@@ -437,9 +437,11 @@ public class TransDialog extends Dialog {
     fdlTransname.right = new FormAttachment( middle, -margin );
     fdlTransname.top = new FormAttachment( 0, margin );
     wlTransname.setLayoutData( fdlTransname );
+//    wTransname = new Text( wTransComp, rep == null ? SWT.SINGLE | SWT.LEFT | SWT.BORDER
+//      : SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.READ_ONLY );
     wTransname = new Text( wTransComp, rep == null ? SWT.SINGLE | SWT.LEFT | SWT.BORDER
-      : SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.READ_ONLY );
-    wTransname.setEnabled( rep == null );
+      : SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+    //wTransname.setEnabled( rep == null );
     props.setLook( wTransname );
     wTransname.addModifyListener( lsMod );
     FormData fdTransname = new FormData();
@@ -2215,9 +2217,11 @@ public class TransDialog extends Dialog {
   }
 
   public void setFlags() {
-    wbDirectory.setEnabled( false );
-    // wDirectory.setEnabled(rep!=null);
-    wlDirectory.setEnabled( false );
+
+    //auphi
+    //wbDirectory.setEnabled( false );
+     wDirectory.setEnabled(rep!=null);
+    //wlDirectory.setEnabled( false );
 
     // wlStepLogtable.setEnabled(wEnableStepPerfMonitor.getSelection());
     // wStepLogtable.setEnabled(wEnableStepPerfMonitor.getSelection());

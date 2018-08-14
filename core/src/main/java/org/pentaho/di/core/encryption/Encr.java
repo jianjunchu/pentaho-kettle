@@ -177,7 +177,12 @@ public class Encr {
       System.out.println( obfuscated );
       System.exit( 0 );
 
-    } else {
+    }else if  ( Const.trim( option ).substring( 1 ).equalsIgnoreCase( "Encrypted" ) ) {
+      String pass = decryptPasswordOptionallyEncrypted("Encrypted" +" "+password);
+      System.out.println( "pass: "+pass );
+      System.exit( 0 );
+    }
+    else {
       // Unknown option, print usage
       //
       System.err.println( "Unknown option '" + option + "'\n" );

@@ -228,18 +228,7 @@ import org.pentaho.di.metastore.MetaStoreConst;
 import org.pentaho.di.pan.CommandLineOption;
 import org.pentaho.di.partition.PartitionSchema;
 import org.pentaho.di.pkg.JarfileGenerator;
-import org.pentaho.di.repository.KettleRepositoryLostException;
-import org.pentaho.di.repository.ObjectId;
-import org.pentaho.di.repository.Repository;
-import org.pentaho.di.repository.RepositoryCapabilities;
-import org.pentaho.di.repository.RepositoryDirectory;
-import org.pentaho.di.repository.RepositoryDirectoryInterface;
-import org.pentaho.di.repository.RepositoryElementInterface;
-import org.pentaho.di.repository.RepositoryObject;
-import org.pentaho.di.repository.RepositoryObjectType;
-import org.pentaho.di.repository.RepositoryOperation;
-import org.pentaho.di.repository.RepositorySecurityManager;
-import org.pentaho.di.repository.RepositorySecurityProvider;
+import org.pentaho.di.repository.*;
 import org.pentaho.di.resource.ResourceExportInterface;
 import org.pentaho.di.resource.ResourceUtil;
 import org.pentaho.di.resource.TopLevelResource;
@@ -4014,7 +4003,7 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
   }
 
   public void exploreRepository() {
-    if ( rep != null ) {
+    //if ( rep != null ) {
       final RepositoryExplorerCallback cb = new RepositoryExplorerCallback() {
 
         @Override
@@ -4100,7 +4089,7 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
         new ErrorDialog( shell, BaseMessages.getString( PKG, "Spoon.Error" ), e.getMessage(), e );
       }
 
-    }
+    //}
   }
 
   public void loadObjectFromRepository(
@@ -5146,70 +5135,251 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
     return saveToRepository( meta, meta.getObjectId() == null );
   }
 
-  @VisibleForTesting
-  FileDialogOperation getFileDialogOperation(  String command, String origin ) {
-    return new FileDialogOperation( command, origin );
-  }
+  public boolean saveToRepository(EngineMetaInterface meta, boolean ask_name) throws KettleException {
 
-  public boolean saveToRepository( EngineMetaInterface meta, boolean ask_name ) throws KettleException {
-    if ( getLog().isDetailed() ) {
+    // Verify repository security first...
+    //
+    if (meta.getFileType().equals(LastUsedFile.FILE_TYPE_TRANSFORMATION)) {
+      if (RepositorySecurityUI.verifyOperations(shell, rep, RepositoryOperation.MODIFY_TRANSFORMATION)) {
+        return false;
+      }
+    }
+    if (meta.getFileType().equals(LastUsedFile.FILE_TYPE_JOB)) {
+      if (RepositorySecurityUI.verifyOperations(shell, rep, RepositoryOperation.MODIFY_JOB)) {
+        return false;
+      }
+    }
+
+    if (log.isDetailed())
       // "Save to repository..."
       //
-      getLog().logDetailed( BaseMessages.getString( PKG, "Spoon.Log.SaveToRepository" ) );
-    }
-    if ( rep != null ) {
+      log.logDetailed(BaseMessages.getString(PKG, "Spoon.Log.SaveToRepository"));
+    if (rep != null) {
+      boolean answer = true;
+      boolean ask = ask_name;
 
       // If the repository directory is root then get the default save directory
-      if ( meta.getRepositoryDirectory() == null || meta.getRepositoryDirectory().isRoot() ) {
-        meta.setRepositoryDirectory( rep.getDefaultSaveDirectory( meta ) );
+      if(meta.getRepositoryDirectory() == null || meta.getRepositoryDirectory().isRoot()) {
+        meta.setRepositoryDirectory(rep.getDefaultSaveDirectory(meta));
       }
+      while (answer && (ask || Const.isEmpty(meta.getName()))) {
+        if (!ask) {
+          MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
 
-      if ( ask_name ) {
-        try {
-          String fileType = meta.getFileType().equals( LastUsedFile.FILE_TYPE_TRANSFORMATION )
-            ? FileDialogOperation.TRANSFORMATION : FileDialogOperation.JOB;
-          FileDialogOperation fileDialogOperation = getFileDialogOperation( FileDialogOperation.SAVE,
-            FileDialogOperation.ORIGIN_SPOON );
-          fileDialogOperation.setFileType( fileType );
-          fileDialogOperation.setStartDir( meta.getRepositoryDirectory().getPath() );
-          //Set the filename so it can be used as the default filename in the save dialog
-          fileDialogOperation.setFilename( meta.getFilename() );
-          ExtensionPointHandler.callExtensionPoint( getLog(), KettleExtensionPoint.SpoonOpenSaveRepository.id,
-            fileDialogOperation );
-          if ( fileDialogOperation.getRepositoryObject() != null ) {
-            RepositoryObject repositoryObject = (RepositoryObject) fileDialogOperation.getRepositoryObject();
-            final RepositoryDirectoryInterface oldDir = meta.getRepositoryDirectory();
-            final String oldName = meta.getName();
-            meta.setRepositoryDirectory( repositoryObject.getRepositoryDirectory() );
-            meta.setName( repositoryObject.getName() );
-            final boolean saved = saveToRepositoryConfirmed( meta );
-            // rename the tab only if the meta object was successfully saved
-            if ( saved ) {
-              delegates.tabs.renameTabs();
-            } else {
-              // if the object wasn't successfully saved, set the name and directory back to their original values
-              meta.setRepositoryDirectory( oldDir );
-              meta.setName( oldName );
-            }
-            return saved;
-          }
-        } catch ( KettleException ke ) {
-          //Ignore
+          // "Please give this transformation a name before saving it in the database."
+          mb.setMessage(BaseMessages.getString(PKG, "Spoon.Dialog.PromptTransformationName.Message"));
+          // "Transformation has no name."
+          mb.setText(BaseMessages.getString(PKG, "Spoon.Dialog.PromptTransformationName.Title"));
+          mb.open();
         }
-      } else {
-        return saveToRepositoryConfirmed( meta );
+        ask = false;
+        if (meta instanceof TransMeta) {
+          answer = TransGraph.editProperties((TransMeta) meta, this, rep, false);
+        }
+        if (meta instanceof JobMeta) {
+          answer = JobGraph.editProperties((JobMeta) meta, this, rep, false);
+        }
       }
 
+      if (answer && !Const.isEmpty(meta.getName())) {
+
+        int response = SWT.YES;
+
+        ObjectId existingId = null;
+        if (meta instanceof TransMeta) {
+          existingId = rep.getTransformationID(meta.getName(), meta.getRepositoryDirectory());
+        }
+        if (meta instanceof JobMeta) {
+          existingId = rep.getJobId(meta.getName(), meta.getRepositoryDirectory());
+        }
+
+        // If there is no object id (import from XML) and there is an existing object.
+        //
+        // or...
+        //
+        // If the transformation/job has an object id and it's different from the one in the repository.
+        //
+        if ((meta.getObjectId() == null && existingId != null) || existingId != null
+                && !meta.getObjectId().equals(existingId)) {
+          // In case we support revisions, we can simply overwrite
+          // without a problem so we simply don't ask.
+          // However, if we import from a file we should ask.
+          //
+          if (!rep.getRepositoryMeta().getRepositoryCapabilities().supportsRevisions() || meta.getObjectId() == null) {
+            MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+
+            // There already is a transformation called ... in the repository.
+            // Do you want to overwrite the transformation?
+            //
+            mb.setMessage(BaseMessages.getString(PKG, "Spoon.Dialog.PromptOverwriteTransformation.Message", meta
+                    .getName(), Const.CR));
+            mb.setText(BaseMessages.getString(PKG, "Spoon.Dialog.PromptOverwriteTransformation.Title"));
+            response = mb.open();
+          }
+        }
+
+        boolean saved = false;
+        if (response == SWT.YES) {
+
+          if (meta.getObjectId() == null) {
+            meta.setObjectId(existingId);
+          }
+
+          try {
+            shell.setCursor(cursor_hourglass);
+
+            // Keep info on who & when this transformation was
+            // created and or modified...
+            if (meta.getCreatedDate() == null) {
+              meta.setCreatedDate(new Date());
+              if (capabilities.supportsUsers()) {
+                meta.setCreatedUser(rep.getUserInfo().getLogin());
+              }
+            }
+
+            // Keep info on who & when this transformation was
+            // changed...
+            meta.setModifiedDate(new Date());
+            if (capabilities.supportsUsers()) {
+              meta.setModifiedUser(rep.getUserInfo().getLogin());
+            }
+
+            // Finally before saving, ask for a version comment (if
+            // applicable)
+            //
+            String versionComment = null;
+            boolean versionOk = false;
+            while (!versionOk) {
+              String fullPath = getJobTransfFullPath( meta );
+              versionComment = RepositorySecurityUI.getVersionComment(shell, rep, meta.getName(),fullPath, false);
+
+              // if the version comment is null, the user hit cancel, exit.
+              if (rep != null && rep.getSecurityProvider() != null &&
+                      rep.getSecurityProvider().allowsVersionComments(fullPath) &&
+                      versionComment == null)
+              {
+                return false;
+              }
+
+              if (Const.isEmpty(versionComment) && rep.getSecurityProvider().isVersionCommentMandatory()) {
+                if (!RepositorySecurityUI.showVersionCommentMandatoryDialog(shell)) {
+                  return false; // no, I don't want to enter a
+                  // version comment and yes,
+                  // it's mandatory.
+                }
+              } else {
+                versionOk = true;
+              }
+            }
+
+            if (versionOk) {
+              SaveProgressDialog tspd = new SaveProgressDialog(shell, rep, meta, versionComment);
+              if (tspd.open()) {
+                saved = true;
+                if (!props.getSaveConfirmation()) {
+                  MessageDialogWithToggle md = new MessageDialogWithToggle(shell, BaseMessages.getString(PKG,
+                          "Spoon.Message.Warning.SaveOK"), null, BaseMessages.getString(PKG,
+                          "Spoon.Message.Warning.TransformationWasStored"), MessageDialog.QUESTION,
+                          new String[] { BaseMessages.getString(PKG, "Spoon.Message.Warning.OK") }, 0, BaseMessages
+                          .getString(PKG, "Spoon.Message.Warning.NotShowThisMessage"), props.getSaveConfirmation());
+                  MessageDialogWithToggle.setDefaultImage(GUIResource.getInstance().getImageSpoon());
+                  md.open();
+                  props.setSaveConfirmation(md.getToggleState());
+                }
+
+                // Handle last opened files...
+                props.addLastFile(meta.getFileType(), meta.getName(), meta.getRepositoryDirectory().getPath(), true,
+                        getRepositoryName());
+                saveSettings();
+                addMenuLast();
+
+                setShellText();
+              }
+            }
+          } finally {
+            shell.setCursor(null);
+          }
+        }
+        return saved;
+      }
     } else {
-      MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_ERROR );
+      MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
       // "There is no repository connection available."
-      mb.setMessage( BaseMessages.getString( PKG, "Spoon.Dialog.NoRepositoryConnection.Message" ) );
+      mb.setMessage(BaseMessages.getString(PKG, "Spoon.Dialog.NoRepositoryConnection.Message"));
       // "No repository available."
-      mb.setText( BaseMessages.getString( PKG, "Spoon.Dialog.NoRepositoryConnection.Title" ) );
+      mb.setText(BaseMessages.getString(PKG, "Spoon.Dialog.NoRepositoryConnection.Title"));
       mb.open();
     }
     return false;
   }
+//
+//  @VisibleForTesting
+//  FileDialogOperation getFileDialogOperation(  String command, String origin ) {
+//    return new FileDialogOperation( command, origin );
+//  }
+
+//  public boolean saveToRepository( EngineMetaInterface meta, boolean ask_name ) throws KettleException {
+//    if ( getLog().isDetailed() ) {
+//      // "Save to repository..."
+//      //
+//      getLog().logDetailed( BaseMessages.getString( PKG, "Spoon.Log.SaveToRepository" ) );
+//    }
+//    if ( rep != null ) {
+//
+//      // If the repository directory is root then get the default save directory
+//      if ( meta.getRepositoryDirectory() == null || meta.getRepositoryDirectory().isRoot() ) {
+//        meta.setRepositoryDirectory( rep.getDefaultSaveDirectory( meta ) );
+//      }
+//
+//      if ( ask_name ) {
+//        try {
+//          String fileType = meta.getFileType().equals( LastUsedFile.FILE_TYPE_TRANSFORMATION )
+//            ? FileDialogOperation.TRANSFORMATION : FileDialogOperation.JOB;
+//          FileDialogOperation fileDialogOperation = getFileDialogOperation( FileDialogOperation.SAVE,
+//            FileDialogOperation.ORIGIN_SPOON );
+//          fileDialogOperation.setFileType( fileType );
+//          fileDialogOperation.setStartDir( meta.getRepositoryDirectory().getPath() );
+//          //Set the filename so it can be used as the default filename in the save dialog
+//          fileDialogOperation.setFilename( meta.getFilename() );
+//          ExtensionPointHandler.callExtensionPoint( getLog(), KettleExtensionPoint.SpoonOpenSaveRepository.id,
+//            fileDialogOperation );
+//          fileDialogOperation.setRepositoryObject(new RepositoryObject());//auphi
+//          if ( fileDialogOperation.getRepositoryObject() != null ) {
+//            RepositoryObject repositoryObject = (RepositoryObject) fileDialogOperation.getRepositoryObject();
+//            final RepositoryDirectoryInterface oldDir = meta.getRepositoryDirectory();
+//            final String oldName = meta.getName();
+//            //auphi
+//            //meta.setRepositoryDirectory( repositoryObject.getRepositoryDirectory() );
+//            //meta.setName( repositoryObject.getName() );
+//
+//            final boolean saved = saveToRepositoryConfirmed( meta );
+//            // rename the tab only if the meta object was successfully saved
+//            if ( saved ) {
+//              delegates.tabs.renameTabs();
+//            } else {
+//              // if the object wasn't successfully saved, set the name and directory back to their original values
+//              meta.setRepositoryDirectory( oldDir );
+//              meta.setName( oldName );
+//            }
+//            return saved;
+//          }
+//        } catch ( KettleException ke ) {
+//          //Ignore
+//        }
+//      } else {
+//        return saveToRepositoryConfirmed( meta );
+//      }
+//
+//    } else {
+//      MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_ERROR );
+//      // "There is no repository connection available."
+//      mb.setMessage( BaseMessages.getString( PKG, "Spoon.Dialog.NoRepositoryConnection.Message" ) );
+//      // "No repository available."
+//      mb.setText( BaseMessages.getString( PKG, "Spoon.Dialog.NoRepositoryConnection.Title" ) );
+//      mb.open();
+//    }
+//    return false;
+//  }
 
   public boolean saveToRepositoryCheckSecurity( EngineMetaInterface meta ) {
     // Verify repository security first...
@@ -7034,13 +7204,15 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
         disableMenuItem( doc, "trans-last-impact", disableTransMenu );
 
         // Tools
-        disableMenuItem( doc, "repository-explore", !isRepositoryRunning );
-        disableMenuItem( doc, "tools-dabase-explore", !isRepositoryRunning && disableDatabaseExplore );
-        disableMenuItem( doc, "repository-clear-shared-object-cache", !isRepositoryRunning );
-        disableMenuItem( doc, "toolbar-expore-repository", !isRepositoryRunning );
-        disableMenuItem( doc, "repository-export-all", !isRepositoryRunning );
-        disableMenuItem( doc, "repository-import-directory", !isRepositoryRunning );
-        disableMenuItem( doc, "trans-last-preview", !isRepositoryRunning || disableTransMenu );
+        //disableMenuItem( doc, "repository-explore", !isRepositoryRunning );
+        //disableMenuItem( doc, "tools-dabase-explore", !isRepositoryRunning && disableDatabaseExplore );
+        //disableMenuItem( doc, "repository-clear-shared-object-cache", !isRepositoryRunning );
+        //disableMenuItem( doc, "toolbar-expore-repository", !isRepositoryRunning );
+        //disableMenuItem( doc, "repository-export-all", !isRepositoryRunning );
+        //disableMenuItem( doc, "repository-import-directory", !isRepositoryRunning );
+        //disableMenuItem( doc, "trans-last-preview", !isRepositoryRunning || disableTransMenu );
+        disableMenuItem( doc, "repository-explore", false );
+
 
         // Wizard
         disableMenuItem( doc, "wizard-connection", disableTransMenu && disableJobMenu );
@@ -7932,6 +8104,104 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
     return APP_NAME;
   }
 
+  /**
+   * auphi, show rep dialog on start up
+   * @param options
+   */
+  public void selectRep(CommandLineOption[] options) {
+    RepositoryMeta repositoryMeta = null;
+    // UserInfo userinfo = null;
+
+    StringBuilder optionRepname = getCommandLineOption(options, "rep").getArgument();
+    StringBuilder optionFilename = getCommandLineOption(options, "file").getArgument();
+    StringBuilder optionUsername = getCommandLineOption(options, "user").getArgument();
+    StringBuilder optionPassword = getCommandLineOption(options, "pass").getArgument();
+
+    if (Const.isEmpty(optionRepname) && Const.isEmpty(optionFilename) && props.showRepositoriesDialogAtStartup()) {
+      if (log.isBasic()) {
+        // "Asking for repository"
+        log.logBasic(BaseMessages.getString(PKG, "Spoon.Log.AskingForRepository"));
+      }
+
+      loginDialog = new RepositoriesDialog(shell, null, new ILoginCallback() {
+
+        public void onSuccess(Repository repository) {
+          setRepository(repository);
+          SpoonPluginManager.getInstance().notifyLifecycleListeners(SpoonLifeCycleEvent.REPOSITORY_CONNECTED);
+        }
+
+        public void onError(Throwable t) {
+          if (t instanceof KettleAuthException) {
+            ShowMessageDialog dialog = new ShowMessageDialog(loginDialog.getShell(), SWT.OK | SWT.ICON_ERROR, BaseMessages.getString(PKG,
+                    "Spoon.Dialog.LoginFailed.Title"), t.getLocalizedMessage());
+            dialog.open();
+          } else {
+            new ErrorDialog(loginDialog.getShell(), BaseMessages.getString(PKG, "Spoon.Dialog.LoginFailed.Title"), BaseMessages.getString(PKG, "Spoon.Dialog.LoginFailed.Message", t), t);
+          }
+        }
+
+        public void onCancel() {
+          // do nothing
+        }
+      });
+      hideSplash();
+      loginDialog.show();
+      //showSplash();
+    }
+    else if (!Const.isEmpty(optionRepname) && Const.isEmpty(optionFilename)) {
+      RepositoriesMeta repsinfo = new RepositoriesMeta();
+      try {
+        repsinfo.readData();
+        repositoryMeta = repsinfo.findRepository(optionRepname.toString());
+        if (repositoryMeta != null && !Const.isEmpty(optionUsername) && !Const.isEmpty(optionPassword)) {
+          // Define and connect to the repository...
+          Repository repo = PluginRegistry.getInstance().loadClass(RepositoryPluginType.class, repositoryMeta,
+                  Repository.class);
+          repo.init(repositoryMeta);
+          repo.connect(optionUsername != null ? optionUsername.toString() : null,
+                  optionPassword != null ? optionPassword.toString() : null);
+          setRepository(repo);
+        } else {
+          if (!Const.isEmpty(optionUsername) && !Const.isEmpty(optionPassword)) {
+            String msg = BaseMessages.getString(PKG, "Spoon.Log.NoRepositoriesDefined");
+            log.logError(msg);// "No repositories defined on this system."
+            MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+            mb.setMessage(BaseMessages.getString(PKG, "Spoon.Error.Repository.NotFound", optionRepname.toString()));
+            mb.setText(BaseMessages.getString(PKG, "Spoon.Error.Repository.NotFound.Title"));
+            mb.open();
+          }
+
+          loginDialog = new RepositoriesDialog(shell, null, new ILoginCallback() {
+
+            public void onSuccess(Repository repository) {
+              setRepository(repository);
+              SpoonPluginManager.getInstance().notifyLifecycleListeners(SpoonLifeCycleEvent.REPOSITORY_CONNECTED);
+            }
+
+            public void onError(Throwable t) {
+              MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+              mb.setMessage(BaseMessages.getString(PKG, "Spoon.Dialog.LoginFailed.Message", t.getLocalizedMessage()));
+              mb.setText(BaseMessages.getString(PKG, "Spoon.Dialog.LoginFailed.Title"));
+              mb.open();
+            }
+
+            public void onCancel() {
+              // TODO Auto-generated method stub
+
+            }
+          });
+          hideSplash();
+          loginDialog.show();
+          //showSplash();
+        }
+      } catch (Exception e) {
+        hideSplash();
+        // Eat the exception but log it...
+        log.logError("Error reading repositories xml file", e);
+      }
+    }
+  }
+
   public void handleStartOptions( CommandLineOption[] options ) {
 
     // note that at this point the rep object is populated by previous calls
@@ -8044,6 +8314,10 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
   }
 
   public void start( CommandLineOption[] options ) throws KettleException {
+
+    // auphi, Show the repository connection dialog
+    //
+    selectRep(options);
 
     // Read the start option parameters
     //

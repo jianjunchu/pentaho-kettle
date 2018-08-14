@@ -48,6 +48,9 @@ public class KettleDatabaseRepositoryMeta extends BaseRepositoryMeta implements 
 
   private DatabaseMeta databaseMeta;
 
+  private String userID;
+  public static long priviledge=-2;
+
   public KettleDatabaseRepositoryMeta() {
     super( REPOSITORY_TYPE_ID );
   }
@@ -177,4 +180,11 @@ public class KettleDatabaseRepositoryMeta extends BaseRepositoryMeta implements 
     return object;
   }
 
+  public void setUserID(String userID){
+    this.userID = userID;
+  }
+
+  public String getUserID(){
+    return this.userID;
+  }
 }

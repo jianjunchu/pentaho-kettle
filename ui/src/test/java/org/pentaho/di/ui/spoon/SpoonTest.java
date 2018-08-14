@@ -697,12 +697,12 @@ public class SpoonTest {
     RepositoryObject repositoryObject = mock( RepositoryObject.class );
     doReturn( newDirMock ).when( repositoryObject ).getRepositoryDirectory();
 
-    FileDialogOperation fileDlgOp = mock( FileDialogOperation.class );
-    doReturn( repositoryObject ).when( fileDlgOp ).getRepositoryObject();
-    doReturn( fileDlgOp ).when( spoon ).getFileDialogOperation( FileDialogOperation.SAVE,
-      FileDialogOperation.ORIGIN_SPOON );
-    doReturn( "newTrans" ).when( repositoryObject ).getName();
-    doCallRealMethod().when( spoon ).saveToRepository( mockJobMeta, true );
+//    FileDialogOperation fileDlgOp = mock( FileDialogOperation.class );
+//    doReturn( repositoryObject ).when( fileDlgOp ).getRepositoryObject();
+//    doReturn( fileDlgOp ).when( spoon ).getFileDialogOperation( FileDialogOperation.SAVE,
+//      FileDialogOperation.ORIGIN_SPOON );
+//    doReturn( "newTrans" ).when( repositoryObject ).getName();
+//    doCallRealMethod().when( spoon ).saveToRepository( mockJobMeta, true );
 
     // mock a successful save
     doReturn( true ).when( spoon ).saveToRepositoryConfirmed( mockJobMeta );

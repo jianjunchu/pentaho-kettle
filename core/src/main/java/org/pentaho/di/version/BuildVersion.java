@@ -102,7 +102,9 @@ public class BuildVersion {
       try {
         loadBuildInfoFromEnvironmentVariables();
       } catch ( Throwable e2 ) {
-        version = "Unknown";
+//        version = "Unknown";
+//        revision = "0";
+        version = "9.0";
         revision = "0";
         buildDate = XMLHandler.date2string( new Date() );
         buildUser = System.getProperty( "user.name" );

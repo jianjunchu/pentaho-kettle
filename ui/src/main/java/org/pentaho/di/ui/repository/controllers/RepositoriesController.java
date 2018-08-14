@@ -22,10 +22,15 @@
 
 package org.pentaho.di.ui.repository.controllers;
 
+import java.io.FileInputStream;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.repository.RepositoryMeta;
 import org.pentaho.di.ui.repository.ILoginCallback;
@@ -38,12 +43,7 @@ import org.pentaho.ui.xul.XulException;
 import org.pentaho.ui.xul.binding.Binding;
 import org.pentaho.ui.xul.binding.BindingConvertor;
 import org.pentaho.ui.xul.binding.BindingFactory;
-import org.pentaho.ui.xul.components.WaitBoxRunnable;
-import org.pentaho.ui.xul.components.XulButton;
-import org.pentaho.ui.xul.components.XulCheckbox;
-import org.pentaho.ui.xul.components.XulConfirmBox;
-import org.pentaho.ui.xul.components.XulMessageBox;
-import org.pentaho.ui.xul.components.XulTextbox;
+import org.pentaho.ui.xul.components.*;
 import org.pentaho.ui.xul.containers.XulDialog;
 import org.pentaho.ui.xul.containers.XulListbox;
 import org.pentaho.ui.xul.impl.AbstractXulEventHandler;
@@ -63,6 +63,14 @@ public class RepositoriesController extends AbstractXulEventHandler {
   private XulTextbox userPassword;
 
   private XulListbox availableRepositories;
+
+  //auphi
+  private XulLabel   usernameLabel;
+  private XulLabel   userPasswordLabel;
+  private XulLabel   connectTipLabel;
+  private XulTextbox repositoryUrl;
+  private XulLabel   repLabel;
+  // auphi end
 
   private XulButton repositoryEditButton;
 
@@ -104,63 +112,133 @@ public class RepositoriesController extends AbstractXulEventHandler {
     }
   }
 
+
   private void createBindings() {
-    loginDialog = (XulDialog) document.getElementById( "repository-login-dialog" );
+    loginDialog = (XulDialog) document.getElementById("repository-login-dialog");//$NON-NLS-1$
+    /**
+     * bug 20697 118-128,143  edit by cli
+     */
+    //    repositoryEditButton = (XulButton) document.getElementById("repository-edit");//$NON-NLS-1$
+//    repositoryRemoveButton = (XulButton) document.getElementById("repository-remove");//$NON-NLS-1$
 
-    repositoryEditButton = (XulButton) document.getElementById( "repository-edit" );
-    repositoryRemoveButton = (XulButton) document.getElementById( "repository-remove" );
+    repositoryUrl = (XulTextbox) document.getElementById("repository-url");
+    repLabel=(XulLabel) document.getElementById("repository-url-lab");
 
-    username = (XulTextbox) document.getElementById( "user-name" );
-    userPassword = (XulTextbox) document.getElementById( "user-password" );
-    availableRepositories = (XulListbox) document.getElementById( "available-repository-list" );
-    showAtStartup = (XulCheckbox) document.getElementById( "show-login-dialog-at-startup" );
-    okButton = (XulButton) document.getElementById( "repository-login-dialog_accept" );
-    cancelButton = (XulButton) document.getElementById( "repository-login-dialog_cancel" );
-    bf.setBindingType( Binding.Type.BI_DIRECTIONAL );
-    bf.createBinding( loginModel, "username", username, "value" );
-    bf.createBinding( loginModel, "password", userPassword, "value" );
-    bf.createBinding( loginModel, "availableRepositories", availableRepositories, "elements" );
-    bf.createBinding( loginModel, "selectedRepository", availableRepositories, "selectedItem" );
-    bf.createBinding( loginModel, "showDialogAtStartup", showAtStartup, "checked" );
-    bf.setBindingType( Binding.Type.ONE_WAY );
-    bf.createBinding( loginModel, "valid", okButton, "!disabled" );
+    username = (XulTextbox) document.getElementById("user-name");
+    usernameLabel = (XulLabel) document.getElementById("user-name-lab");//$NON-NLS-1$
 
+    userPassword = (XulTextbox) document.getElementById("user-password");//$NON-NLS-1$
+    userPasswordLabel = (XulLabel) document.getElementById("user-password-lab");
+
+    connectTipLabel =(XulLabel) document.getElementById("connect-tip");
+
+    availableRepositories = (XulListbox) document.getElementById("available-repository-list");//$NON-NLS-1$
+
+    okButton = (XulButton) document.getElementById("repository-login-dialog_accept"); //$NON-NLS-1$
+    cancelButton = (XulButton) document.getElementById("repository-login-dialog_cancel"); //$NON-NLS-1$
+    bf.setBindingType(Binding.Type.BI_DIRECTIONAL);
+    bf.createBinding(loginModel, "repositoryUrl", repositoryUrl, "value");
+    bf.createBinding(loginModel, "username", username, "value");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(loginModel, "password", userPassword, "value");//$NON-NLS-1$ //$NON-NLS-2$
+
+    bf.createBinding(loginModel, "availableRepositories", availableRepositories, "elements");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(loginModel, "selectedRepository", availableRepositories, "selectedItem");//$NON-NLS-1$ //$NON-NLS-2$
+//    bf.createBinding(loginModel, "showDialogAtStartup", showAtStartup, "checked");//$NON-NLS-1$ //$NON-NLS-2$
+    bf.setBindingType(Binding.Type.ONE_WAY);
+//    bf.createBinding(loginModel, "valid", okButton, "disabled");//$NON-NLS-1$ //$NON-NLS-2$
+    availableRepositories.setVisible(false);
+    connectTipLabel.setVisible(false);
     BindingConvertor<RepositoryMeta, Boolean> buttonConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
       @Override
-      public Boolean sourceToTarget( RepositoryMeta value ) {
-        return ( value == null );
+      public Boolean sourceToTarget(RepositoryMeta value) {
+        return (value == null);
       }
-
       @Override
-      public RepositoryMeta targetToSource( Boolean value ) {
+      public RepositoryMeta targetToSource(Boolean value) {
         return null;
       }
     };
 
     BindingConvertor<RepositoryMeta, Boolean> userpassConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
       @Override
-      public Boolean sourceToTarget( RepositoryMeta value ) {
-        return ( value == null ) || !value.getRepositoryCapabilities().supportsUsers();
+      public Boolean sourceToTarget(RepositoryMeta value) {
+        return (value == null) || !value.getRepositoryCapabilities().supportsUsers();
       }
-
       @Override
-      public RepositoryMeta targetToSource( Boolean value ) {
+      public RepositoryMeta targetToSource(Boolean value) {
         return null;
       }
     };
 
-    bf.createBinding( loginModel, "selectedRepository", username, "disabled", userpassConverter );
-    bf.createBinding( loginModel, "selectedRepository", userPassword, "disabled", userpassConverter );
-
-    bf.createBinding( loginModel, "selectedRepository", repositoryEditButton, "disabled", buttonConverter );
-    bf.createBinding( loginModel, "selectedRepository", repositoryRemoveButton, "disabled", buttonConverter );
-
-    final Shell loginShell = (Shell) loginDialog.getRootObject();
-
-    helper = new RepositoriesHelper( loginModel, document, loginShell );
-    helper.setPreferredRepositoryName( preferredRepositoryName );
-    helper.getMetaData();
+    bf.createBinding(loginModel, "selectedRepository", repositoryUrl, "disabled", userpassConverter);
+    bf.createBinding(loginModel, "selectedRepository", username, "disabled", userpassConverter);//$NON-NLS-1$ //$NON-NLS-2$
+    bf.createBinding(loginModel, "selectedRepository", userPassword, "disabled", userpassConverter);//$NON-NLS-1$ //$NON-NLS-2$
   }
+
+//  private void createBindings() {
+//    loginDialog = (XulDialog) document.getElementById( "repository-login-dialog" );
+//
+//    //auphi 2018
+//    //repositoryEditButton = (XulButton) document.getElementById( "repository-edit" );
+//    //repositoryRemoveButton = (XulButton) document.getElementById( "repository-remove" );
+//    repositoryUrl = (XulTextbox) document.getElementById("repository-url");
+//    repLabel=(XulLabel) document.getElementById("repository-url-lab");
+//    usernameLabel = (XulLabel) document.getElementById("user-name-lab");//$NON-NLS-1$
+//    userPasswordLabel = (XulLabel) document.getElementById("user-password-lab");
+//    connectTipLabel =(XulLabel) document.getElementById("connect-tip");
+//    //auphi end
+//
+//    username = (XulTextbox) document.getElementById( "user-name" );
+//    userPassword = (XulTextbox) document.getElementById( "user-password" );
+//    availableRepositories = (XulListbox) document.getElementById( "available-repository-list" );
+//    showAtStartup = (XulCheckbox) document.getElementById( "show-login-dialog-at-startup" );
+//    okButton = (XulButton) document.getElementById( "repository-login-dialog_accept" );
+//    cancelButton = (XulButton) document.getElementById( "repository-login-dialog_cancel" );
+//    bf.setBindingType( Binding.Type.BI_DIRECTIONAL );
+//    bf.createBinding( loginModel, "username", username, "value" );
+//    bf.createBinding( loginModel, "password", userPassword, "value" );
+//    bf.createBinding( loginModel, "availableRepositories", availableRepositories, "elements" );
+//    bf.createBinding( loginModel, "selectedRepository", availableRepositories, "selectedItem" );
+//    bf.createBinding( loginModel, "showDialogAtStartup", showAtStartup, "checked" );
+//    bf.setBindingType( Binding.Type.ONE_WAY );
+//    bf.createBinding( loginModel, "valid", okButton, "!disabled" );
+//
+//    BindingConvertor<RepositoryMeta, Boolean> buttonConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
+//      @Override
+//      public Boolean sourceToTarget( RepositoryMeta value ) {
+//        return ( value == null );
+//      }
+//
+//      @Override
+//      public RepositoryMeta targetToSource( Boolean value ) {
+//        return null;
+//      }
+//    };
+//
+//    BindingConvertor<RepositoryMeta, Boolean> userpassConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
+//      @Override
+//      public Boolean sourceToTarget( RepositoryMeta value ) {
+//        return ( value == null ) || !value.getRepositoryCapabilities().supportsUsers();
+//      }
+//
+//      @Override
+//      public RepositoryMeta targetToSource( Boolean value ) {
+//        return null;
+//      }
+//    };
+//
+//    bf.createBinding( loginModel, "selectedRepository", username, "disabled", userpassConverter );
+//    bf.createBinding( loginModel, "selectedRepository", userPassword, "disabled", userpassConverter );
+//
+//    bf.createBinding( loginModel, "selectedRepository", repositoryEditButton, "disabled", buttonConverter );
+//    bf.createBinding( loginModel, "selectedRepository", repositoryRemoveButton, "disabled", buttonConverter );
+//
+//    final Shell loginShell = (Shell) loginDialog.getRootObject();
+//
+//    helper = new RepositoriesHelper( loginModel, document, loginShell );
+//    helper.setPreferredRepositoryName( preferredRepositoryName );
+//    helper.getMetaData();
+//  }
 
   public void setBindingFactory( BindingFactory bf ) {
     this.bf = bf;
@@ -173,100 +251,102 @@ public class RepositoriesController extends AbstractXulEventHandler {
   public String getName() {
     return "repositoryLoginController";
   }
+//
+//  public void show() {
+//    if ( loginModel.getUsername() != null ) {
+//      userPassword.setFocus();
+//    } else {
+//      username.setFocus();
+//    }
+//
+//    // PDI-7443: The repo list does not show the selected repo
+//    // make the layout play nice, this is necessary to have the selection box scroll reliably
+////    if ( availableRepositories.getRows() < 4 ) {
+////      availableRepositories.setRows( 4 );
+////    }
+//
+//    int idx = loginModel.getRepositoryIndex( loginModel.getSelectedRepository() );
+//    if ( idx >= 0 ) {
+//      availableRepositories.setSelectedIndex( idx );
+//    }
+//    // END OF PDI-7443
+//
+//    loginDialog.show();
+//
+//  }
 
-  public void show() {
-    if ( loginModel.getUsername() != null ) {
-      userPassword.setFocus();
-    } else {
-      username.setFocus();
-    }
+//  public void login() {
+//    if ( loginModel.isValid() == false ) {
+//      return;
+//    }
+//    KettleWaitBox box;
+//    try {
+//      box = (KettleWaitBox) document.createElement( "iconwaitbox" );
+//      box.setIndeterminate( true );
+//      box.setCanCancel( false );
+//      box.setIcon( "ui/images/kettle_logo_small.svg" );
+//      box.setTitle( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Title" ) );
+//      box.setMessage( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Message" ) );
+//      final Shell loginShell = (Shell) loginDialog.getRootObject();
+//      final Display display = loginShell.getDisplay();
+//      box.setDialogParent( loginShell );
+//      box.setRunnable( new WaitBoxRunnable( box ) {
+//        @Override
+//        public void run() {
+//          try {
+//            helper.loginToRepository();
+//
+//            waitBox.stop();
+//            display.syncExec( new Runnable() {
+//              public void run() {
+//                loginDialog.hide();
+//                okButton.setDisabled( false );
+//                cancelButton.setDisabled( false );
+//
+//                if ( helper.getConnectedRepository().getConnectMessage() != null ) {
+//                  getMessageBox().setTitle( BaseMessages.getString( PKG, "ConnectMessageTitle" ) );
+//                  getMessageBox().setMessage( helper.getConnectedRepository().getConnectMessage() );
+//                  getMessageBox().open();
+//                }
+//
+//                getCallback().onSuccess( helper.getConnectedRepository() );
+//              }
+//            } );
+//
+//          } catch ( final Throwable th ) {
+//
+//            waitBox.stop();
+//
+//            try {
+//              display.syncExec( new Runnable() {
+//                public void run() {
+//
+//                  getCallback().onError( th );
+//                  okButton.setDisabled( false );
+//                  cancelButton.setDisabled( false );
+//                }
+//              } );
+//            } catch ( Exception e ) {
+//              e.printStackTrace();
+//            }
+//
+//          }
+//        }
+//
+//        @Override
+//        public void cancel() {
+//        }
+//
+//      } );
+//      okButton.setDisabled( true );
+//      cancelButton.setDisabled( true );
+//      box.start();
+//    } catch ( XulException e1 ) {
+//      getCallback().onError( e1 );
+//    }
+//  }
 
-    // PDI-7443: The repo list does not show the selected repo
-    // make the layout play nice, this is necessary to have the selection box scroll reliably
-    if ( availableRepositories.getRows() < 4 ) {
-      availableRepositories.setRows( 4 );
-    }
 
-    int idx = loginModel.getRepositoryIndex( loginModel.getSelectedRepository() );
-    if ( idx >= 0 ) {
-      availableRepositories.setSelectedIndex( idx );
-    }
-    // END OF PDI-7443
-
-    loginDialog.show();
-
-  }
-
-  public void login() {
-    if ( loginModel.isValid() == false ) {
-      return;
-    }
-    KettleWaitBox box;
-    try {
-      box = (KettleWaitBox) document.createElement( "iconwaitbox" );
-      box.setIndeterminate( true );
-      box.setCanCancel( false );
-      box.setIcon( "ui/images/kettle_logo_small.svg" );
-      box.setTitle( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Title" ) );
-      box.setMessage( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Message" ) );
-      final Shell loginShell = (Shell) loginDialog.getRootObject();
-      final Display display = loginShell.getDisplay();
-      box.setDialogParent( loginShell );
-      box.setRunnable( new WaitBoxRunnable( box ) {
-        @Override
-        public void run() {
-          try {
-            helper.loginToRepository();
-
-            waitBox.stop();
-            display.syncExec( new Runnable() {
-              public void run() {
-                loginDialog.hide();
-                okButton.setDisabled( false );
-                cancelButton.setDisabled( false );
-
-                if ( helper.getConnectedRepository().getConnectMessage() != null ) {
-                  getMessageBox().setTitle( BaseMessages.getString( PKG, "ConnectMessageTitle" ) );
-                  getMessageBox().setMessage( helper.getConnectedRepository().getConnectMessage() );
-                  getMessageBox().open();
-                }
-
-                getCallback().onSuccess( helper.getConnectedRepository() );
-              }
-            } );
-
-          } catch ( final Throwable th ) {
-
-            waitBox.stop();
-
-            try {
-              display.syncExec( new Runnable() {
-                public void run() {
-
-                  getCallback().onError( th );
-                  okButton.setDisabled( false );
-                  cancelButton.setDisabled( false );
-                }
-              } );
-            } catch ( Exception e ) {
-              e.printStackTrace();
-            }
-
-          }
-        }
-
-        @Override
-        public void cancel() {
-        }
-
-      } );
-      okButton.setDisabled( true );
-      cancelButton.setDisabled( true );
-      box.start();
-    } catch ( XulException e1 ) {
-      getCallback().onError( e1 );
-    }
-  }
 
   /**
    * Executed when the user clicks the new repository image from the Repository Login Dialog It present a new dialog
@@ -348,5 +428,157 @@ public class RepositoriesController extends AbstractXulEventHandler {
 
   public Shell getShell() {
     return shell;
+  }
+
+  public void show(){
+    if(loginModel.getUsername() != null){
+      userPassword.setFocus();
+    } else {
+      username.setFocus();
+    }
+    //xnren start set server_url
+    String server_url = "http://localhost:8080/etl_platform";
+    try{
+      Properties p = new Properties();
+      String propFile = Const.getKettleDirectory()+"/"+Const.KETTLE_PROPERTIES;
+      p.load(new FileInputStream(propFile));
+      if(p.getProperty("SERVER_URL") != null){
+        server_url = p.getProperty("SERVER_URL");
+      }
+    }catch (Exception e){
+      e.printStackTrace();
+    }
+
+//    repositoryUrl.setValue("http://localhost:8080/etl_platform");
+    repositoryUrl.setValue(server_url);
+    //xnren end
+
+    /**
+     * bug 20697 201-208  edity by cli
+     */
+    // PDI-7443: The repo list does not show the selected repo
+    // make the layout play nice, this is necessary to have the selection box scroll reliably
+//    if (availableRepositories.getRows() < 4){
+//    	availableRepositories.setRows(4);
+//    }
+//
+//    int idx = loginModel.getRepositoryIndex(loginModel.getSelectedRepository());
+//    if (idx >= 0){
+//    	availableRepositories.setSelectedIndex(idx);
+//    }
+    // END OF PDI-7443
+
+    loginDialog.show();
+  }
+
+  /**
+   * bug 20697 216-237 edit by cli
+   */
+  public void showRepository(){
+    final Shell loginShell = (Shell) loginDialog.getRootObject();
+    helper = new RepositoriesHelper(loginModel, document, loginShell);
+    if("OK".equals(helper.getInitMessages())){
+      if(helper.getRepositoryCount()==0){
+        MessageBox box = new MessageBox(shell, SWT.YES| SWT.ICON_INFORMATION);
+        box.setMessage(BaseMessages.getString(PKG,"Repository.Show.NoRepository"));
+        box.setText(BaseMessages.getString(PKG,"Repository.Show.NoRepository.Dialog.Title"));
+        box.open();
+        return;
+      }
+      if (availableRepositories.getRows() < 4){
+        availableRepositories.setRows(4);
+      }
+
+      int idx = loginModel.getRepositoryIndex(loginModel.getSelectedRepository());
+      if (idx >= 0){
+        availableRepositories.setSelectedIndex(idx);
+      }
+      helper.setPreferedReopsitory();
+      availableRepositories.setVisible(true);
+      connectTipLabel.setVisible(true);
+      username.setVisible(false);
+      userPassword.setVisible(false);
+      repositoryUrl.setVisible(false);
+      repLabel.setVisible(false);
+      usernameLabel.setVisible(false);
+      userPasswordLabel.setVisible(false);
+      okButton.setVisible(false);
+      cancelButton.setVisible(false);
+    }else{
+      MessageBox box = new MessageBox(shell, SWT.YES| SWT.ICON_ERROR);
+      box.setMessage(BaseMessages.getString(PKG,"Dialog.Error.Message"));
+      box.setText(BaseMessages.getString(PKG,"Dialog.Error"));
+      box.open();
+    }
+  }
+
+  public void login() {
+    if(loginModel.isValid() == false){
+      return;
+    }
+    XulWaitBox box;
+    try {
+      box = (XulWaitBox) document.createElement("waitbox");
+      box.setIndeterminate(true);
+      box.setCanCancel(false);
+      box.setTitle(BaseMessages.getString(PKG, "RepositoryExplorerDialog.Connection.Wait.Title"));
+      box.setMessage(BaseMessages.getString(PKG, "RepositoryExplorerDialog.Connection.Wait.Message"));
+      final Shell loginShell = (Shell) loginDialog.getRootObject();
+      final Display display = loginShell.getDisplay();
+      box.setDialogParent(loginShell);
+      box.setRunnable(new WaitBoxRunnable(box){
+        @Override
+        public void run() {
+          try {
+            helper.loginToRepository();
+
+            waitBox.stop();
+            display.syncExec(new Runnable(){
+              public void run() {
+                loginDialog.hide();
+                okButton.setDisabled(false);
+                cancelButton.setDisabled(false);
+
+                if (helper.getConnectedRepository().getConnectMessage() != null) {
+                  getMessageBox().setTitle(BaseMessages.getString(PKG, "ConnectMessageTitle")); //$NON-NLS-1$
+                  getMessageBox().setMessage(helper.getConnectedRepository().getConnectMessage());
+                  getMessageBox().open();
+                }
+
+                getCallback().onSuccess(helper.getConnectedRepository());
+              }
+            });
+
+          } catch (final Throwable th) {
+
+            waitBox.stop();
+
+            try {
+              display.syncExec(new Runnable(){
+                public void run() {
+
+                  getCallback().onError(th);
+                  okButton.setDisabled(false);
+                  cancelButton.setDisabled(false);
+                }
+              });
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+
+          }
+        }
+
+        @Override
+        public void cancel() {
+        }
+
+      });
+      okButton.setDisabled(true);
+      cancelButton.setDisabled(true);
+      box.start();
+    } catch (XulException e1) {
+      getCallback().onError(e1);
+    }
   }
 }

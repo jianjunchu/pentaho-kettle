@@ -70,6 +70,7 @@ public class SaveProgressDialog {
         try {
           rep.save( meta, versionComment, new ProgressMonitorAdapter( monitor ) );
         } catch ( KettleException e ) {
+          e.printStackTrace();
           throw new InvocationTargetException( e, BaseMessages.getString(
             PKG, "TransSaveProgressDialog.Exception.ErrorSavingTransformation" )
             + e.toString() );

@@ -463,7 +463,8 @@ public class KettleDatabaseRepository extends KettleDatabaseRepositoryBase {
     ProgressMonitorListener monitor, ObjectId parentId, boolean used, boolean overwrite ) throws KettleException {
 
     try {
-      lockRepository();
+      //    auphi remove lock statement
+      //    lockRepository();
 
       if ( !Utils.isEmpty( versionComment ) ) {
         insertLogEntry( versionComment );

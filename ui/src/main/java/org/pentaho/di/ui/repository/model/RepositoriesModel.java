@@ -30,8 +30,141 @@ import org.pentaho.ui.xul.XulEventSourceAdapter;
 
 public class RepositoriesModel extends XulEventSourceAdapter {
 
+//  private String username;
+//  private String password;
+//  private boolean showDialogAtStartup;
+//  private List<RepositoryMeta> availableRepositories;
+//  private RepositoryMeta selectedRepository;
+//
+//  public RepositoriesModel() {
+//    super();
+//    availableRepositories = new ArrayList<RepositoryMeta>();
+//  }
+//
+//  public String getUsername() {
+//    return username;
+//  }
+//
+//  public void setUsername( String username ) {
+//    String previousValue = this.username;
+//    this.username = username;
+//    this.firePropertyChange( "username", previousValue, username );
+//    checkIfModelValid();
+//  }
+//
+//  public String getPassword() {
+//    return password;
+//  }
+//
+//  public void setPassword( String password ) {
+//    String previousValue = this.password;
+//    this.password = password;
+//    this.firePropertyChange( "password", previousValue, password );
+//  }
+//
+//  public boolean isShowDialogAtStartup() {
+//    return showDialogAtStartup;
+//  }
+//
+//  public void setShowDialogAtStartup( boolean showDialogAtStartup ) {
+//    boolean previousValue = this.showDialogAtStartup;
+//    this.showDialogAtStartup = showDialogAtStartup;
+//    this.firePropertyChange( "showDialogAtStartup", previousValue, showDialogAtStartup );
+//  }
+//
+//  public List<RepositoryMeta> getAvailableRepositories() {
+//    return availableRepositories;
+//  }
+//
+//  public void setAvailableRepositories( List<RepositoryMeta> repositoryList ) {
+//    List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
+//    previousValue.addAll( this.availableRepositories );
+//    this.availableRepositories = repositoryList;
+//    this.firePropertyChange( "availableRepositories", previousValue, repositoryList );
+//  }
+//
+//  public void addToAvailableRepositories( RepositoryMeta meta ) {
+//    List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
+//    previousValue.addAll( this.availableRepositories );
+//    this.availableRepositories.add( meta );
+//    this.firePropertyChange( "availableRepositories", previousValue, this.availableRepositories );
+//  }
+//
+//  public void removeFromAvailableRepositories( RepositoryMeta meta ) {
+//    List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
+//    previousValue.addAll( this.availableRepositories );
+//    this.availableRepositories.remove( meta );
+//    this.firePropertyChange( "availableRepositories", previousValue, this.availableRepositories );
+//  }
+//
+//  public void clear() {
+//    setUsername( null );
+//    setPassword( null );
+//    setShowDialogAtStartup( true );
+//    setAvailableRepositories( null );
+//  }
+//
+//  public void setSelectedRepositoryUsingName( String repositoryName ) {
+//    setSelectedRepository( getRepository( repositoryName ) );
+//  }
+//
+//  public void setSelectedRepository( RepositoryMeta selectedRepository ) {
+//    RepositoryMeta previousValue = this.selectedRepository;
+//    this.selectedRepository = selectedRepository;
+//    this.firePropertyChange( "selectedRepository", previousValue, selectedRepository );
+//    checkIfModelValid();
+//  }
+//
+//  public RepositoryMeta getSelectedRepository() {
+//    return selectedRepository;
+//  }
+//
+//  public RepositoryMeta getRepository( String repositoryName ) {
+//    if ( availableRepositories != null && availableRepositories.size() > 0 ) {
+//      for ( RepositoryMeta meta : availableRepositories ) {
+//        if ( meta != null && meta.getName().equals( repositoryName ) ) {
+//          return meta;
+//        }
+//      }
+//    }
+//    return null;
+//  }
+//
+//  public int getRepositoryIndex( RepositoryMeta repositoryMeta ) {
+//    int index = 0;
+//    if ( repositoryMeta != null && availableRepositories != null && availableRepositories.size() > 0 ) {
+//      for ( RepositoryMeta meta : availableRepositories ) {
+//        if ( meta != null && meta.getName().equals( repositoryMeta.getName() ) ) {
+//          break;
+//        } else {
+//          index++;
+//        }
+//      }
+//    } else {
+//      index = -1;
+//    }
+//    return index;
+//  }
+//
+//  public RepositoryMeta getRepository( int index ) {
+//    return availableRepositories.get( index );
+//  }
+//
+//  public void checkIfModelValid() {
+//    this.firePropertyChange( "valid", null, isValid() );
+//  }
+//
+//  public boolean isValid() {
+//    return username != null && username.length() > 0 && selectedRepository != null;
+//  }
+
+
+
+
+
   private String username;
   private String password;
+  private String repositoryUrl;
   private boolean showDialogAtStartup;
   private List<RepositoryMeta> availableRepositories;
   private RepositoryMeta selectedRepository;
@@ -44,97 +177,94 @@ public class RepositoriesModel extends XulEventSourceAdapter {
   public String getUsername() {
     return username;
   }
-
-  public void setUsername( String username ) {
+  public void setUsername(String username) {
     String previousValue = this.username;
     this.username = username;
-    this.firePropertyChange( "username", previousValue, username );
+    this.firePropertyChange("username", previousValue, username); //$NON-NLS-1$
     checkIfModelValid();
   }
-
   public String getPassword() {
     return password;
   }
-
-  public void setPassword( String password ) {
+  public void setPassword(String password) {
     String previousValue = this.password;
     this.password = password;
-    this.firePropertyChange( "password", previousValue, password );
+    this.firePropertyChange("password", previousValue, password); //$NON-NLS-1$
   }
-
+  public String getRepositoryUrl(){
+    return repositoryUrl;
+  }
+  public void setRepositoryUrl(String repositoryUrl) {
+    String previousValue = this.repositoryUrl;
+    this.repositoryUrl = repositoryUrl;
+    this.firePropertyChange("repositoryUrl", previousValue, repositoryUrl); //$NON-NLS-1$
+    checkIfModelValid();
+  }
   public boolean isShowDialogAtStartup() {
     return showDialogAtStartup;
   }
-
-  public void setShowDialogAtStartup( boolean showDialogAtStartup ) {
+  public void setShowDialogAtStartup(boolean showDialogAtStartup) {
     boolean previousValue = this.showDialogAtStartup;
     this.showDialogAtStartup = showDialogAtStartup;
-    this.firePropertyChange( "showDialogAtStartup", previousValue, showDialogAtStartup );
+    this.firePropertyChange("showDialogAtStartup", previousValue, showDialogAtStartup); //$NON-NLS-1$
   }
-
   public List<RepositoryMeta> getAvailableRepositories() {
     return availableRepositories;
   }
-
-  public void setAvailableRepositories( List<RepositoryMeta> repositoryList ) {
+  public void setAvailableRepositories(List<RepositoryMeta> repositoryList) {
     List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
-    previousValue.addAll( this.availableRepositories );
+    previousValue.addAll(this.availableRepositories);
     this.availableRepositories = repositoryList;
-    this.firePropertyChange( "availableRepositories", previousValue, repositoryList );
+    this.firePropertyChange("availableRepositories", previousValue, repositoryList); //$NON-NLS-1$
   }
-
-  public void addToAvailableRepositories( RepositoryMeta meta ) {
+  public void addToAvailableRepositories(RepositoryMeta meta) {
     List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
-    previousValue.addAll( this.availableRepositories );
-    this.availableRepositories.add( meta );
-    this.firePropertyChange( "availableRepositories", previousValue, this.availableRepositories );
+    previousValue.addAll(this.availableRepositories);
+    this.availableRepositories.add(meta);
+    this.firePropertyChange("availableRepositories", previousValue, this.availableRepositories); //$NON-NLS-1$
   }
-
-  public void removeFromAvailableRepositories( RepositoryMeta meta ) {
+  public void removeFromAvailableRepositories(RepositoryMeta meta) {
     List<RepositoryMeta> previousValue = new ArrayList<RepositoryMeta>();
-    previousValue.addAll( this.availableRepositories );
-    this.availableRepositories.remove( meta );
-    this.firePropertyChange( "availableRepositories", previousValue, this.availableRepositories );
+    previousValue.addAll(this.availableRepositories);
+    this.availableRepositories.remove(meta);
+    this.firePropertyChange("availableRepositories", previousValue, this.availableRepositories); //$NON-NLS-1$
   }
-
   public void clear() {
-    setUsername( null );
-    setPassword( null );
-    setShowDialogAtStartup( true );
-    setAvailableRepositories( null );
+    setUsername(null);
+    setPassword(null);
+    setRepositoryUrl(null);
+    setShowDialogAtStartup(true);
+    setAvailableRepositories(null);
   }
 
-  public void setSelectedRepositoryUsingName( String repositoryName ) {
-    setSelectedRepository( getRepository( repositoryName ) );
+  public void setSelectedRepositoryUsingName(String repositoryName) {
+    setSelectedRepository(getRepository(repositoryName));
   }
-
-  public void setSelectedRepository( RepositoryMeta selectedRepository ) {
+  public void setSelectedRepository(RepositoryMeta selectedRepository) {
     RepositoryMeta previousValue = this.selectedRepository;
     this.selectedRepository = selectedRepository;
-    this.firePropertyChange( "selectedRepository", previousValue, selectedRepository );
+    this.firePropertyChange("selectedRepository", previousValue, selectedRepository); //$NON-NLS-1$
     checkIfModelValid();
   }
 
   public RepositoryMeta getSelectedRepository() {
     return selectedRepository;
   }
-
-  public RepositoryMeta getRepository( String repositoryName ) {
-    if ( availableRepositories != null && availableRepositories.size() > 0 ) {
-      for ( RepositoryMeta meta : availableRepositories ) {
-        if ( meta != null && meta.getName().equals( repositoryName ) ) {
+  public RepositoryMeta getRepository(String repositoryName) {
+    if(availableRepositories != null && availableRepositories.size() > 0) {
+      for(RepositoryMeta meta:availableRepositories) {
+        if(meta != null && meta.getName().equals(repositoryName)) {
           return meta;
         }
       }
     }
     return null;
   }
-
-  public int getRepositoryIndex( RepositoryMeta repositoryMeta ) {
+  public int getRepositoryIndex(RepositoryMeta repositoryMeta) {
     int index = 0;
-    if ( repositoryMeta != null && availableRepositories != null && availableRepositories.size() > 0 ) {
-      for ( RepositoryMeta meta : availableRepositories ) {
-        if ( meta != null && meta.getName().equals( repositoryMeta.getName() ) ) {
+    if(repositoryMeta != null && availableRepositories != null && availableRepositories.size() > 0) {
+      for(RepositoryMeta meta:availableRepositories) {
+        if(meta != null && meta.getName().equals(repositoryMeta.getName())) {
           break;
         } else {
           index++;
@@ -146,12 +276,12 @@ public class RepositoriesModel extends XulEventSourceAdapter {
     return index;
   }
 
-  public RepositoryMeta getRepository( int index ) {
-    return availableRepositories.get( index );
+  public RepositoryMeta getRepository(int index) {
+    return availableRepositories.get(index);
   }
 
   public void checkIfModelValid() {
-    this.firePropertyChange( "valid", null, isValid() );
+    this.firePropertyChange("valid", null, isValid());//$NON-NLS-1$
   }
 
   public boolean isValid() {
