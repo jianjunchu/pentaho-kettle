@@ -148,6 +148,7 @@ public class KettleEnvironment {
         initLifecycleListeners();
         ready.set( true );
       } catch ( Throwable t ) {
+        t.printStackTrace();
         ready.setException( t );
         // If it's a KettleException, throw it, otherwise wrap it in a KettleException
         throw ( ( t instanceof KettleException ) ? (KettleException) t : new KettleException( t ) );

@@ -144,8 +144,8 @@ public class CentralLogStore {
    *
   public static Log4jBufferAppender getAppender() {
     return getInstance().appender;
-  }
-  */
+  }*/
+
 
   /**
    * Discard all the lines for the specified log channel id AND all the children.

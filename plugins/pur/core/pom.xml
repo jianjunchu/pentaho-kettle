@@ -115,7 +115,8 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-platform-repository</artifactId>
-      <version>${platform.version}</version>
+      <version>9.0.0.0</version>
+      <classifier>20180618.085616-54</classifier>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -153,6 +154,7 @@
     <dependency>
       <groupId>org.eclipse.swt</groupId>
       <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+      <version>4.6</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
