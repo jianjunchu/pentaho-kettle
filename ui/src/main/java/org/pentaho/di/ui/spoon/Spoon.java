@@ -8117,7 +8117,8 @@ public class Spoon extends ApplicationWindow implements AddUndoPositionInterface
     StringBuilder optionUsername = getCommandLineOption(options, "user").getArgument();
     StringBuilder optionPassword = getCommandLineOption(options, "pass").getArgument();
 
-    if (Const.isEmpty(optionRepname) && Const.isEmpty(optionFilename) && props.showRepositoriesDialogAtStartup()) {
+    //if (Const.isEmpty(optionRepname) && Const.isEmpty(optionFilename) && props.showRepositoriesDialogAtStartup()) {
+    if (Const.isEmpty(optionRepname) && Const.isEmpty(optionFilename) ) {
       if (log.isBasic()) {
         // "Asking for repository"
         log.logBasic(BaseMessages.getString(PKG, "Spoon.Log.AskingForRepository"));

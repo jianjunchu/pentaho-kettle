@@ -115,11 +115,6 @@ public class RepositoriesController extends AbstractXulEventHandler {
 
   private void createBindings() {
     loginDialog = (XulDialog) document.getElementById("repository-login-dialog");//$NON-NLS-1$
-    /**
-     * bug 20697 118-128,143  edit by cli
-     */
-    //    repositoryEditButton = (XulButton) document.getElementById("repository-edit");//$NON-NLS-1$
-//    repositoryRemoveButton = (XulButton) document.getElementById("repository-remove");//$NON-NLS-1$
 
     repositoryUrl = (XulTextbox) document.getElementById("repository-url");
     repLabel=(XulLabel) document.getElementById("repository-url-lab");
@@ -145,9 +140,9 @@ public class RepositoriesController extends AbstractXulEventHandler {
     bf.createBinding(loginModel, "selectedRepository", availableRepositories, "selectedItem");//$NON-NLS-1$ //$NON-NLS-2$
 //    bf.createBinding(loginModel, "showDialogAtStartup", showAtStartup, "checked");//$NON-NLS-1$ //$NON-NLS-2$
     bf.setBindingType(Binding.Type.ONE_WAY);
-//    bf.createBinding(loginModel, "valid", okButton, "disabled");//$NON-NLS-1$ //$NON-NLS-2$
-    availableRepositories.setVisible(false);
-    connectTipLabel.setVisible(false);
+//   bf.createBinding(loginModel, "valid", okButton, "disabled");//$NON-NLS-1$ //$NON-NLS-2$
+//   availableRepositories.setVisible(false);
+//   connectTipLabel.setVisible(false);
     BindingConvertor<RepositoryMeta, Boolean> buttonConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
       @Override
       public Boolean sourceToTarget(RepositoryMeta value) {
@@ -175,71 +170,6 @@ public class RepositoriesController extends AbstractXulEventHandler {
     bf.createBinding(loginModel, "selectedRepository", userPassword, "disabled", userpassConverter);//$NON-NLS-1$ //$NON-NLS-2$
   }
 
-//  private void createBindings() {
-//    loginDialog = (XulDialog) document.getElementById( "repository-login-dialog" );
-//
-//    //auphi 2018
-//    //repositoryEditButton = (XulButton) document.getElementById( "repository-edit" );
-//    //repositoryRemoveButton = (XulButton) document.getElementById( "repository-remove" );
-//    repositoryUrl = (XulTextbox) document.getElementById("repository-url");
-//    repLabel=(XulLabel) document.getElementById("repository-url-lab");
-//    usernameLabel = (XulLabel) document.getElementById("user-name-lab");//$NON-NLS-1$
-//    userPasswordLabel = (XulLabel) document.getElementById("user-password-lab");
-//    connectTipLabel =(XulLabel) document.getElementById("connect-tip");
-//    //auphi end
-//
-//    username = (XulTextbox) document.getElementById( "user-name" );
-//    userPassword = (XulTextbox) document.getElementById( "user-password" );
-//    availableRepositories = (XulListbox) document.getElementById( "available-repository-list" );
-//    showAtStartup = (XulCheckbox) document.getElementById( "show-login-dialog-at-startup" );
-//    okButton = (XulButton) document.getElementById( "repository-login-dialog_accept" );
-//    cancelButton = (XulButton) document.getElementById( "repository-login-dialog_cancel" );
-//    bf.setBindingType( Binding.Type.BI_DIRECTIONAL );
-//    bf.createBinding( loginModel, "username", username, "value" );
-//    bf.createBinding( loginModel, "password", userPassword, "value" );
-//    bf.createBinding( loginModel, "availableRepositories", availableRepositories, "elements" );
-//    bf.createBinding( loginModel, "selectedRepository", availableRepositories, "selectedItem" );
-//    bf.createBinding( loginModel, "showDialogAtStartup", showAtStartup, "checked" );
-//    bf.setBindingType( Binding.Type.ONE_WAY );
-//    bf.createBinding( loginModel, "valid", okButton, "!disabled" );
-//
-//    BindingConvertor<RepositoryMeta, Boolean> buttonConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
-//      @Override
-//      public Boolean sourceToTarget( RepositoryMeta value ) {
-//        return ( value == null );
-//      }
-//
-//      @Override
-//      public RepositoryMeta targetToSource( Boolean value ) {
-//        return null;
-//      }
-//    };
-//
-//    BindingConvertor<RepositoryMeta, Boolean> userpassConverter = new BindingConvertor<RepositoryMeta, Boolean>() {
-//      @Override
-//      public Boolean sourceToTarget( RepositoryMeta value ) {
-//        return ( value == null ) || !value.getRepositoryCapabilities().supportsUsers();
-//      }
-//
-//      @Override
-//      public RepositoryMeta targetToSource( Boolean value ) {
-//        return null;
-//      }
-//    };
-//
-//    bf.createBinding( loginModel, "selectedRepository", username, "disabled", userpassConverter );
-//    bf.createBinding( loginModel, "selectedRepository", userPassword, "disabled", userpassConverter );
-//
-//    bf.createBinding( loginModel, "selectedRepository", repositoryEditButton, "disabled", buttonConverter );
-//    bf.createBinding( loginModel, "selectedRepository", repositoryRemoveButton, "disabled", buttonConverter );
-//
-//    final Shell loginShell = (Shell) loginDialog.getRootObject();
-//
-//    helper = new RepositoriesHelper( loginModel, document, loginShell );
-//    helper.setPreferredRepositoryName( preferredRepositoryName );
-//    helper.getMetaData();
-//  }
-
   public void setBindingFactory( BindingFactory bf ) {
     this.bf = bf;
   }
@@ -251,102 +181,6 @@ public class RepositoriesController extends AbstractXulEventHandler {
   public String getName() {
     return "repositoryLoginController";
   }
-//
-//  public void show() {
-//    if ( loginModel.getUsername() != null ) {
-//      userPassword.setFocus();
-//    } else {
-//      username.setFocus();
-//    }
-//
-//    // PDI-7443: The repo list does not show the selected repo
-//    // make the layout play nice, this is necessary to have the selection box scroll reliably
-////    if ( availableRepositories.getRows() < 4 ) {
-////      availableRepositories.setRows( 4 );
-////    }
-//
-//    int idx = loginModel.getRepositoryIndex( loginModel.getSelectedRepository() );
-//    if ( idx >= 0 ) {
-//      availableRepositories.setSelectedIndex( idx );
-//    }
-//    // END OF PDI-7443
-//
-//    loginDialog.show();
-//
-//  }
-
-//  public void login() {
-//    if ( loginModel.isValid() == false ) {
-//      return;
-//    }
-//    KettleWaitBox box;
-//    try {
-//      box = (KettleWaitBox) document.createElement( "iconwaitbox" );
-//      box.setIndeterminate( true );
-//      box.setCanCancel( false );
-//      box.setIcon( "ui/images/kettle_logo_small.svg" );
-//      box.setTitle( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Title" ) );
-//      box.setMessage( BaseMessages.getString( PKG, "RepositoryExplorerDialog.Connection.Wait.Message" ) );
-//      final Shell loginShell = (Shell) loginDialog.getRootObject();
-//      final Display display = loginShell.getDisplay();
-//      box.setDialogParent( loginShell );
-//      box.setRunnable( new WaitBoxRunnable( box ) {
-//        @Override
-//        public void run() {
-//          try {
-//            helper.loginToRepository();
-//
-//            waitBox.stop();
-//            display.syncExec( new Runnable() {
-//              public void run() {
-//                loginDialog.hide();
-//                okButton.setDisabled( false );
-//                cancelButton.setDisabled( false );
-//
-//                if ( helper.getConnectedRepository().getConnectMessage() != null ) {
-//                  getMessageBox().setTitle( BaseMessages.getString( PKG, "ConnectMessageTitle" ) );
-//                  getMessageBox().setMessage( helper.getConnectedRepository().getConnectMessage() );
-//                  getMessageBox().open();
-//                }
-//
-//                getCallback().onSuccess( helper.getConnectedRepository() );
-//              }
-//            } );
-//
-//          } catch ( final Throwable th ) {
-//
-//            waitBox.stop();
-//
-//            try {
-//              display.syncExec( new Runnable() {
-//                public void run() {
-//
-//                  getCallback().onError( th );
-//                  okButton.setDisabled( false );
-//                  cancelButton.setDisabled( false );
-//                }
-//              } );
-//            } catch ( Exception e ) {
-//              e.printStackTrace();
-//            }
-//
-//          }
-//        }
-//
-//        @Override
-//        public void cancel() {
-//        }
-//
-//      } );
-//      okButton.setDisabled( true );
-//      cancelButton.setDisabled( true );
-//      box.start();
-//    } catch ( XulException e1 ) {
-//      getCallback().onError( e1 );
-//    }
-//  }
-
-
 
   /**
    * Executed when the user clicks the new repository image from the Repository Login Dialog It present a new dialog
@@ -448,14 +282,11 @@ public class RepositoriesController extends AbstractXulEventHandler {
     }catch (Exception e){
       e.printStackTrace();
     }
-
-//    repositoryUrl.setValue("http://localhost:8080/etl_platform");
+   repositoryUrl.setValue("http://localhost:8080/etl_platform");
     repositoryUrl.setValue(server_url);
     //xnren end
 
-    /**
-     * bug 20697 201-208  edity by cli
-     */
+
     // PDI-7443: The repo list does not show the selected repo
     // make the layout play nice, this is necessary to have the selection box scroll reliably
 //    if (availableRepositories.getRows() < 4){
@@ -472,7 +303,7 @@ public class RepositoriesController extends AbstractXulEventHandler {
   }
 
   /**
-   * bug 20697 216-237 edit by cli
+   * login and show all available repositories in platform
    */
   public void showRepository(){
     final Shell loginShell = (Shell) loginDialog.getRootObject();
@@ -496,14 +327,14 @@ public class RepositoriesController extends AbstractXulEventHandler {
       helper.setPreferedReopsitory();
       availableRepositories.setVisible(true);
       connectTipLabel.setVisible(true);
-      username.setVisible(false);
-      userPassword.setVisible(false);
-      repositoryUrl.setVisible(false);
-      repLabel.setVisible(false);
-      usernameLabel.setVisible(false);
-      userPasswordLabel.setVisible(false);
-      okButton.setVisible(false);
-      cancelButton.setVisible(false);
+      //username.setVisible(false);
+      //userPassword.setVisible(false);
+      //repositoryUrl.setVisible(false);
+      //repLabel.setVisible(false);
+      //usernameLabel.setVisible(false);
+      //userPasswordLabel.setVisible(false);
+      //okButton.setVisible(false);
+      //cancelButton.setVisible(false);
     }else{
       MessageBox box = new MessageBox(shell, SWT.YES| SWT.ICON_ERROR);
       box.setMessage(BaseMessages.getString(PKG,"Dialog.Error.Message"));
