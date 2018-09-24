@@ -19,6 +19,8 @@
     <version>9.0.0.0-SNAPSHOT</version>
   </parent>
 
+
+
   <scm>
     <developerConnection>scm:git:git@github.com:pentaho/pentaho-kettle.git</developerConnection>
     <tag>HEAD</tag>
@@ -79,6 +81,18 @@
     <powermock-api-mockito.version>1.7.3</powermock-api-mockito.version>
     <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
   </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>my-deploy-release</id>
+      <url>http://101.37.17.102:8081/nexus/content/repositories/releases/</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>my-deploy-snapshot</id>
+      <url>http://101.37.17.102:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>
@@ -286,6 +300,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
+          <classifier>auphi</classifier>
           <archive>
             <manifestEntries>
               <Compile-Timestamp>${maven.build.timestamp}</Compile-Timestamp>
