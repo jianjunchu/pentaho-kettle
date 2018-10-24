@@ -140,10 +140,10 @@
       <version>${mondrian.version}</version>
     </dependency>
     <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>pentaho-platform-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <groupId>pentaho</groupId>
+    <artifactId>pentaho-platform-api</artifactId>
+    <version>${project.version}</version>
+  </dependency>
 
     <!-- Reporting dependencies -->
     <dependency>
