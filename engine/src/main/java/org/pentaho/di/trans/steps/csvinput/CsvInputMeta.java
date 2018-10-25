@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -30,6 +30,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.exception.KettleFileException;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.KettleAttributeInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -61,6 +62,7 @@ import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInjectionInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.common.CsvInputAwareMeta;
 import org.pentaho.di.trans.steps.textfileinput.InputFileMetaInterface;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
@@ -74,7 +76,7 @@ import org.w3c.dom.Node;
  */
 
 public class CsvInputMeta extends BaseStepMeta implements StepMetaInterface, InputFileMetaInterface,
-  StepMetaInjectionInterface {
+  StepMetaInjectionInterface, CsvInputAwareMeta {
   private static Class<?> PKG = CsvInput.class; // for i18n purposes, needed by Translator2!!
 
   private String filename;
@@ -116,7 +118,11 @@ public class CsvInputMeta extends BaseStepMeta implements StepMetaInterface, Inp
 
   @Override
   public Object clone() {
-    Object retval = super.clone();
+    final CsvInputMeta retval = (CsvInputMeta) super.clone();
+    retval.inputFields = new TextFileInputField[ inputFields.length ];
+    for ( int i = 0; i < inputFields.length; i++ ) {
+      retval.inputFields[ i ] = (TextFileInputField) inputFields[ i ].clone();
+    }
     return retval;
   }
 
@@ -128,12 +134,6 @@ public class CsvInputMeta extends BaseStepMeta implements StepMetaInterface, Inp
     lazyConversionActive = true;
     isaddresult = false;
     bufferSize = "50000";
-
-    TextFileInputField field = new TextFileInputField();
-    field.setName( "field" );
-    field.setType( ValueMetaInterface.TYPE_STRING );
-
-    inputFields = new TextFileInputField[] { field, };
   }
 
   private void readData( Node stepnode ) throws KettleXMLException {
@@ -885,6 +885,16 @@ public class CsvInputMeta extends BaseStepMeta implements StepMetaInterface, Inp
    */
   public void setNewlinePossibleInFields( boolean newlinePossibleInFields ) {
     this.newlinePossibleInFields = newlinePossibleInFields;
+  }
+
+  @Override
+  public FileObject getHeaderFileObject( final TransMeta transMeta ) {
+    final String filename = transMeta.environmentSubstitute( getFilename() );
+    try {
+      return KettleVFS.getFileObject( filename );
+    } catch ( final KettleFileException e ) {
+      return null;
+    }
   }
 
 }

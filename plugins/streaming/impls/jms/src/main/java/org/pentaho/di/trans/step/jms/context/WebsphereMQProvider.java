@@ -23,19 +23,28 @@
 package org.pentaho.di.trans.step.jms.context;
 
 
+import com.google.common.base.Strings;
 import com.ibm.mq.jms.MQConnectionFactory;
 import com.ibm.mq.jms.MQQueue;
 import com.ibm.mq.jms.MQQueueConnectionFactory;
 import com.ibm.mq.jms.MQTopic;
 import com.ibm.mq.jms.MQTopicConnectionFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
-import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.trans.step.jms.JmsConstants;
 import org.pentaho.di.trans.step.jms.JmsDelegate;
 
 import javax.jms.Destination;
 import javax.jms.JMSContext;
 import javax.jms.JMSException;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,14 +59,79 @@ public class WebsphereMQProvider implements JmsProvider {
     return type == WEBSPHERE;
   }
 
-  @Override public JMSContext getContext( JmsDelegate meta, VariableSpace variableSpace ) {
+  @Override public String getConnectionDetails( JmsDelegate meta ) {
+    StringBuilder connDetails = new StringBuilder();
+    MQUrlResolver resolver = new MQUrlResolver( meta );
+    connDetails.append( "Hostname: " ).append( resolver.host );
+    connDetails.append( "\nPort: " ).append( resolver.port );
+    connDetails.append( "\nChannel: " ).append( resolver.channel );
+    connDetails.append( "\nQueueManager: " ).append( resolver.queueManager );
+    connDetails.append( "\nUser Name: " ).append( meta.ibmUsername );
+    connDetails.append( "\nPassword: " ).append( meta.ibmPassword );
 
-    MQUrlResolver resolver = new MQUrlResolver( meta, variableSpace );
+    if ( meta.sslEnabled ) {
+      connDetails.append( "\nSSL Enabled: true" );
+      connDetails.append( "\nKey Store: " ).append( meta.sslKeystorePath );
+      connDetails.append( "\nKey Store Pass: " ).append( meta.sslKeystorePassword );
+      connDetails.append( "\nKey Store Type: " ).append( meta.sslKeystoreType );
+      connDetails.append( "\nTrust Store: " ).append( meta.sslTruststorePath );
+      connDetails.append( "\nTrust Store Pass: " ).append( meta.sslTruststorePassword );
+      connDetails.append( "\nTrust Store Type: " ).append( meta.sslTruststoreType );
+      connDetails.append( "\nSSL Context Algorithm: " ).append( meta.sslContextAlgorithm );
+      connDetails.append( "\nCipher Suite: " ).append( meta.sslCipherSuite );
+      connDetails.append( "\nFIPS Required: " ).append( meta.ibmSslFipsRequired );
+    }
 
-    MQConnectionFactory connFactory = isQueue( meta, variableSpace )
+    return connDetails.toString();
+  }
+
+  @Override public JMSContext getContext( JmsDelegate meta ) {
+
+    MQUrlResolver resolver = new MQUrlResolver( meta );
+
+    MQConnectionFactory connFactory = isQueue( meta )
       ? new MQQueueConnectionFactory() : new MQTopicConnectionFactory();
 
     connFactory.setHostName( resolver.host );
+
+    if ( meta.sslEnabled ) {
+      // try to configure SSL settings
+      try {
+        KeyStore trustStore = KeyStore.getInstance( meta.sslTruststoreType );
+        trustStore.load( new FileInputStream( meta.sslTruststorePath ),
+          Strings.isNullOrEmpty( meta.sslTruststorePassword ) ? null : meta.sslTruststorePassword.toCharArray() );
+
+        TrustManagerFactory trustManagerFactory =
+          TrustManagerFactory.getInstance( TrustManagerFactory.getDefaultAlgorithm() );
+
+        trustManagerFactory.init( trustStore );
+
+        KeyManagerFactory keyManagerFactory = null;
+        // the keystore is optional; use if client authentication is desired
+        if ( !Strings.isNullOrEmpty( meta.sslKeystorePath ) ) {
+          KeyStore keyStore = KeyStore.getInstance( meta.sslKeystoreType );
+          keyStore.load( new FileInputStream( meta.sslKeystorePath ), meta.sslKeystorePassword.toCharArray() );
+
+          keyManagerFactory = KeyManagerFactory.getInstance( KeyManagerFactory.getDefaultAlgorithm() );
+          keyManagerFactory.init( keyStore, meta.sslKeystorePassword.toCharArray() );
+        }
+
+        SSLContext sslContext = SSLContext.getInstance( meta.sslContextAlgorithm );
+        sslContext.init( ( null == keyManagerFactory ? null : keyManagerFactory.getKeyManagers() ),
+          trustManagerFactory.getTrustManagers(), new SecureRandom() );
+
+        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+        connFactory.setSSLFipsRequired( meta.ibmSslFipsRequired.toLowerCase().startsWith( "t" )
+          || meta.ibmSslFipsRequired.toLowerCase().startsWith( "y" ) );
+        connFactory.setSSLSocketFactory( sslSocketFactory );
+        connFactory.setSSLCipherSuite( meta.sslCipherSuite );
+
+      } catch ( GeneralSecurityException | IOException e ) {
+        throw new RuntimeException( e );
+      }
+    }
+
     try {
       connFactory.setPort( resolver.port );
       connFactory.setQueueManager( resolver.queueManager );
@@ -66,18 +140,15 @@ public class WebsphereMQProvider implements JmsProvider {
     } catch ( JMSException e ) {
       throw new RuntimeException( e );
     }
-    return connFactory.createContext(
-      variableSpace.environmentSubstitute( meta.ibmUsername ),
-      variableSpace.environmentSubstitute( meta.ibmPassword ) );
+    return connFactory.createContext( meta.ibmUsername, meta.ibmPassword );
 
   }
 
-  @Override public Destination getDestination( JmsDelegate meta,
-                                               VariableSpace variableSpace ) {
+  @Override public Destination getDestination( JmsDelegate meta ) {
     checkNotNull( meta.destinationName, getString( JmsConstants.PKG, "JmsWebsphereMQ.DestinationNameRequired" ) );
     try {
-      String destName = variableSpace.environmentSubstitute( meta.destinationName );
-      return isQueue( meta, variableSpace )
+      String destName = meta.destinationName;
+      return isQueue( meta )
         ? new MQQueue( destName )
         : new MQTopic( destName );
     } catch ( JMSException e ) {
@@ -95,15 +166,15 @@ public class WebsphereMQProvider implements JmsProvider {
     private String channel = "SYSTEM.DEF.SVRCONN"; // IBM default
 
 
-    MQUrlResolver( JmsDelegate meta, VariableSpace space ) {
+    MQUrlResolver( JmsDelegate meta ) {
       this.pattern = compile(
         "mq://([\\p{Alnum}\\x2D\\x2E]*)(:(\\p{Digit}*))?/([\\p{Alnum}\\x2E]*)(\\x3F(channel=([^\\s=\\x26]*)))?" );
       this.meta = meta;
-      resolve( space );
+      resolve();
     }
 
-    void resolve( VariableSpace space ) {
-      Matcher matcher = pattern.matcher( space.environmentSubstitute( meta.ibmUrl ).trim() );
+    void resolve() {
+      Matcher matcher = pattern.matcher( meta.ibmUrl.trim() );
       if ( matcher.matches() ) {
         String value;
 

@@ -11,16 +11,16 @@
   <parent>
     <artifactId>pdi-assemblies</artifactId>
     <groupId>org.pentaho.di</groupId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
     <pdi-dataservice-driver-bundle.version>${project.version}</pdi-dataservice-driver-bundle.version>
-    <ael.version>9.0.0.0-SNAPSHOT</ael.version>
+    <ael.version>8.2.0.0-SNAPSHOT</ael.version>
 
-    <pentaho-karaf.version>9.0.0.0-SNAPSHOT</pentaho-karaf.version>
-    <pentaho-launcher.version>9.0.0.0-SNAPSHOT</pentaho-launcher.version>
-    <oss-licenses.version>9.0.0.0-SNAPSHOT</oss-licenses.version>
+    <pentaho-karaf.version>8.2.0.0-SNAPSHOT</pentaho-karaf.version>
+    <pentaho-launcher.version>8.2.0.0-SNAPSHOT</pentaho-launcher.version>
+    <oss-licenses.version>8.2.0.0-SNAPSHOT</oss-licenses.version>
 
     <!-- swt -->
     <org.eclipse.swt.gtk.linux.x86.version>4.3.2</org.eclipse.swt.gtk.linux.x86.version>
@@ -105,18 +105,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.pentaho.adaptive</groupId>
-      <artifactId>pdi-websocket-daemon-assembly</artifactId>
-      <version>${ael.version}</version>
-      <type>zip</type>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-application-launcher</artifactId>
       <version>${pentaho-launcher.version}</version>
@@ -182,23 +170,6 @@
                 </artifactItem>
               </artifactItems>
               <outputDirectory>${assembly.dir}/system</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-pdi-daemon</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.pentaho.adaptive</groupId>
-                  <artifactId>pdi-websocket-daemon-assembly</artifactId>
-                  <type>zip</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${assembly.dir}</outputDirectory>
             </configuration>
           </execution>
         </executions>

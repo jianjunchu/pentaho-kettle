@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pdi-plugins</artifactId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>file-open-save</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
+  <version>8.2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>PDI File Open and Save Plugin</name>
@@ -21,16 +21,16 @@
   </modules>
 
   <properties>
-    <pdi.version>9.0.0.0-SNAPSHOT</pdi.version>
+    <pdi.version>8.2.0.0-SNAPSHOT</pdi.version>
     <dependency.karaf.version>3.0.3</dependency.karaf.version>
     <dependency.osgi.version>4.3.1</dependency.osgi.version>
     <version.for.license>${project.version}</version.for.license>
     <js.project.list>requirejs,requirejs-text,angular,require-css,angular-i18n</js.project.list>
     <angular.version>1.5.8</angular.version>
-    <pentaho-osgi-bundles.version>9.0.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
+    <pentaho-osgi-bundles.version>8.2.0.0-SNAPSHOT</pentaho-osgi-bundles.version>
     <angular-ui-router.version>0.4.2</angular-ui-router.version>
     <karaf-maven-plugin.version>3.0.3</karaf-maven-plugin.version>
-    <pdi.version>9.0.0.0-SNAPSHOT</pdi.version>
+    <pdi.version>8.2.0.0-SNAPSHOT</pdi.version>
     <cxf.karaf.version>3.0.13</cxf.karaf.version>
     <requirejs-text.version>2.0.10</requirejs-text.version>
     <require-css.version>0.1.8</require-css.version>
@@ -39,8 +39,6 @@
     <dojo.version>1.9.2</dojo.version>
     <requirejs.version>2.2.0</requirejs.version>
     <dependency.javax.servlet-api.version>3.0.1</dependency.javax.servlet-api.version>
-    <dependency.jackson.version>1.9.2</dependency.jackson.version>
-    <dependency.fasterxml.jackson.version>2.5.4</dependency.fasterxml.jackson.version>
     <dependency.javax.ws.rs-api.version>2.0</dependency.javax.ws.rs-api.version>
   </properties>
   <dependencyManagement>
@@ -104,61 +102,6 @@
         <artifactId>pentaho-i18n-webservice-bundle</artifactId>
         <version>${project.version}</version>
         <scope>provided</scope>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${fasterxml.jackson.core.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-        <artifactId>jackson-jaxrs-json-provider</artifactId>
-        <version>${dependency.fasterxml.jackson.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>*</artifactId>
-            <groupId>*</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-        <artifactId>jackson-jaxrs-base</artifactId>
-        <version>${dependency.fasterxml.jackson.version}</version>
         <exclusions>
           <exclusion>
             <artifactId>*</artifactId>

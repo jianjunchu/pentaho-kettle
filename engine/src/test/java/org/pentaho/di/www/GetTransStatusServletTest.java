@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -109,7 +109,7 @@ public class GetTransStatusServletTest {
     when( mockTransMeta.getMaximum() ).thenReturn( new Point( 10, 10 ) );
 
     getTransStatusServlet.doGet( mockHttpServletRequest, mockHttpServletResponse );
-    assertFalse( ServletTestUtils.hasBadText( ServletTestUtils.getInsideOfTag( "H1", out.toString() ) ) );
+    assertFalse( ServletTestUtils.hasBadText( ServletTestUtils.getInsideOfTag( "TITLE", out.toString() ) ) );
 
     PowerMockito.verifyStatic( atLeastOnce() );
     Encode.forHtml( anyString() );
@@ -149,7 +149,7 @@ public class GetTransStatusServletTest {
 
     verify( cacheMock, times( 2 ) ).get( logId, 0 );
     verify( cacheMock, times( 1 ) ).put( eq( logId ), anyString(), eq( 0 ) );
-    verify( mockTrans.getLogChannel(), times( 1 ) );
+    verify( mockTrans, times( 1 ) ).getLogChannel();
 
   }
 

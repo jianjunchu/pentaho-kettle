@@ -177,6 +177,11 @@ public class JobEntryPluginType extends BasePluginType implements PluginTypeInte
   }
 
   @Override
+  protected String extractSuggestion( Annotation annotation ) {
+    return ( (JobEntry) annotation ).suggestion();
+  }
+
+  @Override
   protected String extractClassLoaderGroup( Annotation annotation ) {
     return ( (JobEntry) annotation ).classLoaderGroup();
   }

@@ -715,10 +715,34 @@ public interface StepMetaInterface {
   Object loadReferencedObject( int index, Repository rep, IMetaStore metaStore, VariableSpace space ) throws KettleException;
 
   /**
-   * Action remove hop from this step
+   * Action remove hop exiting this step
    * @return step was changed
    */
   default boolean cleanAfterHopFromRemove() {
+    return false;
+  }
+
+  /**
+   * <p>Action remove hop exiting this step</p>
+   *
+   * @param toStep the to-step of the hop being removed
+   * @return step was changed
+   */
+  default boolean cleanAfterHopFromRemove( StepMeta toStep ) {
+    return false;
+  }
+
+  /**
+   * <p>Action remove hop entering this step.</p>
+   * <p>Sometimes, in addition to the hops themselves, a Step has internal
+   * configuration referencing some of the steps that connect to it (to identify the main step or the one to be used for
+   * lookup, for instance). If the hop being deleted comes from one of those steps, the references to them should be
+   * removed.</p>
+   *
+   * @param fromStep the from-step of the hop being removed
+   * @return step was changed
+   */
+  default boolean cleanAfterHopToRemove( StepMeta fromStep ) {
     return false;
   }
 
@@ -730,5 +754,18 @@ public interface StepMetaInterface {
    */
   default boolean passDataToServletOutput() {
     return false;
+  }
+
+  /**
+   * Allows for someone to fetch the related TransMeta object. Returns null if not found (or not implemented)
+   * @param stepMeta StepMetaInterface object
+   * @param rep Repository object
+   * @param metastore metastore object
+   * @param space VariableSpace
+   * @return the associated TransMeta object, or null if not found (or not implemented)
+   * @throws KettleException should something go wrong
+   */
+  default TransMeta fetchTransMeta( StepMetaInterface stepMeta, Repository rep, IMetaStore metastore, VariableSpace space ) throws KettleException {
+    return null; // default
   }
 }

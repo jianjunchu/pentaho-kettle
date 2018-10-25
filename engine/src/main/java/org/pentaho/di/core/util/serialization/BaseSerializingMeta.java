@@ -83,6 +83,17 @@ public abstract class BaseSerializingMeta extends BaseStepMeta implements StepMe
     return StepMetaProps
       .from( this )
       .withVariables( variables )
-      .to( (StepMetaInterface) this.clone() );
+      .to( (StepMetaInterface) this.copyObject() );
+  }
+
+  /**
+   * This is intended to act the way clone should (return a fully independent copy of the original).  This method
+   * name was chosen in order to force any subclass that wants to use withVariables to implement a proper clone
+   * override, but let others ignore it.
+   *
+   * @return a copy of this object
+   */
+  public BaseSerializingMeta copyObject() {
+    throw new UnsupportedOperationException( "This method must be overridden if you use withVariables." );
   }
 }

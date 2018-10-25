@@ -37,6 +37,7 @@ import java.net.InetAddress;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
 
@@ -56,9 +57,9 @@ public class ValueMetaInternetAddress extends ValueMetaDate {
     } else if ( inet2 == null ) {
       cmp = 1;
     } else {
-      BigInteger bigint1 = new BigInteger( inet1.getAddress() );
-      BigInteger bigint2 = new BigInteger( inet2.getAddress() );
-      cmp = bigint1.compareTo( bigint2 );
+      BigDecimal bd1 = getBigNumber( inet1 );
+      BigDecimal bd2 = getBigNumber( inet2 );
+      cmp = bd1.compareTo( bd2 );
     }
     if ( isSortedDescending() ) {
       return -cmp;
@@ -185,16 +186,23 @@ public class ValueMetaInternetAddress extends ValueMetaDate {
       return null;
     }
 
-    return Long.valueOf( l ).doubleValue();
+    return l.doubleValue();
   }
 
   @Override
   public BigDecimal getBigNumber( Object object ) throws KettleValueException {
-    Long l = getInteger( object );
-    if ( l == null ) {
+    InetAddress address = getInternetAddress( object );
+    if ( null == address ) {
       return null;
     }
-    return BigDecimal.valueOf( l );
+    BigInteger bi = BigInteger.ZERO;
+    byte[] addr = address.getAddress();
+
+    for ( byte aByte : addr ) {
+      bi = bi.shiftLeft( 8 ).add( BigInteger.valueOf( aByte & 0xFF ) );
+    }
+
+    return new BigDecimal( bi );
   }
 
   @Override
@@ -450,6 +458,29 @@ public class ValueMetaInternetAddress extends ValueMetaDate {
     } catch ( Exception e ) {
       throw new KettleValueException( "Unable to clone Internet Address", e );
     }
+  }
+
+  @Override
+  public ValueMetaInterface getMetadataPreview( DatabaseMeta databaseMeta, ResultSet rs )
+    throws KettleDatabaseException {
+
+    try {
+      if ( "INET".equalsIgnoreCase( rs.getString( "TYPE_NAME" ) ) ) {
+        ValueMetaInterface vmi = super.getMetadataPreview( databaseMeta, rs );
+        ValueMetaInterface valueMeta = new ValueMetaInternetAddress( name );
+        valueMeta.setLength( vmi.getLength() );
+        valueMeta.setOriginalColumnType( vmi.getOriginalColumnType() );
+        valueMeta.setOriginalColumnTypeName( vmi.getOriginalColumnTypeName() );
+        valueMeta.setOriginalNullable( vmi.getOriginalNullable() );
+        valueMeta.setOriginalPrecision( vmi.getOriginalPrecision() );
+        valueMeta.setOriginalScale( vmi.getOriginalScale() );
+        valueMeta.setOriginalSigned( vmi.getOriginalSigned() );
+        return valueMeta;
+      }
+    } catch ( SQLException e ) {
+      throw new KettleDatabaseException( e );
+    }
+    return null;
   }
 
   @Override

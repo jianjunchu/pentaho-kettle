@@ -52,7 +52,7 @@ import static java.util.Collections.singletonList;
 import static org.pentaho.di.core.util.serialization.ConfigHelper.conf;
 import static org.pentaho.di.i18n.BaseMessages.getString;
 
-@InjectionSupported ( localizationPrefix = "JmsProducerMeta.Injection.", groups = { "PROPERTIES" } )
+@InjectionSupported ( localizationPrefix = "JmsProducerMeta.Injection.", groups = { "PROPERTIES", "SSL_GROUP" } )
 @Step ( id = "Jms2Producer", image = "JMSP.svg",
   i18nPackageName = "org.pentaho.di.trans.step.jms",
   name = "JmsProducer.TypeLongDesc",
@@ -81,7 +81,7 @@ public class JmsProducerMeta extends BaseSerializingMeta implements StepMetaInte
   public static final String JMS_TYPE = "JMS_TYPE";
 
   @InjectionDeep
-  public final JmsDelegate jmsDelegate;
+  public JmsDelegate jmsDelegate;
 
   @Injection( name = FIELD_TO_SEND )
   private String fieldToSend = "";
@@ -253,5 +253,13 @@ public class JmsProducerMeta extends BaseSerializingMeta implements StepMetaInte
       new StepOption( JMS_CORRELATION_ID, getString( PKG, "JmsDialog.Options.JMS_CORRELATION_ID" ), jmsCorrelationId ),
       new StepOption( JMS_TYPE, getString( PKG, "JmsDialog.Options.JMS_TYPE" ), jmsType )
     );
+  }
+
+  @Override public JmsProducerMeta copyObject() {
+    JmsProducerMeta newClone = (JmsProducerMeta) this.clone();
+    newClone.jmsDelegate = new JmsDelegate( this.jmsDelegate );
+    newClone.propertyNames = new ArrayList<>( this.propertyNames );
+    newClone.propertyValues = new ArrayList<>( this.propertyValues );
+    return newClone;
   }
 }

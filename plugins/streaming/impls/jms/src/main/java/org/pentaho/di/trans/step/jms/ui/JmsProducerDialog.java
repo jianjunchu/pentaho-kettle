@@ -85,7 +85,7 @@ import static org.pentaho.di.ui.trans.step.BaseStreamingDialog.INPUT_WIDTH;
 
 public class JmsProducerDialog extends BaseStepDialog implements StepDialogInterface {
   private static final int SHELL_MIN_WIDTH = 528;
-  private static final int SHELL_MIN_HEIGHT = 601;
+  private static final int SHELL_MIN_HEIGHT = 670;
 
   private ModifyListener lsMod;
   private final JmsDelegate jmsDelegate;
@@ -100,6 +100,8 @@ public class JmsProducerDialog extends BaseStepDialog implements StepDialogInter
   private ComboVar wMessageField;
   private TableView propertiesTable;
   private TableView optionsTable;
+
+  private JmsDialogSecurityLayout jmsDialogSecurityLayout;
 
   private List<StepOption> options;
 
@@ -215,7 +217,11 @@ public class JmsProducerDialog extends BaseStepDialog implements StepDialogInter
     setupLayout.marginWidth = 15;
     wSetupComp.setLayout( setupLayout );
 
-    connectionForm = new ConnectionForm( wSetupComp, props, transMeta, lsMod, jmsDelegate );
+    jmsDialogSecurityLayout = new JmsDialogSecurityLayout(
+      props, wTabFolder, lsMod, transMeta, jmsDelegate.sslEnabled, jmsDelegate );
+    jmsDialogSecurityLayout.buildSecurityTab();
+
+    connectionForm = new ConnectionForm( wSetupComp, props, transMeta, lsMod, jmsDelegate, jmsDialogSecurityLayout );
     Group group = connectionForm.layoutForm();
     destinationForm = new DestinationForm(
       wSetupComp, group, props, transMeta, lsMod, jmsDelegate.destinationType, jmsDelegate.destinationName );
@@ -480,18 +486,16 @@ public class JmsProducerDialog extends BaseStepDialog implements StepDialogInter
 
     jmsDelegate.connectionType = connectionForm.getConnectionType();
     jmsDelegate.ibmUrl = connectionForm.getIbmUrl();
-    jmsDelegate.ibmUsername = connectionForm.getIbmUser();
-    jmsDelegate.ibmPassword = connectionForm.getIbmPassword();
 
     jmsDelegate.amqUrl = connectionForm.getActiveUrl();
-    jmsDelegate.amqUsername = connectionForm.getActiveUser();
-    jmsDelegate.amqPassword = connectionForm.getActivePassword();
 
     jmsDelegate.destinationType = destinationForm.getDestinationType();
     jmsDelegate.destinationName = destinationForm.getDestinationName();
     meta.setFieldToSend( wMessageField.getText() );
     meta.setPropertyValuesByName( getMapFromTableView( propertiesTable ) );
 
+    jmsDialogSecurityLayout.saveTableValues();
+    jmsDialogSecurityLayout.saveAuthentication();
     saveOptions();
 
     dispose();
@@ -553,7 +557,7 @@ public class JmsProducerDialog extends BaseStepDialog implements StepDialogInter
     String id = plugin.getIds()[ 0 ];
     if ( id != null ) {
       return GUIResource.getInstance().getImagesSteps().get( id ).getAsBitmapForSize( shell.getDisplay(),
-        ConstUI.ICON_SIZE, ConstUI.ICON_SIZE );
+        ConstUI.LARGE_ICON_SIZE, ConstUI.LARGE_ICON_SIZE );
     }
     return null;
   }

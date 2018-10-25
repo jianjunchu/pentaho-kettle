@@ -25,7 +25,9 @@ package org.pentaho.di.kitchen;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.di.base.CommandExecutorCodes;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.Result;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleSecurityException;
 import org.pentaho.di.job.Job;
@@ -40,8 +42,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.Permission;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
@@ -85,6 +90,24 @@ public class KitchenTest {
     mockRepositoryMeta = null;
     mockRepository = null;
     mockRepositoryDirectory = null;
+  }
+
+  @Test
+  public void testKitchenStatusCodes() throws Exception {
+
+    assertNull( CommandExecutorCodes.Kitchen.getByCode( 9999 ) );
+    assertNotNull( CommandExecutorCodes.Kitchen.getByCode( 0 ) );
+
+    assertEquals( CommandExecutorCodes.Kitchen.UNEXPECTED_ERROR, CommandExecutorCodes.Kitchen.getByCode( 2 ) );
+    assertEquals( CommandExecutorCodes.Kitchen.CMD_LINE_PRINT, CommandExecutorCodes.Kitchen.getByCode( 9 ) );
+
+    assertEquals( "The job ran without a problem", CommandExecutorCodes.Kitchen.getByCode( 0 ).getDescription() );
+    assertEquals( "The job couldn't be loaded from XML or the Repository", CommandExecutorCodes.Kitchen.getByCode( 7 ).getDescription() );
+
+    assertTrue( CommandExecutorCodes.Kitchen.isFailedExecution( CommandExecutorCodes.Kitchen.COULD_NOT_LOAD_JOB.getCode() ) );
+    assertTrue( CommandExecutorCodes.Kitchen.isFailedExecution( CommandExecutorCodes.Kitchen.ERROR_LOADING_STEPS_PLUGINS.getCode() ) );
+    assertFalse( CommandExecutorCodes.Kitchen.isFailedExecution( CommandExecutorCodes.Kitchen.SUCCESS.getCode() ) );
+    assertFalse( CommandExecutorCodes.Kitchen.isFailedExecution( CommandExecutorCodes.Kitchen.ERRORS_DURING_PROCESSING.getCode() ) );
   }
 
   @Test
@@ -142,6 +165,10 @@ public class KitchenTest {
       assertTrue( sysOutContent.toString().contains( TEST_REPO_DUMMY_NAME ) );
       assertTrue( sysOutContent.toString().contains( TEST_REPO_DUMMY_DESC ) );
 
+      Result result = Kitchen.getCommandExecutor().getResult();
+      assertNotNull( result );
+      assertEquals( result.getExitStatus(), CommandExecutorCodes.Kitchen.COULD_NOT_LOAD_JOB.getCode() );
+
     } finally {
       // sanitize
 
@@ -187,6 +214,10 @@ public class KitchenTest {
       assertTrue( sysOutContent.toString().contains( DUMMY_DIR_1 ) );
       assertTrue( sysOutContent.toString().contains( DUMMY_DIR_2 ) );
 
+      Result result = Kitchen.getCommandExecutor().getResult();
+      assertNotNull( result );
+      assertEquals( result.getExitStatus(), CommandExecutorCodes.Kitchen.COULD_NOT_LOAD_JOB.getCode() );
+
     } finally {
       // sanitize
 
@@ -230,6 +261,10 @@ public class KitchenTest {
 
       assertTrue( sysOutContent.toString().contains( DUMMY_JOB_1 ) );
       assertTrue( sysOutContent.toString().contains( DUMMY_JOB_2 ) );
+
+      Result result = Kitchen.getCommandExecutor().getResult();
+      assertNotNull( result );
+      assertEquals( result.getExitStatus(), CommandExecutorCodes.Kitchen.COULD_NOT_LOAD_JOB.getCode() );
 
     } finally {
       // sanitize

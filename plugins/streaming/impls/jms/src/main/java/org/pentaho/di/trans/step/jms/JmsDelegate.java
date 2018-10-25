@@ -22,13 +22,11 @@
 
 package org.pentaho.di.trans.step.jms;
 
-
 import org.pentaho.di.core.injection.Injection;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.util.serialization.Sensitive;
-import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.trans.step.jms.context.JmsProvider;
 
 import javax.jms.Destination;
@@ -73,6 +71,34 @@ public class JmsDelegate {
 
   @Injection ( name = "DESTINATION_FIELD_NAME" ) public String destinationField = "destination";
 
+  @Injection ( name = "SSL_ENABLED", group = "SSL_GROUP" ) public boolean sslEnabled = false;
+
+  @Injection ( name = "SSL_KEYSTORE_PATH", group = "SSL_GROUP" ) public String sslKeystorePath = "";
+
+  @Injection ( name = "SSL_KEYSTORE_TYPE", group = "SSL_GROUP" ) public String sslKeystoreType = "";
+
+  @Sensitive
+  @Injection ( name = "SSL_KEYSTORE_PASSWORD", group = "SSL_GROUP" ) public String sslKeystorePassword = "";
+
+  @Injection ( name = "SSL_TRUSTSTORE_PATH", group = "SSL_GROUP" ) public String sslTruststorePath = "";
+
+  @Injection ( name = "SSL_TRUSTSTORE_TYPE", group = "SSL_GROUP" ) public String sslTruststoreType = "";
+
+  @Sensitive
+  @Injection ( name = "SSL_TRUSTSTORE_PASSWORD", group = "SSL_GROUP" ) public String sslTruststorePassword = "";
+
+  @Injection ( name = "SSL_CONTEXT_ALGORITHM", group = "SSL_GROUP" ) public String sslContextAlgorithm = "";
+
+  @Injection ( name = "SSL_CIPHERSUITE", group = "SSL_GROUP" ) public String sslCipherSuite = "";
+
+  @Injection ( name = "IBM_SSL_FIPSREQUIRED", group = "SSL_GROUP" ) public String ibmSslFipsRequired = "";
+
+  @Injection ( name = "AMQ_SSL_PROVIDER", group = "SSL_GROUP" ) public String amqSslProvider = "";
+
+  @Injection ( name = "AMQ_SSL_VERIFY_HOST", group = "SSL_GROUP" ) public String amqSslVerifyHost = "";
+
+  @Injection ( name = "AMQ_SSL_TRUST_ALL", group = "SSL_GROUP" ) public String amqSslTrustAll = "";
+
   private final List<JmsProvider> jmsProviders;
 
   public JmsDelegate( List<JmsProvider> jmsProviders ) {
@@ -80,15 +106,45 @@ public class JmsDelegate {
     this.jmsProviders = jmsProviders;
   }
 
-  Destination getDestination( VariableSpace variableSpace ) {
-    return getJmsProvider().getDestination( this, variableSpace );
+  public JmsDelegate( JmsDelegate orig ) {
+    super();
+    this.jmsProviders = orig.jmsProviders;
+    this.destinationName = orig.destinationName;
+    this.ibmUrl = orig.ibmUrl;
+    this.ibmUsername  = orig.ibmUsername;
+    this.ibmPassword = orig.ibmPassword;
+    this.amqUrl = orig.amqUrl;
+    this.amqUsername = orig.amqUsername;
+    this.amqPassword = orig.amqPassword;
+    this.connectionType = orig.connectionType;
+    this.destinationType = orig.destinationType;
+    this.receiveTimeout = orig.receiveTimeout;
+    this.messageField = orig.messageField;
+    this.destinationField = orig.destinationField;
+    this.sslEnabled = orig.sslEnabled;
+    this.sslKeystorePath = orig.sslKeystorePath;
+    this.sslKeystoreType = orig.sslKeystoreType;
+    this.sslKeystorePassword = orig.sslKeystorePassword;
+    this.sslTruststorePath = orig.sslTruststorePath;
+    this.sslTruststoreType = orig.sslTruststoreType;
+    this.sslTruststorePassword = orig.sslTruststorePassword;
+    this.sslContextAlgorithm = orig.sslContextAlgorithm;
+    this.sslCipherSuite = orig.sslCipherSuite;
+    this.ibmSslFipsRequired = orig.ibmSslFipsRequired;
+    this.amqSslProvider = orig.amqSslProvider;
+    this.amqSslVerifyHost = orig.amqSslVerifyHost;
+    this.amqSslTrustAll = orig.amqSslTrustAll;
   }
 
-  JMSContext getJmsContext( VariableSpace variableSpace ) {
-    return getJmsProvider().getContext( this, variableSpace );
+  Destination getDestination( ) {
+    return getJmsProvider().getDestination( this );
   }
 
-  private JmsProvider getJmsProvider() {
+  JMSContext getJmsContext() {
+    return getJmsProvider().getContext( this );
+  }
+
+  JmsProvider getJmsProvider() {
     return jmsProviders.stream()
       .filter( prov -> prov.supports( JmsProvider.ConnectionType.valueOf( connectionType ) ) )
       .findFirst()

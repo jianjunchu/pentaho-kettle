@@ -48,6 +48,11 @@ public class JmsConsumerDialog extends BaseStreamingDialog {
   private TextVar wReceiverTimeout;
   private FieldsTab fieldsTab;
 
+  private static final int SHELL_MIN_WIDTH = 528;
+  private static final int SHELL_MIN_HEIGHT = 700;
+
+  private JmsDialogSecurityLayout jmsDialogSecurityLayout;
+
   public JmsConsumerDialog( Shell parent, Object in, TransMeta tr, String sname ) {
     super( parent, in, tr, sname );
     jmsMeta = (JmsConsumerMeta) in;
@@ -64,7 +69,12 @@ public class JmsConsumerDialog extends BaseStreamingDialog {
     setupLayout.marginHeight = 15;
     setupLayout.marginWidth = 15;
     wSetupComp.setLayout( setupLayout );
-    connectionForm = new ConnectionForm( wSetupComp, props, transMeta, lsMod, jmsMeta.jmsDelegate );
+    jmsDialogSecurityLayout = new JmsDialogSecurityLayout(
+      props, wTabFolder, lsMod, transMeta, jmsDelegate.sslEnabled, jmsDelegate );
+    jmsDialogSecurityLayout.buildSecurityTab();
+
+    connectionForm = new ConnectionForm( wSetupComp, props, transMeta, lsMod, jmsMeta.jmsDelegate,
+      jmsDialogSecurityLayout );
     Group group = connectionForm.layoutForm();
 
     destinationForm =
@@ -104,12 +114,7 @@ public class JmsConsumerDialog extends BaseStreamingDialog {
     jmsDelegate.connectionType = connectionForm.getConnectionType();
 
     jmsDelegate.ibmUrl = connectionForm.getIbmUrl();
-    jmsDelegate.ibmUsername = connectionForm.getIbmUser();
-    jmsDelegate.ibmPassword = connectionForm.getIbmPassword();
-
     jmsDelegate.amqUrl = connectionForm.getActiveUrl();
-    jmsDelegate.amqUsername = connectionForm.getActiveUser();
-    jmsDelegate.amqPassword = connectionForm.getActivePassword();
 
     jmsDelegate.connectionType = connectionForm.getConnectionType();
 
@@ -118,8 +123,17 @@ public class JmsConsumerDialog extends BaseStreamingDialog {
     jmsDelegate.messageField = fieldsTab.getFieldNames()[ 0 ];
     jmsDelegate.destinationField = fieldsTab.getFieldNames()[ 1 ];
     jmsDelegate.receiveTimeout = wReceiverTimeout.getText();
+
+    jmsDialogSecurityLayout.saveAuthentication();
+    jmsDialogSecurityLayout.saveTableValues();
   }
 
+  @Override
+  public void setSize() {
+    setSize( shell );  // sets shell location and preferred size
+    shell.setMinimumSize( SHELL_MIN_WIDTH, SHELL_MIN_HEIGHT  );
+    shell.setSize(  SHELL_MIN_WIDTH, SHELL_MIN_HEIGHT   ); // force initial size
+  }
 
   @Override protected int[] getFieldTypes() {
     return fieldsTab.getFieldTypes();

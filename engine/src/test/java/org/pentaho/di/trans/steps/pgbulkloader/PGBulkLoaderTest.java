@@ -92,6 +92,7 @@ public class PGBulkLoaderTest {
     doReturn( new Object[0] ).when( spy ).getRow();
     doReturn( "" ).when( spy ).getCopyCommand();
     doNothing().when( spy ).connect();
+    doNothing().when( spy ).checkClientEncoding();
     doNothing().when( spy ).processTruncate();
     spy.processRow( meta, data );
     verify( spy ).processTruncate();
@@ -143,6 +144,15 @@ public class PGBulkLoaderTest {
     assertEquals( CONNECTION_DB_PORT, database.getDatabaseMeta().getDatabasePortNumberString() );
     assertEquals( CONNECTION_DB_USERNAME, database.getDatabaseMeta().getUsername() );
     assertEquals( CONNECTION_DB_PASSWORD, database.getDatabaseMeta().getPassword() );
+  }
+
+  @Test
+  public void testProcessRow_StreamIsNull() throws Exception {
+    PGBulkLoader pgBulkLoaderStreamIsNull = mock( PGBulkLoader.class );
+    doReturn( null ).when( pgBulkLoaderStreamIsNull ).getRow();
+    PGBulkLoaderMeta meta = mock( PGBulkLoaderMeta.class );
+    PGBulkLoaderData data = mock( PGBulkLoaderData.class );
+    assertEquals( false, pgBulkLoaderStreamIsNull.processRow( meta, data ) );
   }
 
   private static PGBulkLoaderMeta getPgBulkLoaderMock( String DbNameOverride ) throws KettleXMLException {

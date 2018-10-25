@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -68,6 +68,7 @@ public class SWTGC implements GCInterface {
   protected Color crystal;
   protected Color hopDefault;
   protected Color hopOK;
+  protected Color deprecated;
 
   private GC gc;
 
@@ -114,6 +115,7 @@ public class SWTGC implements GCInterface {
     this.crystal = GUIResource.getInstance().getColorCrystalTextPentaho();
     this.hopDefault = GUIResource.getInstance().getColorHopDefault();
     this.hopOK = GUIResource.getInstance().getColorHopOK();
+    this.deprecated = GUIResource.getInstance().getColorDeprecated();
   }
 
   public void dispose() {
@@ -337,6 +339,8 @@ public class SWTGC implements GCInterface {
         return hopDefault;
       case HOP_OK:
         return hopOK;
+      case DEPRECATED:
+        return deprecated;
       default:
         break;
     }
@@ -411,6 +415,8 @@ public class SWTGC implements GCInterface {
     Image im = null;
     if ( stepMeta.isMissing() ) {
       im = GUIResource.getInstance().getImageMissing();
+    } else if ( stepMeta.isDeprecated() ) {
+      im = GUIResource.getInstance().getImageDeprecated();
     } else {
       im =
           images.get( steptype ).getAsBitmapForSize( gc.getDevice(), Math.round( iconsize * magnification ),

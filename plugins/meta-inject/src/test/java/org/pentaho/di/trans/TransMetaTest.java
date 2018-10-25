@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -59,7 +59,7 @@ public class TransMetaTest {
 
   @Test
   public void testAddOrReplaceStep() throws Exception {
-    StepMeta stepMeta = mockStepMeta( "ETL Metadata Injection" );
+    StepMeta stepMeta = mockStepMeta( "ETL metadata injection" );
     MetaInjectMeta stepMetaInterfaceMock = mock( MetaInjectMeta.class );
     when( stepMeta.getStepMetaInterface() ).thenReturn( stepMetaInterfaceMock );
     transMeta.addOrReplaceStep( stepMeta );

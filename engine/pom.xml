@@ -6,7 +6,7 @@
 
   <groupId>pentaho-kettle</groupId>
   <artifactId>kettle-engine</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
+  <version>8.2.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>PDI Engine</name>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.pentaho.di</groupId>
     <artifactId>pdi</artifactId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -23,10 +23,10 @@
     <maven-failsafe-plugin.reuseForks>false</maven-failsafe-plugin.reuseForks>
 
     <!-- Pentaho dependencies -->
-    <pentaho-reporting.version>9.0.0.0-SNAPSHOT</pentaho-reporting.version>
-    <pentaho-registry.version>9.0.0.0-SNAPSHOT</pentaho-registry.version>
-    <pentaho-connections.version>9.0.0.0-SNAPSHOT</pentaho-connections.version>
-    <mondrian.version>9.0.0.0-SNAPSHOT</mondrian.version>
+    <pentaho-reporting.version>8.2.0.0-SNAPSHOT</pentaho-reporting.version>
+    <pentaho-registry.version>8.2.0.0-SNAPSHOT</pentaho-registry.version>
+    <pentaho-connections.version>8.2.0.0-SNAPSHOT</pentaho-connections.version>
+    <mondrian.version>8.2.0.0-SNAPSHOT</mondrian.version>
 
     <!-- Third-party dependencies -->
     <antlr-complete.version>3.5.2</antlr-complete.version>
@@ -38,7 +38,8 @@
     <georss-rome.version>0.9.8</georss-rome.version>
     <infobright-core.version>3.4</infobright-core.version>
     <ini4j.version>0.5.1</ini4j.version>
-    <janino.version>2.5.16</janino.version>
+    <!-- https://jira.pentaho.com/browse/PDI-44134 update janino to latest -->
+    <janino.version>3.0.8</janino.version>
     <javadbf.version>20081125</javadbf.version>
     <jcommon.version>1.0.16</jcommon.version>
     <json-simple.version>1.1</json-simple.version>
@@ -69,8 +70,6 @@
     <wsdl4j.version>1.6.2</wsdl4j.version>
     <wsdl4j-qname.version>1.6.1</wsdl4j-qname.version>
     <ehcache-core.version>2.5.1</ehcache-core.version>
-    <jackson.version>2.9.4</jackson.version>
-    <jackson-jaxrs.version>1.9.2</jackson-jaxrs.version>
     <hibernate-core.version>3.6.9.Final</hibernate-core.version>
     <hibernate-c3p0.version>3.6.9.Final</hibernate-c3p0.version>
     <hibernate-commons-annotations.version>3.2.0.Final</hibernate-commons-annotations.version>
@@ -159,6 +158,10 @@
 
 
     <!-- Third-party dependencies -->
+    <dependency>
+      <groupId>org.dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+    </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
@@ -283,7 +286,18 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>janino</groupId>
+      <groupId>org.codehaus.janino</groupId>
+      <artifactId>commons-compiler</artifactId>
+      <version>${janino.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
       <version>${janino.version}</version>
       <exclusions>
@@ -648,42 +662,16 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency> 
-    <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <version>${hibernate-core.version}</version>
@@ -900,6 +888,7 @@
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- required by org.dom4j -->
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>

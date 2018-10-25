@@ -6,7 +6,7 @@
 
   <groupId>org.pentaho.di</groupId>
   <artifactId>pdi</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
+  <version>8.2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Pentaho Data Integration</name>
@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <scm>
@@ -55,8 +55,8 @@
     <license.licenseName>apache_v2</license.licenseName>
 
     <!-- Pentaho dependencies -->
-    <commons-xul.version>9.0.0.0-SNAPSHOT</commons-xul.version>
-    <pentaho-metastore.version>9.0.0.0-SNAPSHOT</pentaho-metastore.version>
+    <commons-xul.version>8.2.0.0-SNAPSHOT</commons-xul.version>
+    <pentaho-metastore.version>8.2.0.0-SNAPSHOT</pentaho-metastore.version>
 
     <!-- Third-party dependencies -->
     <org.eclipse.swt.version>4.6</org.eclipse.swt.version>
@@ -69,7 +69,6 @@
     <guava.version>17.0</guava.version>
     <encoder.version>1.2</encoder.version>
     <h2.version>1.2.131</h2.version>
-    <jaxen.version>1.1.1</jaxen.version>
     <wstx-asl.version>3.2.4</wstx-asl.version>
 
     <!-- Test dependencies -->
@@ -141,6 +140,35 @@
         <groupId>org.eclipse.swt</groupId>
         <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
         <version>${org.eclipse.swt.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.owasp.encoder</groupId>
+        <artifactId>encoder</artifactId>
+        <version>${encoder.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.woodstox</groupId>
+        <artifactId>wstx-asl</artifactId>
+        <version>${wstx-asl.version}</version>
+        <scope>provided</scope>
       </dependency>
 
     <dependency>

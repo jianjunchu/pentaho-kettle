@@ -59,7 +59,7 @@ import org.pentaho.di.trans.step.StepPartitioningMeta;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
 import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
-import org.pentaho.di.trans.steps.userdefinedjavaclass.StepDefinition;
+import org.pentaho.di.trans.steps.userdefinedjavaclass.InfoStepDefinition;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassDef;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassMeta;
 import org.pentaho.metastore.api.IMetaStore;
@@ -374,7 +374,7 @@ public class TransMetaTest {
       "public boolean processRow( StepMetaInterface smi, StepDataInterface sdi ) throws KettleException { return "
         + "false; }";
     UserDefinedJavaClassMeta udjcMeta = new UserDefinedJavaClassMeta();
-    udjcMeta.getInfoStepDefinitions().add( new StepDefinition( dg2.getName(), dg2.getName(), dg2, "info_data" ) );
+    udjcMeta.getInfoStepDefinitions().add( new InfoStepDefinition( dg2.getName(), dg2.getName(), dg2, "info_data" ) );
     udjcMeta.replaceDefinitions( singletonList(
       new UserDefinedJavaClassDef( UserDefinedJavaClassDef.ClassType.TRANSFORM_CLASS, "MainClass", UDJC_METHOD ) ) );
 
@@ -768,6 +768,15 @@ public class TransMetaTest {
 
     assertThat( 4, equalTo( results.size() ) );
     assertThat( new String[] { "field3", "field4", "field5", "outputField" }, equalTo( results.getFieldNames() ) );
+  }
+
+  @Test
+  public void findPreviousStepsNullMeta( ) {
+    TransMeta transMeta = new TransMeta( new Variables() );
+    List<StepMeta> result = transMeta.findPreviousSteps( null, false );
+
+    assertThat( 0, equalTo( result.size() ) );
+    assertThat( result, equalTo( new ArrayList<>() ) );
   }
 
   private void wireUpTestTransMeta( TransMeta transMeta, StepMeta toBeAppended1, StepMeta toBeAppended2,

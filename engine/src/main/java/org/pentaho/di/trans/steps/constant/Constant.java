@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -234,13 +234,11 @@ public class Constant extends BaseStep implements StepInterface {
 
       data.firstRow = false;
       data.outputMeta = getInputRowMeta().clone();
-
-      RowMetaInterface constants = data.constants.getRowMeta();
-      data.outputMeta.mergeRowMeta( constants );
+      meta.getFields( data.outputMeta, getStepname(), null, null, this, repository, metaStore );
     }
 
     // Add the constant data to the end of the row.
-    r = RowDataUtil.addRowData( r, getInputRowMeta().size(), data.constants.getData() );
+    r = RowDataUtil.addRowData( r, getInputRowMeta().size(), data.getConstants().getData() );
 
     putRow( data.outputMeta, r );
 

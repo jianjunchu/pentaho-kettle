@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.Props;
 import org.pentaho.di.core.SQLStatement;
@@ -227,6 +228,7 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
       public void widgetSelected( SelectionEvent e ) {
         input.setChanged();
         setTableFieldCombo();
+        validateSelection();
       }
     };
     backupChanged = input.hasChanged();
@@ -1064,6 +1066,35 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     }
   }
 
+  private void validateSelection() {
+    Runnable fieldLoader = () -> {
+      isConnectionSupported();
+    };
+    shell.getDisplay().asyncExec( fieldLoader );
+  }
+
+  protected void isConnectionSupported() {
+    final String tableName = wTable.getText(), connectionName = wConnection.getText();
+
+    if ( !Utils.isEmpty( tableName ) ) {
+      DatabaseMeta dbmeta = transMeta.findDatabase( connectionName );
+      if ( dbmeta != null && !dbmeta.getDatabaseInterface().supportsStandardTableOutput() ) {
+        showUnsupportedConnectionMessageBox( dbmeta.getDatabaseInterface() );
+      }
+    }
+  }
+
+  protected void showUnsupportedConnectionMessageBox( DatabaseInterface dbi ) {
+    String title = BaseMessages.getString( PKG, "TableOutput.UnsupportedConnection.DialogTitle" );
+    String message = dbi.getUnsupportedTableOutputMessage();
+    String close = BaseMessages.getString( PKG, "System.Button.Close" );
+
+    MessageDialog dialog =
+      new MessageDialog( shell, title, GUIResource.getInstance().getImageSpoon(), message, MessageDialog.WARNING,
+        new String[] { close }, 0 );
+    dialog.open();
+  }
+
   private void setTableFieldCombo() {
     Runnable fieldLoader = new Runnable() {
       public void run() {
@@ -1082,10 +1113,10 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
               try {
                 db.connect();
 
-                String schemaTable =
-                  ci.getQuotedSchemaTableCombination( transMeta.environmentSubstitute( schemaName ), transMeta
-                    .environmentSubstitute( tableName ) );
-                RowMetaInterface r = db.getTableFields( schemaTable );
+                RowMetaInterface r =
+                  db.getTableFieldsMeta(
+                    transMeta.environmentSubstitute( schemaName ),
+                    transMeta.environmentSubstitute( tableName ) );
                 if ( null != r ) {
                   String[] fieldNames = r.getFieldNames();
                   if ( null != fieldNames ) {

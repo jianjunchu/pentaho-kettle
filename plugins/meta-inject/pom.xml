@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pdi-plugins</artifactId>
-    <version>9.0.0.0-SNAPSHOT</version>
+    <version>8.2.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>meta-inject-plugin</artifactId>
-  <version>9.0.0.0-SNAPSHOT</version>
+  <version>8.2.0.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>PDI Metadata Injection Plugin</name>
@@ -18,7 +18,9 @@
   <url>http://www.pentaho.com</url>
 
   <properties>
-    <pdi.version>9.0.0.0-SNAPSHOT</pdi.version>
+    <pdi.version>${project.version}</pdi.version>
+    <pentaho-metaverse.version>${project.version}</pentaho-metaverse.version>
+    <platform.version>${project.version}</platform.version>
     <servlet-api.version>2.3</servlet-api.version>
     <mockito.version>1.10.19</mockito.version>
     <guava.version>17.0</guava.version>
@@ -33,6 +35,8 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
     <mockito.version>1.10.19</mockito.version>
     <powermock.version>1.6.3</powermock.version>
+    <pentaho-hadoop-shims-api.version>${project.version}</pentaho-hadoop-shims-api.version>
+    <commons-configuration.revision>1.9</commons-configuration.revision>
   </properties>
 
   <dependencies>
@@ -52,6 +56,12 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
       <version>${pdi.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-metaverse-api</artifactId>
+      <version>${pentaho-metaverse.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -148,6 +158,18 @@
           <groupId>org.apache.xmlgraphics</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.pentaho</groupId>
+      <artifactId>pentaho-hadoop-shims-api</artifactId>
+      <version>${pentaho-hadoop-shims-api.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>${commons-configuration.revision}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

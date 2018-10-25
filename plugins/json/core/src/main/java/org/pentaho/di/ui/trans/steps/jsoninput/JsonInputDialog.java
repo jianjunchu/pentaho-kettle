@@ -50,13 +50,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.Props;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.extension.ExtensionPointHandler;
+import org.pentaho.di.core.extension.KettleExtensionPoint;
 import org.pentaho.di.core.fileinput.FileInputList;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaBase;
 import org.pentaho.di.core.row.value.ValueMetaFactory;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -65,6 +67,7 @@ import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepDialogInterface;
 import org.pentaho.di.trans.steps.jsoninput.JsonInputField;
 import org.pentaho.di.trans.steps.jsoninput.JsonInputMeta;
+import org.pentaho.di.ui.core.GetFieldsDialogOperation;
 import org.pentaho.di.ui.core.dialog.EnterNumberDialog;
 import org.pentaho.di.ui.core.dialog.EnterSelectionDialog;
 import org.pentaho.di.ui.core.dialog.EnterTextDialog;
@@ -75,6 +78,9 @@ import org.pentaho.di.ui.core.widget.TableView;
 import org.pentaho.di.ui.core.widget.TextVar;
 import org.pentaho.di.ui.trans.dialog.TransPreviewProgressDialog;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonInputDialog extends BaseStepDialog implements StepDialogInterface {
   private static Class<?> PKG = JsonInputMeta.class; // for i18n purposes, needed by Translator2!!
@@ -300,6 +306,11 @@ public class JsonInputDialog extends BaseStepDialog implements StepDialogInterfa
         ok();
       }
     };
+    lsGet = new Listener() {
+      public void handleEvent( Event e ) {
+        get();
+      }
+    };
     lsPreview = new Listener() {
       public void handleEvent( Event e ) {
         preview();
@@ -312,6 +323,7 @@ public class JsonInputDialog extends BaseStepDialog implements StepDialogInterfa
     };
 
     wOK.addListener( SWT.Selection, lsOK );
+    wGet.addListener( SWT.Selection, lsGet );
     wPreview.addListener( SWT.Selection, lsPreview );
     wCancel.addListener( SWT.Selection, lsCancel );
 
@@ -492,6 +504,15 @@ public class JsonInputDialog extends BaseStepDialog implements StepDialogInterfa
     wFieldsComp.setLayout( fieldsLayout );
     props.setLook( wFieldsComp );
 
+    wGet = new Button( wFieldsComp, SWT.PUSH );
+    wGet.setText( BaseMessages.getString( PKG, "JsonInputDialog.Button.SelectFields" ) );
+    fdGet = new FormData();
+    fdGet.left = new FormAttachment( 50, 0 );
+    fdGet.bottom = new FormAttachment( 100, 0 );
+    wGet.setLayoutData( fdGet );
+
+    setButtonPositions( new Button[] { wGet }, margin, null );
+
     final int FieldsRows = input.getInputFields().length;
 
     ColumnInfo[] colinf =
@@ -546,7 +567,7 @@ public class JsonInputDialog extends BaseStepDialog implements StepDialogInterfa
     fdFields.left = new FormAttachment( 0, 0 );
     fdFields.top = new FormAttachment( 0, 0 );
     fdFields.right = new FormAttachment( 100, 0 );
-    fdFields.bottom = new FormAttachment( 100, -margin );
+    fdFields.bottom = new FormAttachment( wGet, -margin );
     wFields.setLayoutData( fdFields );
 
     fdFieldsComp = new FormData();
@@ -1455,6 +1476,42 @@ public class JsonInputDialog extends BaseStepDialog implements StepDialogInterfa
     in.setRootUriField( wRootUriName.getText() );
     in.setExtensionField( wExtensionFieldName.getText() );
     in.setSizeField( wSizeFieldName.getText() );
+  }
+
+  private void get() {
+    try {
+      // Call new get fields dialog
+      if ( wFilenameList.getItemCount() > 0 ) {
+        String filename = transMeta.environmentSubstitute( wFilenameList.getItem( 0 )[ 0 ] );
+        List<String> paths = new ArrayList<>();
+        for ( int i = 0; i < wFields.table.getItems().length; i++ ) {
+          TableItem item = wFields.table.getItem( i );
+          paths.add( item.getText( 2 ) );
+        }
+        GetFieldsDialogOperation getFieldsDialogOperation = new GetFieldsDialogOperation( shell, 540, 588, filename,
+                BaseMessages.getString( PKG, "JsonInput.GetFields.Dialog.Title" ), paths );
+        ExtensionPointHandler.callExtensionPoint( null, KettleExtensionPoint.GetFieldsExtension.id,
+                getFieldsDialogOperation );
+
+        int numRows = getFieldsDialogOperation.getPaths().size();
+        if ( numRows > 0 ) {
+          wFields.table.setItemCount( numRows );
+          for ( int i = 0; i < numRows; i++ ) {
+            String path = getFieldsDialogOperation.getPaths().get( i );
+            String[] values = path.split( ":" );
+            TableItem item = wFields.table.getItem( i );
+            item.setText( 1, values[0] );
+            item.setText( 2, values[1] );
+            item.setText( 3, values[2] );
+          }
+          wFields.removeEmptyRows();
+          wFields.setRowNums();
+          wFields.optWidth( true );
+        }
+      }
+    } catch ( Exception e ) {
+      log.logError( e.getMessage() );
+    }
   }
 
   // Preview the data
