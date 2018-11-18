@@ -72,6 +72,7 @@ public abstract class KettleDatabaseRepositoryBase extends AbstractRepository {
   public static final String FIELD_CREATE_USER = "CREATE_USER";
   public static final String FIELD_UPDATE_USER = "UPDATE_USER";
 
+
   public static final String TABLE_R_DATABASE_ATTRIBUTE = "R_DATABASE_ATTRIBUTE";
   public static final String FIELD_DATABASE_ATTRIBUTE_ID_DATABASE_ATTRIBUTE = "ID_DATABASE_ATTRIBUTE";
   public static final String FIELD_DATABASE_ATTRIBUTE_ID_DATABASE = "ID_DATABASE";
