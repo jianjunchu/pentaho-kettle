@@ -98,19 +98,22 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>com.kingbase</groupId>
-      <artifactId>etl_platform</artifactId>
-      <version>1.0.7</version>
-      <scope>system</scope>
-      <systemPath>/Users/jianjunchu/workspace/etl/pentaho-kettle/lib/etl-platform.jar</systemPath>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>com.kingbase</groupId>-->
+      <!--<artifactId>etl_platform</artifactId>-->
+      <!--<version>1.0.7</version>-->
+      <!--<scope>system</scope>-->
+      <!--<systemPath>/Users/jianjunchu/workspace/etl/pentaho-kettle/lib/etl-platform.jar</systemPath>-->
+    <!--</dependency>-->
+
+
 
     <!-- Kettle dependencies -->
     <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle-core</artifactId>
-      <version>${project.version}</version>
+        <groupId>pentaho-kettle</groupId>
+        <artifactId>kettle-core</artifactId>
+        <version>${project.version}</version>
+        <classifier>auphi</classifier>
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
