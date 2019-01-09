@@ -6,7 +6,7 @@
 
   <groupId>pentaho-kettle</groupId>
   <artifactId>kettle-engine</artifactId>
-  <version>8.2.0.0-SNAPSHOT</version>
+  <version>8.3.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>PDI Engine</name>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.pentaho.di</groupId>
     <artifactId>pdi</artifactId>
-    <version>8.2.0.0-SNAPSHOT</version>
+    <version>8.3.0.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -23,10 +23,10 @@
     <maven-failsafe-plugin.reuseForks>false</maven-failsafe-plugin.reuseForks>
 
     <!-- Pentaho dependencies -->
-    <pentaho-reporting.version>8.2.0.0-SNAPSHOT</pentaho-reporting.version>
-    <pentaho-registry.version>8.2.0.0-SNAPSHOT</pentaho-registry.version>
-    <pentaho-connections.version>8.2.0.0-SNAPSHOT</pentaho-connections.version>
-    <mondrian.version>8.2.0.0-SNAPSHOT</mondrian.version>
+    <pentaho-reporting.version>8.3.0.0-SNAPSHOT</pentaho-reporting.version>
+    <pentaho-registry.version>8.3.0.0-SNAPSHOT</pentaho-registry.version>
+    <pentaho-connections.version>8.3.0.0-SNAPSHOT</pentaho-connections.version>
+    <mondrian.version>8.3.0.0-SNAPSHOT</mondrian.version>
 
     <!-- Third-party dependencies -->
     <antlr-complete.version>3.5.2</antlr-complete.version>
@@ -91,7 +91,7 @@
     <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
     <oro.version>2.0.8</oro.version>
     <javax.websocket-api.version>1.1</javax.websocket-api.version>
-    <rxjava.version>2.0.4</rxjava.version>
+    <rxjava.version>2.2.3</rxjava.version>
     <xmlunit.version>1.5</xmlunit.version>
   </properties>
 

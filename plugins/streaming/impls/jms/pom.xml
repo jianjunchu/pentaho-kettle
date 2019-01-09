@@ -23,14 +23,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>pentaho-streaming-jms-plugin</artifactId>
-  <version>8.2.0.0-SNAPSHOT</version>
+  <version>8.3.0.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
 
   <parent>
     <groupId>org.pentaho.di.plugins</groupId>
     <artifactId>pentaho-streaming-impls</artifactId>
-    <version>8.2.0.0-SNAPSHOT</version>
+    <version>8.3.0.0-SNAPSHOT</version>
   </parent>
 
 
@@ -41,8 +41,7 @@
   <properties>
     <ibmmq.version>9.0.4.0</ibmmq.version>
     <jms.version>2.0.1</jms.version>
-    <pdi.version>8.2.0.0-SNAPSHOT</pdi.version>
-    <rxjava.version>2.0.4</rxjava.version>
+    <pdi.version>8.3.0.0-SNAPSHOT</pdi.version>
     <artemis.version>2.5.0</artemis.version>
   </properties>
 
@@ -74,6 +73,12 @@
       <groupId>com.ibm.mq</groupId>
       <artifactId>com.ibm.mq.allclient</artifactId>
       <version>${ibmmq.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-metaverse-api</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -123,11 +128,6 @@
       <groupId>io.netty</groupId>
       <artifactId>netty-transport-native-epoll</artifactId>
       <version>4.1.22.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>io.reactivex.rxjava2</groupId>
-      <artifactId>rxjava</artifactId>
-      <version>${rxjava.version}</version>
     </dependency>
 
     <dependency>

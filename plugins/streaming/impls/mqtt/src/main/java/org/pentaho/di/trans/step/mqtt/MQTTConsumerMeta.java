@@ -82,7 +82,7 @@ import static org.pentaho.di.core.util.serialization.ConfigHelper.conf;
   documentationUrl = "Products/Data_Integration/Transformation_Step_Reference/MQTT_Consumer" )
 @InjectionSupported ( localizationPrefix = "MQTTConsumerMeta.Injection.", groups = { "SSL" } )
 public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInterface {
-  private static Class<?> PKG = MQTTConsumerMeta.class;
+  private static final Class<?> PKG = MQTTConsumerMeta.class;
 
   @Injection ( name = MQTT_SERVER ) private String mqttServer = "";
 
@@ -101,12 +101,10 @@ public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInte
 
   @Injection ( name = USE_SSL, group = SSL_GROUP ) private Boolean useSsl = false;
 
-  @Injection ( name = SSL_KEYS, group = SSL_GROUP )
-  public List<String> sslKeys = new ArrayList<>();
+  @Injection ( name = SSL_KEYS, group = SSL_GROUP ) List<String> sslKeys = new ArrayList<>();
 
   @Sensitive
-  @Injection ( name = SSL_VALUES, group = SSL_GROUP )
-  public List<String> sslValues = new ArrayList<>();
+  @Injection ( name = SSL_VALUES, group = SSL_GROUP ) List<String> sslValues = new ArrayList<>();
 
   @Injection ( name = KEEP_ALIVE_INTERVAL )
   private String keepAliveInterval = "";
@@ -137,7 +135,7 @@ public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInte
     setSpecificationMethod( ObjectLocationSpecificationMethod.FILENAME );
   }
 
-  public void setDefault() {
+  @Override public void setDefault() {
     super.setDefault();
     mqttServer = "";
     qos = "0";
@@ -174,12 +172,12 @@ public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInte
     return rowMeta;
   }
 
-  public StepInterface getStep( StepMeta stepMeta, StepDataInterface stepDataInterface, int cnr, TransMeta tr,
+  @Override public StepInterface getStep( StepMeta stepMeta, StepDataInterface stepDataInterface, int cnr, TransMeta tr,
                                 Trans trans ) {
     return new MQTTConsumer( stepMeta, stepDataInterface, cnr, tr, trans );
   }
 
-  public StepDataInterface getStepData() {
+  @Override public StepDataInterface getStepData() {
     return new MQTTConsumerData();
   }
 
@@ -326,7 +324,7 @@ public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInte
     this.automaticReconnect = automaticReconnect;
   }
 
-  public List<StepOption> retrieveOptions() {
+  List<StepOption> retrieveOptions() {
     return Arrays.asList(
       new StepOption( KEEP_ALIVE_INTERVAL, getString( PKG, "MQTTDialog.Options.KEEP_ALIVE_INTERVAL" ),
         keepAliveInterval ),
@@ -398,13 +396,4 @@ public class MQTTConsumerMeta extends BaseStreamStepMeta implements StepMetaInte
         sslValues, username, password, keepAliveInterval, maxInflight, connectionTimeout,
         cleanSession, storageLevel, serverUris, mqttVersion, automaticReconnect );
   }
-
-  @Override public MQTTConsumerMeta copyObject() {
-    MQTTConsumerMeta newClone = (MQTTConsumerMeta) this.clone();
-    newClone.topics = new ArrayList<>( this.topics );
-    newClone.sslKeys = new ArrayList<>( this.sslKeys );
-    newClone.sslValues = new ArrayList<>( this.sslValues );
-    return newClone;
-  }
-
 }

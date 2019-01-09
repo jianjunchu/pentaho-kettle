@@ -23,16 +23,15 @@
 package org.pentaho.di.trans.steps.jsoninput.analyzer;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.pentaho.di.core.KettleClientEnvironment;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.fileinput.FileInputList;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.variables.VariableSpace;
-import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepMeta;
@@ -44,11 +43,15 @@ import org.pentaho.metaverse.api.IMetaverseObjectFactory;
 import org.pentaho.metaverse.api.INamespace;
 import org.pentaho.metaverse.api.MetaverseObjectFactory;
 import org.pentaho.metaverse.api.StepField;
+import org.pentaho.metaverse.api.analyzer.kettle.ExternalResourceCache;
 import org.pentaho.metaverse.api.model.IExternalResourceInfo;
+
+import org.powermock.reflect.Whitebox;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
@@ -78,6 +81,11 @@ public class JsonInputAnalyzerTest {
 
   private IMetaverseObjectFactory mockFactory;
 
+  @BeforeClass
+  public static void init() throws KettleException {
+    KettleClientEnvironment.init();
+  }
+
   @Before
   public void setUp() throws Exception {
 
@@ -98,6 +106,9 @@ public class JsonInputAnalyzerTest {
     when( mockJsonInput.getStepMetaInterface() ).thenReturn( meta );
     when( mockJsonInput.getStepMeta() ).thenReturn( mockStepMeta );
     when( mockStepMeta.getStepMetaInterface() ).thenReturn( meta );
+
+    Whitebox.setInternalState( ExternalResourceCache.getInstance(), "transMap", new ConcurrentHashMap() );
+    Whitebox.setInternalState( ExternalResourceCache.getInstance(), "resourceMap", new ConcurrentHashMap() );
   }
 
   @Test
@@ -175,21 +186,42 @@ public class JsonInputAnalyzerTest {
     assertFalse( resources.isEmpty() );
     assertEquals( 2, resources.size() );
 
+    when( meta.getFilePaths( false ) ).thenReturn( new String[]{ "/path/to/file1", "/another/path/to/file2",
+      "/another/path/to/file3" } );
+    resources = consumer.getResourcesFromMeta( meta );
+    assertFalse( resources.isEmpty() );
+    assertEquals( 3, resources.size() );
+
     when( meta.isAcceptingFilenames() ).thenReturn( true );
     assertTrue( consumer.isDataDriven( meta ) );
     assertTrue( consumer.getResourcesFromMeta( meta ).isEmpty() );
-    when( mockJsonInput.environmentSubstitute( Mockito.any( String.class ) ) ).thenReturn( "/path/to/row/file" );
 
+    when( mockJsonInput.environmentSubstitute( Mockito.any( String.class ) ) ).thenReturn( "/path/to/row/file" );
     when( mockJsonInput.getStepMetaInterface() ).thenReturn( meta );
     resources = consumer.getResourcesFromRow( mockJsonInput, mockRowMetaInterface, new String[] { "id", "name" } );
     assertFalse( resources.isEmpty() );
     assertEquals( 1, resources.size() );
 
+    // when getString throws an exception, we still get the cached resources
     when( mockRowMetaInterface.getString( Mockito.any( Object[].class ), Mockito.anyString(), Mockito.anyString() ) )
       .thenThrow( KettleException.class );
     resources = consumer.getResourcesFromRow( mockJsonInput, mockRowMetaInterface, new String[] { "id", "name" } );
-    assertTrue( resources.isEmpty() );
+    assertFalse( resources.isEmpty() );
+    assertEquals( 1, resources.size() );
 
     assertEquals( JsonInputMeta.class, consumer.getMetaClass() );
+  }
+  
+  @Test
+  public void testCloneAnalyzer() {
+    final JsonInputAnalyzer analyzer = new JsonInputAnalyzer();
+    // verify that cloneAnalyzer returns an instance that is different from the original
+    assertNotEquals( analyzer, analyzer.cloneAnalyzer() );
+  }
+
+  @Test
+  public void testNewInstance(){
+    JsonInputAnalyzer analyzer = new JsonInputAnalyzer();
+    assertTrue( analyzer.newInstance().getClass().equals(JsonInputAnalyzer.class));
   }
 }

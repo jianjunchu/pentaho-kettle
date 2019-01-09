@@ -24,17 +24,21 @@ package org.pentaho.di.trans.step.jms;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.pentaho.di.core.annotations.Step;
+import org.pentaho.di.core.injection.Injection;
 import org.pentaho.di.core.injection.InjectionDeep;
 import org.pentaho.di.core.injection.InjectionSupported;
 import org.pentaho.di.core.row.RowMeta;
+import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.util.GenericStepData;
 import org.pentaho.di.core.variables.VariableSpace;
+import org.pentaho.di.trans.ISubTransAwareMeta;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
+import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.di.trans.step.jms.context.ActiveMQProvider;
 import org.pentaho.di.trans.streaming.common.BaseStreamStepMeta;
 
@@ -48,10 +52,16 @@ import static org.pentaho.di.core.ObjectLocationSpecificationMethod.FILENAME;
   description = "JmsConsumer.TypeTooltipDesc",
   categoryDescription = "i18n:org.pentaho.di.trans.step:BaseStep.Category.Streaming",
   documentationUrl = "Products/Data_Integration/Transformation_Step_Reference/JMS_Consumer" )
-public class JmsConsumerMeta extends BaseStreamStepMeta {
+public class JmsConsumerMeta extends BaseStreamStepMeta implements ISubTransAwareMeta, StepMetaInterface {
 
   @InjectionDeep
   public JmsDelegate jmsDelegate;
+
+  @Injection( name = "RECEIVE_TIMEOUT" ) public String receiveTimeout = "0";
+
+  @Injection ( name = "MESSAGE_FIELD_NAME" ) public String messageField = "message";
+
+  @Injection ( name = "DESTINATION_FIELD_NAME" ) public String destinationField = "destination";
 
   @VisibleForTesting
   public JmsConsumerMeta() {
@@ -63,15 +73,23 @@ public class JmsConsumerMeta extends BaseStreamStepMeta {
     this.jmsDelegate = jmsDelegate;
   }
 
-  @SuppressWarnings( "deprecated" )
+  @SuppressWarnings( "deprecation" )
   public String getDialogClassName() {
     return "org.pentaho.di.trans.step.jms.ui.JmsConsumerDialog";
   }
 
-  public RowMeta getRowMeta( String s, VariableSpace variableSpace ) {
+  @Override public RowMeta getRowMeta( String s, VariableSpace variableSpace ) {
     RowMeta rowMeta = new RowMeta();
     rowMeta.addValueMeta( new ValueMetaString( "message" ) );
     return rowMeta;
+  }
+
+  public JmsDelegate getJmsDelegate() {
+    return jmsDelegate;
+  }
+
+  public String getReceiveTimeout() {
+    return receiveTimeout;
   }
 
   @Override
@@ -84,9 +102,13 @@ public class JmsConsumerMeta extends BaseStreamStepMeta {
     return new GenericStepData();
   }
 
-  @Override public JmsConsumerMeta copyObject() {
-    JmsConsumerMeta newClone = (JmsConsumerMeta) this.clone();
-    newClone.jmsDelegate = new JmsDelegate( this.jmsDelegate );
-    return newClone;
+  /**
+   * Creates a rowMeta for output field names
+   */
+  RowMetaInterface getRowMeta() {
+    RowMeta rowMeta = new RowMeta();
+    rowMeta.addValueMeta( new ValueMetaString( messageField ) );
+    rowMeta.addValueMeta( new ValueMetaString( destinationField ) );
+    return rowMeta;
   }
 }

@@ -24,7 +24,7 @@
 package org.pentaho.di.trans.streaming.common;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.reactivex.Observable;
+import io.reactivex.Flowable;
 import io.reactivex.processors.FlowableProcessor;
 import io.reactivex.processors.ReplayProcessor;
 import org.pentaho.di.core.logging.LogChannel;
@@ -53,7 +53,7 @@ public abstract class BlockingQueueStreamSource<T> implements StreamSource<T> {
 
   private final AtomicBoolean paused = new AtomicBoolean( false );
 
-  private final FlowableProcessor<T> publishProcessor = ReplayProcessor.create();
+  private final FlowableProcessor<T> publishProcessor = ReplayProcessor.createWithSize( 1000 );
   protected final BaseStreamStep streamStep;
 
   // binary semaphore used to block acceptance of rows when paused
@@ -65,8 +65,8 @@ public abstract class BlockingQueueStreamSource<T> implements StreamSource<T> {
   }
 
 
-  @Override public Observable<T> observable() {
-    return Observable
+  @Override public Flowable<T> flowable() {
+    return Flowable
       .fromPublisher( publishProcessor );
   }
 

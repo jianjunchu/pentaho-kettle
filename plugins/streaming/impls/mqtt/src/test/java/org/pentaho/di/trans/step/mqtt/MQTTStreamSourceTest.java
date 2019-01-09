@@ -120,7 +120,7 @@ public class MQTTStreamSourceTest {
     publish( "mytopic", messages );
 
     List<List<Object>> rows = getQuickly(
-      iterateSource( source.observable().blockingIterable().iterator(), 3 ) );
+      iterateSource( source.flowable().blockingIterable().iterator(), 3 ) );
     assertThat( messagesToRows( "mytopic", messages ), equalTo( rows ) );
     source.close();
   }
@@ -137,9 +137,8 @@ public class MQTTStreamSourceTest {
     String[] topic2Messages = { "chuntttttt", "usidor", "arnie" };
     publish( "vermilion.minotaur", topic2Messages );
 
-    Thread.sleep( 200 );
     List<List<Object>> rows = getQuickly(
-      iterateSource( source.observable().blockingIterable().iterator(), 6 ) );
+      iterateSource( source.flowable().blockingIterable().iterator(), 6 ) );
     List<List<Object>> expectedResults = ImmutableList.<List<Object>>builder()
       .addAll( messagesToRows( "mytopic-1", topic1Messages ) )
       .addAll( messagesToRows( "vermilion.minotaur", topic2Messages ) )

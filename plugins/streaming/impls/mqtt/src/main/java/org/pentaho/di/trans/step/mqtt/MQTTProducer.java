@@ -43,17 +43,19 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Optional.ofNullable;
 import static org.pentaho.di.i18n.BaseMessages.getString;
 
 public class MQTTProducer extends BaseStep implements StepInterface {
-  private static Class<?> PKG = MQTTProducer.class;
+  private static final Class<?> PKG = MQTTProducer.class;
 
   private MQTTProducerMeta meta;
 
   Supplier<MqttClient> client = Suppliers.memoize( this::connectToClient );
+  private AtomicBoolean connectionError = new AtomicBoolean( false );
 
   /**
    * This is the base step that forms that basis for all steps. You can derive from this class to implement your own
@@ -96,7 +98,6 @@ public class MQTTProducer extends BaseStep implements StepInterface {
 
     if ( null == row ) {
       setOutputDone();
-      stopMqttClient();
       return false;
     }
     try {
@@ -106,10 +107,8 @@ public class MQTTProducer extends BaseStep implements StepInterface {
       incrementLinesOutput();
       putRow( getInputRowMeta(), row ); // copy row to possible alternate rowset(s).
 
-      if ( checkFeedback( getLinesRead() ) ) {
-        if ( log.isBasic() ) {
-          logBasic( getString( PKG, "MQTTProducer.Log.LineNumber" ) + getLinesRead() );
-        }
+      if ( checkFeedback( getLinesRead() ) && log.isBasic() ) {
+        logBasic( getString( PKG, "MQTTProducer.Log.LineNumber" ) + getLinesRead() );
       }
     } catch ( MqttException e ) {
       logError( getString( PKG, "MQTTProducer.Error.QOSNotSupported", meta.qos ) );
@@ -148,7 +147,8 @@ public class MQTTProducer extends BaseStep implements StepInterface {
           .withAutomaticReconnect( meta.automaticReconnect )
           .buildAndConnect();
     } catch ( MqttException e ) {
-      throw new RuntimeException( e );
+      connectionError.set( true );
+      throw new IllegalStateException( e );
     }
   }
 
@@ -182,7 +182,7 @@ public class MQTTProducer extends BaseStep implements StepInterface {
   private Optional<String> getField( Object[] row, String field ) {
     int messageFieldIndex = getInputRowMeta().indexOfValue( field );
     checkArgument( messageFieldIndex > -1, getString( PKG, "MQTTProducer.Error.FieldNotFound", field ) );
-    return ofNullable( row[ messageFieldIndex ] ).map( f -> f.toString() );
+    return ofNullable( row[ messageFieldIndex ] ).map( Object::toString );
   }
 
   @Override public void stopRunning( StepMetaInterface stepMetaInterface, StepDataInterface stepDataInterface )
@@ -191,15 +191,25 @@ public class MQTTProducer extends BaseStep implements StepInterface {
     super.stopRunning( stepMetaInterface, stepDataInterface );
   }
 
+  @Override public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
+    super.dispose( smi, sdi );
+    stopMqttClient();
+  }
+
   private void stopMqttClient() {
     try {
       // Check if connected so subsequent calls does not produce an already stopped exception
-      if ( null != client.get() && client.get().isConnected() ) {
+      if ( !connectionError.get()
+        && client.get() != null
+        && client.get().isConnected() ) {
+        log.logDebug( getString( PKG, "MQTTProducer.Log.Closing" ) );
         client.get().disconnect();
         client.get().close();
       }
-    } catch ( MqttException e ) {
+    } catch ( IllegalArgumentException | MqttException e ) {
       logError( e.getMessage() );
     }
   }
+
+
 }

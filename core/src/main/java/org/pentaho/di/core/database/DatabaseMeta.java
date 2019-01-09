@@ -1008,7 +1008,7 @@ public class DatabaseMeta extends SharedObjectBase implements Cloneable, XMLInte
           String code = XMLHandler.getTagValue( attrnode, "code" );
           String attribute = XMLHandler.getTagValue( attrnode, "attribute" );
           if ( code != null && attribute != null ) {
-            getAttributes().put( code, attribute );
+            databaseInterface.addAttribute( code, attribute );
           }
           getDatabasePortNumberString();
         }
@@ -1609,7 +1609,7 @@ public class DatabaseMeta extends SharedObjectBase implements Cloneable, XMLInte
    * @return the schemaname-tablename combination
    */
   public String getQuotedSchemaTableCombination( String schemaName, String tableName ) {
-    if ( Utils.isEmpty( schemaName ) ) {
+    if ( !supportsSchemas() || Utils.isEmpty( schemaName ) ) {
       if ( Utils.isEmpty( getPreferredSchemaName() ) ) {
         return quoteField( environmentSubstitute( tableName ) ); // no need to look further
       } else {

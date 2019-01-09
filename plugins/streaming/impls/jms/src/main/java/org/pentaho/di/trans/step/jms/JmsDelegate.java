@@ -23,9 +23,6 @@
 package org.pentaho.di.trans.step.jms;
 
 import org.pentaho.di.core.injection.Injection;
-import org.pentaho.di.core.row.RowMeta;
-import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.util.serialization.Sensitive;
 import org.pentaho.di.trans.step.jms.context.JmsProvider;
 
@@ -65,12 +62,6 @@ public class JmsDelegate {
 
   @Injection ( name = "DESTINATION_TYPE" ) public String destinationType = QUEUE.name();
 
-  @Injection ( name = "RECEIVE_TIMEOUT" ) public String receiveTimeout = "0";
-
-  @Injection ( name = "MESSAGE_FIELD_NAME" ) public String messageField = "message";
-
-  @Injection ( name = "DESTINATION_FIELD_NAME" ) public String destinationField = "destination";
-
   @Injection ( name = "SSL_ENABLED", group = "SSL_GROUP" ) public boolean sslEnabled = false;
 
   @Injection ( name = "SSL_KEYSTORE_PATH", group = "SSL_GROUP" ) public String sslKeystorePath = "";
@@ -99,41 +90,13 @@ public class JmsDelegate {
 
   @Injection ( name = "AMQ_SSL_TRUST_ALL", group = "SSL_GROUP" ) public String amqSslTrustAll = "";
 
-  private final List<JmsProvider> jmsProviders;
+  @Injection ( name = "SSL_USE_DEFAULT_CONTEXT", group = "SSL_GROUP" ) public boolean sslUseDefaultContext = false;
+
+  List<JmsProvider> jmsProviders;
 
   public JmsDelegate( List<JmsProvider> jmsProviders ) {
     super();
     this.jmsProviders = jmsProviders;
-  }
-
-  public JmsDelegate( JmsDelegate orig ) {
-    super();
-    this.jmsProviders = orig.jmsProviders;
-    this.destinationName = orig.destinationName;
-    this.ibmUrl = orig.ibmUrl;
-    this.ibmUsername  = orig.ibmUsername;
-    this.ibmPassword = orig.ibmPassword;
-    this.amqUrl = orig.amqUrl;
-    this.amqUsername = orig.amqUsername;
-    this.amqPassword = orig.amqPassword;
-    this.connectionType = orig.connectionType;
-    this.destinationType = orig.destinationType;
-    this.receiveTimeout = orig.receiveTimeout;
-    this.messageField = orig.messageField;
-    this.destinationField = orig.destinationField;
-    this.sslEnabled = orig.sslEnabled;
-    this.sslKeystorePath = orig.sslKeystorePath;
-    this.sslKeystoreType = orig.sslKeystoreType;
-    this.sslKeystorePassword = orig.sslKeystorePassword;
-    this.sslTruststorePath = orig.sslTruststorePath;
-    this.sslTruststoreType = orig.sslTruststoreType;
-    this.sslTruststorePassword = orig.sslTruststorePassword;
-    this.sslContextAlgorithm = orig.sslContextAlgorithm;
-    this.sslCipherSuite = orig.sslCipherSuite;
-    this.ibmSslFipsRequired = orig.ibmSslFipsRequired;
-    this.amqSslProvider = orig.amqSslProvider;
-    this.amqSslVerifyHost = orig.amqSslVerifyHost;
-    this.amqSslTrustAll = orig.amqSslTrustAll;
   }
 
   Destination getDestination( ) {
@@ -151,13 +114,19 @@ public class JmsDelegate {
       .orElseThrow( () -> new RuntimeException( getString( PKG, "JmsDelegate.UnsupportedConnectionType" ) ) );
   }
 
-  /**
-   * Creates a rowMeta for output field names
-   */
-  RowMetaInterface getRowMeta() {
-    RowMeta rowMeta = new RowMeta();
-    rowMeta.addValueMeta( new ValueMetaString( messageField ) );
-    rowMeta.addValueMeta( new ValueMetaString( destinationField ) );
-    return rowMeta;
+  public String getConnectionType() {
+    return connectionType;
+  }
+
+  public String getConnectionUrl() {
+    return connectionType.equals( ACTIVEMQ.name() ) ? amqUrl : ibmUrl;
+  }
+
+  public String getDestinationName() {
+    return destinationName;
+  }
+
+  public String getDestinationType() {
+    return destinationType;
   }
 }

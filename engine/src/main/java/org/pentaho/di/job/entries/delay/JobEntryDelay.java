@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -159,9 +159,9 @@ public class JobEntryDelay extends JobEntryBase implements Cloneable, JobEntryIn
 
     try {
       // starttime (in seconds ,Minutes or Hours)
-      long timeStart = System.currentTimeMillis() / Multiple;
+      double timeStart = (double) System.currentTimeMillis() / (double) Multiple;
 
-      long iMaximumTimeout = Const.toInt( getRealMaximumTimeout(), Const.toInt( DEFAULT_MAXIMUM_TIMEOUT, 0 ) );
+      double iMaximumTimeout = Const.toInt( getRealMaximumTimeout(), Const.toInt( DEFAULT_MAXIMUM_TIMEOUT, 0 ) );
 
       if ( isDetailed() ) {
         logDetailed( BaseMessages.getString( PKG, "JobEntryDelay.LetsWaitFor.Label", iMaximumTimeout, Waitscale ) );
@@ -181,10 +181,10 @@ public class JobEntryDelay extends JobEntryBase implements Cloneable, JobEntryIn
       //
       while ( continueLoop && !parentJob.isStopped() ) {
         // Update Time value
-        long now = System.currentTimeMillis() / Multiple;
+        double now = (double) System.currentTimeMillis() / (double) Multiple;
 
         // Let's check the limit time
-        if ( ( iMaximumTimeout > 0 ) && ( now >= ( timeStart + iMaximumTimeout ) ) ) {
+        if ( ( iMaximumTimeout >= 0 ) && ( now >= ( timeStart + iMaximumTimeout ) ) ) {
           // We have reached the time limit
           if ( log.isDetailed() ) {
             logDetailed( BaseMessages.getString( PKG, "JobEntryDelay.WaitTimeIsElapsed.Label" ) );
@@ -199,6 +199,10 @@ public class JobEntryDelay extends JobEntryBase implements Cloneable, JobEntryIn
       // We get an exception
       result.setResult( false );
       logError( "Error  : " + e.getMessage() );
+
+      if ( Thread.currentThread().isInterrupted() ) {
+        Thread.currentThread().interrupt();
+      }
     }
 
     return result;

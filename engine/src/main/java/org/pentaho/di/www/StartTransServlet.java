@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -43,6 +43,8 @@ import org.pentaho.di.core.logging.SimpleLoggingObject;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
+import org.pentaho.di.trans.TransConfiguration;
+import org.pentaho.di.trans.TransExecutionConfiguration;
 import org.pentaho.di.www.cache.CarteStatusCache;
 
 
@@ -208,9 +210,28 @@ public class StartTransServlet extends BaseHttpServlet implements CartePluginInt
         trans = getTransformationMap().getTransformation( entry );
       }
 
+      try {
+        getTransformationMap().deallocateServerSocketPorts( transName, id );
+      } catch ( Exception e ) {
+        // nothing to do
+      }
+
       if ( trans != null ) {
+        TransConfiguration transConfiguration = getTransformationMap().getConfiguration( entry );
+        if ( transConfiguration != null ) {
+          TransExecutionConfiguration executionConfiguration = transConfiguration.getTransExecutionConfiguration();
+          // Set the appropriate logging, variables, arguments, replay date, ...
+          // etc.
+          trans.setArguments( executionConfiguration.getArgumentStrings() );
+          trans.setReplayDate( executionConfiguration.getReplayDate() );
+          trans.setSafeModeEnabled( executionConfiguration.isSafeModeEnabled() );
+          trans.setGatheringMetrics( executionConfiguration.isGatheringMetrics() );
+          trans.injectVariables( executionConfiguration.getVariables() );
+          trans.setPreviousResult( executionConfiguration.getPreviousResult() );
+        }
 
         cache.remove( trans.getLogChannelId() );
+        trans.cleanup();
 
         // Discard old log lines from old transformation runs
         //
@@ -245,6 +266,7 @@ public class StartTransServlet extends BaseHttpServlet implements CartePluginInt
           out.println( "<a href=\""
             + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">"
             + BaseMessages.getString( PKG, "TransStatusServlet.BackToStatusPage" ) + "</a><p>" );
+          response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
         }
       }
     } catch ( Exception ex ) {
@@ -256,6 +278,7 @@ public class StartTransServlet extends BaseHttpServlet implements CartePluginInt
         out.println( "<pre>" );
         out.println( Encode.forHtml( Const.getStackTracker( ex ) ) );
         out.println( "</pre>" );
+        response.setStatus( HttpServletResponse.SC_BAD_REQUEST );
       }
     }
 

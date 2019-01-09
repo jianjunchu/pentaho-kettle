@@ -114,24 +114,27 @@ public class BaseStreamStep extends BaseStep {
     Preconditions.checkNotNull( source );
     Preconditions.checkNotNull( window );
 
-    source.open();
+    try {
+      source.open();
 
-    bufferStream().forEach( result -> {
-      if ( result.isSafeStop() ) {
-        getTrans().safeStop();
-      }
+      bufferStream().forEach( result -> {
+        if ( result.isSafeStop() ) {
+          getTrans().safeStop();
+        }
 
-      putRows( result.getRows() );
-    } );
-    super.setOutputDone();
+        putRows( result.getRows() );
+      } );
+      super.setOutputDone();
 
-    // Needed for when an Abort Step is used.
-    source.close();
+    } finally {
+      // Needed for when an Abort Step is used.
+      source.close();
+    }
     return false;
   }
 
   private Iterable<Result> bufferStream() {
-    return window.buffer( source.observable() );
+    return window.buffer( source.flowable() );
   }
 
   @Override
@@ -186,6 +189,14 @@ public class BaseStreamStep extends BaseStep {
       return Long.parseLong( variablizedStepMeta.getBatchDuration() );
     } catch ( NumberFormatException nfe ) {
       return 5000L;
+    }
+  }
+
+  protected int getParallelism() {
+    try {
+      return Integer.parseInt( variablizedStepMeta.getParallelism() );
+    } catch ( NumberFormatException nfe ) {
+      return 1;
     }
   }
 

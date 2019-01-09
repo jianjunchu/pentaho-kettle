@@ -22,12 +22,6 @@
 
 package org.pentaho.di.ui.trans.steps.synchronizeaftermerge;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -57,7 +51,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.Props;
 import org.pentaho.di.core.SQLStatement;
 import org.pentaho.di.core.SourceToTargetMapping;
@@ -66,6 +59,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.BaseStepMeta;
@@ -84,6 +78,12 @@ import org.pentaho.di.ui.core.widget.TableView;
 import org.pentaho.di.ui.core.widget.TextVar;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.di.ui.trans.step.TableItemInsertListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SynchronizeAfterMergeDialog extends BaseStepDialog implements StepDialogInterface {
   private static Class<?> PKG = SynchronizeAfterMergeMeta.class; // for i18n purposes, needed by Translator2!!
@@ -110,7 +110,7 @@ public class SynchronizeAfterMergeDialog extends BaseStepDialog implements StepD
   private FormData fdlReturn, fdReturn;
 
   private Label wlCommit;
-  private Text wCommit;
+  private TextVar wCommit;
   private FormData fdlCommit, fdCommit;
 
   private Button wGetLU;
@@ -335,7 +335,8 @@ public class SynchronizeAfterMergeDialog extends BaseStepDialog implements StepD
     fdlCommit.top = new FormAttachment( wTable, margin );
     fdlCommit.right = new FormAttachment( middle, -margin );
     wlCommit.setLayoutData( fdlCommit );
-    wCommit = new Text( wGeneralComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+
+    wCommit = new TextVar( transMeta, wGeneralComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
     props.setLook( wCommit );
     wCommit.addModifyListener( lsMod );
     fdCommit = new FormData();
@@ -1064,7 +1065,7 @@ public class SynchronizeAfterMergeDialog extends BaseStepDialog implements StepD
       logDebug( BaseMessages.getString( PKG, "SynchronizeAfterMergeDialog.Log.GettingKeyInfo" ) );
     }
 
-    wCommit.setText( "" + input.getCommitSize() );
+    wCommit.setText( input.getCommitSize() );
     wTablenameInField.setSelection( input.istablenameInField() );
     if ( input.gettablenameField() != null ) {
       wTableField.setText( input.gettablenameField() );
@@ -1153,7 +1154,7 @@ public class SynchronizeAfterMergeDialog extends BaseStepDialog implements StepD
 
     inf.allocate( nrkeys, nrfields );
 
-    inf.setCommitSize( Const.toInt( wCommit.getText(), 0 ) );
+    inf.setCommitSize( wCommit.getText() );
     inf.settablenameInField( wTablenameInField.getSelection() );
     inf.settablenameField( wTableField.getText() );
     inf.setUseBatchUpdate( wBatch.getSelection() );
