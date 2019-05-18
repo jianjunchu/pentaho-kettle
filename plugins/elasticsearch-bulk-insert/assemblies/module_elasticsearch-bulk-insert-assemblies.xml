@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_elasticsearch-bulk-insert-assemblies" default="compile.module.elasticsearch-bulk-insert-assemblies">
+  <dirname property="module.elasticsearch-bulk-insert-assemblies.basedir" file="${ant.file.module_elasticsearch-bulk-insert-assemblies}"/>
+  
+  <property name="module.jdk.home.elasticsearch-bulk-insert-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.elasticsearch-bulk-insert-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.elasticsearch-bulk-insert-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.elasticsearch-bulk-insert-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="elasticsearch-bulk-insert-assemblies.output.dir" value="${module.elasticsearch-bulk-insert-assemblies.basedir}/target/classes"/>
+  <property name="elasticsearch-bulk-insert-assemblies.testoutput.dir" value="${module.elasticsearch-bulk-insert-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="elasticsearch-bulk-insert-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="elasticsearch-bulk-insert-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.elasticsearch-bulk-insert-assemblies}"/>
+  </path>
+  
+  <path id="elasticsearch-bulk-insert-assemblies.runtime.production.module.classpath">
+    <pathelement location="${elasticsearch-bulk-insert-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="elasticsearch-bulk-insert-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.elasticsearch-bulk-insert-assemblies}"/>
+    <pathelement location="${elasticsearch-bulk-insert-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="elasticsearch-bulk-insert-assemblies.runtime.module.classpath">
+    <pathelement location="${elasticsearch-bulk-insert-assemblies.testoutput.dir}"/>
+    <pathelement location="${elasticsearch-bulk-insert-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.elasticsearch-bulk-insert-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.elasticsearch-bulk-insert-assemblies">
+    <patternset refid="excluded.from.module.elasticsearch-bulk-insert-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.elasticsearch-bulk-insert-assemblies" depends="compile.module.elasticsearch-bulk-insert-assemblies.production,compile.module.elasticsearch-bulk-insert-assemblies.tests" description="Compile module elasticsearch-bulk-insert-assemblies"/>
+  
+  <target name="compile.module.elasticsearch-bulk-insert-assemblies.production" depends="register.custom.compilers" description="Compile module elasticsearch-bulk-insert-assemblies; production classes"/>
+  
+  <target name="compile.module.elasticsearch-bulk-insert-assemblies.tests" depends="register.custom.compilers,compile.module.elasticsearch-bulk-insert-assemblies.production" description="compile module elasticsearch-bulk-insert-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.elasticsearch-bulk-insert-assemblies" description="cleanup module">
+    <delete dir="${elasticsearch-bulk-insert-assemblies.output.dir}"/>
+    <delete dir="${elasticsearch-bulk-insert-assemblies.testoutput.dir}"/>
+  </target>
+</project>

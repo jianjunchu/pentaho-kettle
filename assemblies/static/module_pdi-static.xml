@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-static" default="compile.module.pdi-static">
+  <dirname property="module.pdi-static.basedir" file="${ant.file.module_pdi-static}"/>
+  
+  <property name="module.jdk.home.pdi-static" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-static" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-static" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-static" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-static.output.dir" value="${module.pdi-static.basedir}/target/classes"/>
+  <property name="pdi-static.testoutput.dir" value="${module.pdi-static.basedir}/target/test-classes"/>
+  
+  <path id="pdi-static.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-static.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-static}"/>
+    <pathelement location="${kettle-ui-swt.output.dir}"/>
+  </path>
+  
+  <path id="pdi-static.runtime.production.module.classpath">
+    <pathelement location="${pdi-static.output.dir}"/>
+    <path refid="kettle-ui-swt.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="pdi-static.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-static}"/>
+    <pathelement location="${pdi-static.output.dir}"/>
+    <pathelement location="${kettle-ui-swt.testoutput.dir}"/>
+    <pathelement location="${kettle-ui-swt.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-static.runtime.module.classpath">
+    <pathelement location="${pdi-static.testoutput.dir}"/>
+    <pathelement location="${pdi-static.output.dir}"/>
+    <path refid="kettle-ui-swt.runtime.module.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-static">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-static">
+    <patternset refid="excluded.from.module.pdi-static"/>
+  </patternset>
+  
+  <path id="pdi-static.module.sourcepath">
+    <dirset dir="${module.pdi-static.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pdi-static" depends="compile.module.pdi-static.production,compile.module.pdi-static.tests" description="Compile module pdi-static"/>
+  
+  <target name="compile.module.pdi-static.production" depends="register.custom.compilers,compile.module.kettle-ui-swt" description="Compile module pdi-static; production classes">
+    <mkdir dir="${pdi-static.output.dir}"/>
+    <javac2 destdir="${pdi-static.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pdi-static}/javac">
+      <compilerarg line="${compiler.args.pdi-static}"/>
+      <bootclasspath refid="pdi-static.module.bootclasspath"/>
+      <classpath refid="pdi-static.module.production.classpath"/>
+      <src refid="pdi-static.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pdi-static"/>
+    </javac2>
+    
+    <copy todir="${pdi-static.output.dir}">
+      <fileset dir="${module.pdi-static.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pdi-static.tests" depends="register.custom.compilers,compile.module.pdi-static.production" description="compile module pdi-static; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-static" description="cleanup module">
+    <delete dir="${pdi-static.output.dir}"/>
+    <delete dir="${pdi-static.testoutput.dir}"/>
+  </target>
+</project>

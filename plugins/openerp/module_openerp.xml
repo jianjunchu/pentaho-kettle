@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_openerp" default="compile.module.openerp">
+  <dirname property="module.openerp.basedir" file="${ant.file.module_openerp}"/>
+  
+  <property name="module.jdk.home.openerp" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.openerp" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.openerp" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.openerp" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="openerp.output.dir" value="${module.openerp.basedir}/target/classes"/>
+  <property name="openerp.testoutput.dir" value="${module.openerp.basedir}/target/test-classes"/>
+  
+  <path id="openerp.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="openerp.module.production.classpath">
+    <path refid="${module.jdk.classpath.openerp}"/>
+  </path>
+  
+  <path id="openerp.runtime.production.module.classpath">
+    <pathelement location="${openerp.output.dir}"/>
+  </path>
+  
+  <path id="openerp.module.classpath">
+    <path refid="${module.jdk.classpath.openerp}"/>
+    <pathelement location="${openerp.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="openerp.runtime.module.classpath">
+    <pathelement location="${openerp.testoutput.dir}"/>
+    <pathelement location="${openerp.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.openerp">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.openerp">
+    <patternset refid="excluded.from.module.openerp"/>
+  </patternset>
+  
+  
+  <target name="compile.module.openerp" depends="compile.module.openerp.production,compile.module.openerp.tests" description="Compile module openerp"/>
+  
+  <target name="compile.module.openerp.production" depends="register.custom.compilers" description="Compile module openerp; production classes"/>
+  
+  <target name="compile.module.openerp.tests" depends="register.custom.compilers,compile.module.openerp.production" description="compile module openerp; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.openerp" description="cleanup module">
+    <delete dir="${openerp.output.dir}"/>
+    <delete dir="${openerp.testoutput.dir}"/>
+  </target>
+</project>

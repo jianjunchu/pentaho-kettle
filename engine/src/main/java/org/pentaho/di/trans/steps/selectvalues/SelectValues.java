@@ -36,6 +36,7 @@ import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowDataUtil;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.util.FunctionUtil;
 import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
@@ -57,6 +58,7 @@ public class SelectValues extends BaseStep implements StepInterface {
 
   private SelectValuesMeta meta;
   private SelectValuesData data;
+  private FunctionUtil functionUtil;
 
   public SelectValues( StepMeta stepMeta, StepDataInterface stepDataInterface, int copyNr, TransMeta transMeta,
                        Trans trans ) {
@@ -152,11 +154,13 @@ public class SelectValues extends BaseStep implements StepInterface {
 
     // Get the field values
     //
-    for ( int idx : data.fieldnrs ) {
+    for ( int i=0;i< data.fieldnrs.length;i++) {
       // Normally this can't happen, except when streams are mixed with different
       // number of fields.
       //
+      int idx = data.fieldnrs[i];
       if ( idx < rowMeta.size() ) {
+
         ValueMetaInterface valueMeta = rowMeta.getValueMeta( idx );
 
         // TODO: Clone might be a 'bit' expensive as it is only needed in case you want to copy a single field to 2 or
@@ -165,7 +169,28 @@ public class SelectValues extends BaseStep implements StepInterface {
         // Perhaps we can consider the requirements for cloning at init(), store it in a boolean[] and just consider
         // this at runtime
         //
-        outputData[ outputIndex++ ] = valueMeta.cloneValueData( rowData[ idx ] );
+        //outputData[ outputIndex++ ] = valueMeta.cloneValueData( rowData[ idx ] );
+        Object o = null;
+        if(Const.isEmpty(meta.getSelectFields()[i].getFunctionExpession()) ){
+          o = valueMeta.cloneValueData(rowData[idx]);
+        } else{
+          try {
+            o= functionUtil.eval(rowMeta.getFieldNames(),rowData,meta.getSelectFields()[i].getFunctionExpession());
+            //o= functionUtil.eval(valueMeta.getName(),rowData[idx],meta.getFunctionExpession()[i]);
+            //o  = FunctionUtil.execStatement(meta.getFunctionExpession()[i],rowMeta,rowData);
+          } catch (Exception e) {
+            e.printStackTrace();
+            throw new KettleValueException("function execut exception :" + e.getMessage());
+          }
+        }
+        if(!Const.isEmpty(data.padChar[i]) && valueMeta.isString()){
+          o =  Const.Rpad(String.valueOf(o),data.padChar[idx],valueMeta.getLength());
+
+        }
+        if(valueMeta.isString() && o ==null ){
+          o = "";
+        }
+        outputData[outputIndex++] =o;
       } else {
         if ( log.isDetailed() ) {
           logDetailed( BaseMessages.getString( PKG, "SelectValues.Log.MixingStreamWithDifferentFields" ) );
@@ -366,6 +391,12 @@ public class SelectValues extends BaseStep implements StepInterface {
       meta.getDeleteFields( data.deselectRowMeta );
       data.metadataRowMeta = data.deselectRowMeta.clone();
       meta.getMetadataFields( data.metadataRowMeta, getStepname(), this );
+
+      // padding char
+      data.padChar = new String[meta.getSelectFields().length];
+      for (int i = 0; i < meta.getSelectFields().length; i++) {
+        data.padChar[i] = meta.getSelectFields()[i].getPadChar();
+      }
     }
 
     try {
@@ -419,7 +450,7 @@ public class SelectValues extends BaseStep implements StepInterface {
   public boolean init( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (SelectValuesMeta) smi;
     data = (SelectValuesData) sdi;
-
+    functionUtil= new FunctionUtil(log);
     if ( super.init( smi, sdi ) ) {
       data.firstselect = true;
       data.firstdeselect = true;

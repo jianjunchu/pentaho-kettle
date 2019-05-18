@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_ms-access" default="compile.module.ms-access">
+  <dirname property="module.ms-access.basedir" file="${ant.file.module_ms-access}"/>
+  
+  <property name="module.jdk.home.ms-access" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ms-access" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ms-access" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ms-access" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="ms-access.output.dir" value="${module.ms-access.basedir}/target/classes"/>
+  <property name="ms-access.testoutput.dir" value="${module.ms-access.basedir}/target/test-classes"/>
+  
+  <path id="ms-access.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ms-access.module.production.classpath">
+    <path refid="${module.jdk.classpath.ms-access}"/>
+  </path>
+  
+  <path id="ms-access.runtime.production.module.classpath">
+    <pathelement location="${ms-access.output.dir}"/>
+  </path>
+  
+  <path id="ms-access.module.classpath">
+    <path refid="${module.jdk.classpath.ms-access}"/>
+    <pathelement location="${ms-access.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="ms-access.runtime.module.classpath">
+    <pathelement location="${ms-access.testoutput.dir}"/>
+    <pathelement location="${ms-access.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ms-access">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ms-access">
+    <patternset refid="excluded.from.module.ms-access"/>
+  </patternset>
+  
+  
+  <target name="compile.module.ms-access" depends="compile.module.ms-access.production,compile.module.ms-access.tests" description="Compile module ms-access"/>
+  
+  <target name="compile.module.ms-access.production" depends="register.custom.compilers" description="Compile module ms-access; production classes"/>
+  
+  <target name="compile.module.ms-access.tests" depends="register.custom.compilers,compile.module.ms-access.production" description="compile module ms-access; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ms-access" description="cleanup module">
+    <delete dir="${ms-access.output.dir}"/>
+    <delete dir="${ms-access.testoutput.dir}"/>
+  </target>
+</project>

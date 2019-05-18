@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-plugins_(2)_(org.pentaho.di.plugins)" default="compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins)">
+  <dirname property="module.pdi-plugins_(2)_(org.pentaho.di.plugins).basedir" file="${ant.file.module_pdi-plugins_(2)_(org.pentaho.di.plugins)}"/>
+  
+  <property name="module.jdk.home.pdi-plugins_(2)_(org.pentaho.di.plugins)" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-plugins_(2)_(org.pentaho.di.plugins)" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-plugins_(2)_(org.pentaho.di.plugins)" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-plugins_(2)_(org.pentaho.di.plugins)" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-plugins_(2)_(org.pentaho.di.plugins).output.dir" value="${module.pdi-plugins_(2)_(org.pentaho.di.plugins).basedir}/target/classes"/>
+  <property name="pdi-plugins_(2)_(org.pentaho.di.plugins).testoutput.dir" value="${module.pdi-plugins_(2)_(org.pentaho.di.plugins).basedir}/target/test-classes"/>
+  
+  <path id="pdi-plugins_(2)_(org.pentaho.di.plugins).module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-plugins_(2)_(org.pentaho.di.plugins).module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-plugins_(2)_(org.pentaho.di.plugins)}"/>
+  </path>
+  
+  <path id="pdi-plugins_(2)_(org.pentaho.di.plugins).runtime.production.module.classpath">
+    <pathelement location="${pdi-plugins_(2)_(org.pentaho.di.plugins).output.dir}"/>
+  </path>
+  
+  <path id="pdi-plugins_(2)_(org.pentaho.di.plugins).module.classpath">
+    <path refid="${module.jdk.classpath.pdi-plugins_(2)_(org.pentaho.di.plugins)}"/>
+    <pathelement location="${pdi-plugins_(2)_(org.pentaho.di.plugins).output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-plugins_(2)_(org.pentaho.di.plugins).runtime.module.classpath">
+    <pathelement location="${pdi-plugins_(2)_(org.pentaho.di.plugins).testoutput.dir}"/>
+    <pathelement location="${pdi-plugins_(2)_(org.pentaho.di.plugins).output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-plugins_(2)_(org.pentaho.di.plugins)">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-plugins_(2)_(org.pentaho.di.plugins)">
+    <patternset refid="excluded.from.module.pdi-plugins_(2)_(org.pentaho.di.plugins)"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins)" depends="compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins).production,compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins).tests" description="Compile module pdi-plugins (2) (org.pentaho.di.plugins)"/>
+  
+  <target name="compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins).production" depends="register.custom.compilers" description="Compile module pdi-plugins (2) (org.pentaho.di.plugins); production classes"/>
+  
+  <target name="compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins).tests" depends="register.custom.compilers,compile.module.pdi-plugins_(2)_(org.pentaho.di.plugins).production" description="compile module pdi-plugins (2) (org.pentaho.di.plugins); test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-plugins_(2)_(org.pentaho.di.plugins)" description="cleanup module">
+    <delete dir="${pdi-plugins_(2)_(org.pentaho.di.plugins).output.dir}"/>
+    <delete dir="${pdi-plugins_(2)_(org.pentaho.di.plugins).testoutput.dir}"/>
+  </target>
+</project>

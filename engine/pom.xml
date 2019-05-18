@@ -98,6 +98,12 @@
   <dependencies>
 
     <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>QLExpress</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.kingbase</groupId>
       <artifactId>etl_platform</artifactId>
       <version>1.0.7</version>

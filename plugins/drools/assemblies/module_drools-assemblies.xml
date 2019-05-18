@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_drools-assemblies" default="compile.module.drools-assemblies">
+  <dirname property="module.drools-assemblies.basedir" file="${ant.file.module_drools-assemblies}"/>
+  
+  <property name="module.jdk.home.drools-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.drools-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.drools-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.drools-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="drools-assemblies.output.dir" value="${module.drools-assemblies.basedir}/target/classes"/>
+  <property name="drools-assemblies.testoutput.dir" value="${module.drools-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="drools-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="drools-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.drools-assemblies}"/>
+  </path>
+  
+  <path id="drools-assemblies.runtime.production.module.classpath">
+    <pathelement location="${drools-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="drools-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.drools-assemblies}"/>
+    <pathelement location="${drools-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="drools-assemblies.runtime.module.classpath">
+    <pathelement location="${drools-assemblies.testoutput.dir}"/>
+    <pathelement location="${drools-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.drools-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.drools-assemblies">
+    <patternset refid="excluded.from.module.drools-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.drools-assemblies" depends="compile.module.drools-assemblies.production,compile.module.drools-assemblies.tests" description="Compile module drools-assemblies"/>
+  
+  <target name="compile.module.drools-assemblies.production" depends="register.custom.compilers" description="Compile module drools-assemblies; production classes"/>
+  
+  <target name="compile.module.drools-assemblies.tests" depends="register.custom.compilers,compile.module.drools-assemblies.production" description="compile module drools-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.drools-assemblies" description="cleanup module">
+    <delete dir="${drools-assemblies.output.dir}"/>
+    <delete dir="${drools-assemblies.testoutput.dir}"/>
+  </target>
+</project>

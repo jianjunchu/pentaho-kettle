@@ -6,7 +6,9 @@
   <attribute id="FIELD_RENAME"> <xmlcode>rename</xmlcode> <repcode>field_rename</repcode> <description>SelectValuesDialog.ColumnInfo.RenameTo</description> <tooltip/> <valuetype>String</valuetype> <parentid>FIELD</parentid> </attribute>
   <attribute id="FIELD_LENGTH"> <xmlcode>length</xmlcode> <repcode>field_length</repcode> <description>SelectValuesDialog.ColumnInfo.Length</description> <tooltip/> <valuetype>String</valuetype> <parentid>FIELD</parentid> </attribute>
   <attribute id="FIELD_PRECISION"> <xmlcode>precision</xmlcode> <repcode>field_precision</repcode> <description>SelectValuesDialog.ColumnInfo.Precision</description> <tooltip/> <valuetype>String</valuetype> <parentid>FIELD</parentid> </attribute>
-  
+  <attribute id="FIELD_FUNCTION"> <xmlcode>function</xmlcode> <repcode>field_function</repcode> <description>SelectValuesDialog.ColumnInfo.FieldFunction</description> <tooltip/> <valuetype>String</valuetype> <parentid>FIELD</parentid> </attribute>
+  <attribute id="FIELD_PADCHAR"> <xmlcode>pad_char</xmlcode> <repcode>field_pad_char</repcode> <description>SelectValuesDialog.ColumnInfo.CharPad</description> <tooltip/> <valuetype>String</valuetype> <parentid>FIELD</parentid> </attribute>
+
   <attribute id="SELECT_UNSPECIFIED"> <xmlcode>select_unspecified</xmlcode> <repcode/>  <description>SelectValuesDialog.Unspecified.Label</description> <tooltip/> <valuetype>Boolean</valuetype> <parentid/> </attribute>
   
   <attribute id="REMOVES"> <xmlcode>removes</xmlcode> <repcode/>  <description>CsvInputDialog.Removes.Label</description> <tooltip/> <valuetype>None</valuetype> <parentid/> </attribute>

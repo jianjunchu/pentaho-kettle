@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_openerp-assemblies" default="compile.module.openerp-assemblies">
+  <dirname property="module.openerp-assemblies.basedir" file="${ant.file.module_openerp-assemblies}"/>
+  
+  <property name="module.jdk.home.openerp-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.openerp-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.openerp-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.openerp-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="openerp-assemblies.output.dir" value="${module.openerp-assemblies.basedir}/target/classes"/>
+  <property name="openerp-assemblies.testoutput.dir" value="${module.openerp-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="openerp-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="openerp-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.openerp-assemblies}"/>
+  </path>
+  
+  <path id="openerp-assemblies.runtime.production.module.classpath">
+    <pathelement location="${openerp-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="openerp-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.openerp-assemblies}"/>
+    <pathelement location="${openerp-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="openerp-assemblies.runtime.module.classpath">
+    <pathelement location="${openerp-assemblies.testoutput.dir}"/>
+    <pathelement location="${openerp-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.openerp-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.openerp-assemblies">
+    <patternset refid="excluded.from.module.openerp-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.openerp-assemblies" depends="compile.module.openerp-assemblies.production,compile.module.openerp-assemblies.tests" description="Compile module openerp-assemblies"/>
+  
+  <target name="compile.module.openerp-assemblies.production" depends="register.custom.compilers" description="Compile module openerp-assemblies; production classes"/>
+  
+  <target name="compile.module.openerp-assemblies.tests" depends="register.custom.compilers,compile.module.openerp-assemblies.production" description="compile module openerp-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.openerp-assemblies" description="cleanup module">
+    <delete dir="${openerp-assemblies.output.dir}"/>
+    <delete dir="${openerp-assemblies.testoutput.dir}"/>
+  </target>
+</project>

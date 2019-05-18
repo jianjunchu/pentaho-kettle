@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_repositories" default="compile.module.repositories">
+  <dirname property="module.repositories.basedir" file="${ant.file.module_repositories}"/>
+  
+  <property name="module.jdk.home.repositories" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.repositories" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.repositories" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.repositories" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="repositories.output.dir" value="${module.repositories.basedir}/target/classes"/>
+  <property name="repositories.testoutput.dir" value="${module.repositories.basedir}/target/test-classes"/>
+  
+  <path id="repositories.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="repositories.module.production.classpath">
+    <path refid="${module.jdk.classpath.repositories}"/>
+  </path>
+  
+  <path id="repositories.runtime.production.module.classpath">
+    <pathelement location="${repositories.output.dir}"/>
+  </path>
+  
+  <path id="repositories.module.classpath">
+    <path refid="${module.jdk.classpath.repositories}"/>
+    <pathelement location="${repositories.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="repositories.runtime.module.classpath">
+    <pathelement location="${repositories.testoutput.dir}"/>
+    <pathelement location="${repositories.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.repositories">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.repositories">
+    <patternset refid="excluded.from.module.repositories"/>
+  </patternset>
+  
+  
+  <target name="compile.module.repositories" depends="compile.module.repositories.production,compile.module.repositories.tests" description="Compile module repositories"/>
+  
+  <target name="compile.module.repositories.production" depends="register.custom.compilers" description="Compile module repositories; production classes"/>
+  
+  <target name="compile.module.repositories.tests" depends="register.custom.compilers,compile.module.repositories.production" description="compile module repositories; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.repositories" description="cleanup module">
+    <delete dir="${repositories.output.dir}"/>
+    <delete dir="${repositories.testoutput.dir}"/>
+  </target>
+</project>

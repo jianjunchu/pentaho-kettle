@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_log4j-assemblies" default="compile.module.log4j-assemblies">
+  <dirname property="module.log4j-assemblies.basedir" file="${ant.file.module_log4j-assemblies}"/>
+  
+  <property name="module.jdk.home.log4j-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.log4j-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.log4j-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.log4j-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="log4j-assemblies.output.dir" value="${module.log4j-assemblies.basedir}/target/classes"/>
+  <property name="log4j-assemblies.testoutput.dir" value="${module.log4j-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="log4j-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="log4j-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.log4j-assemblies}"/>
+  </path>
+  
+  <path id="log4j-assemblies.runtime.production.module.classpath">
+    <pathelement location="${log4j-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="log4j-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.log4j-assemblies}"/>
+    <pathelement location="${log4j-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="log4j-assemblies.runtime.module.classpath">
+    <pathelement location="${log4j-assemblies.testoutput.dir}"/>
+    <pathelement location="${log4j-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.log4j-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.log4j-assemblies">
+    <patternset refid="excluded.from.module.log4j-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.log4j-assemblies" depends="compile.module.log4j-assemblies.production,compile.module.log4j-assemblies.tests" description="Compile module log4j-assemblies"/>
+  
+  <target name="compile.module.log4j-assemblies.production" depends="register.custom.compilers" description="Compile module log4j-assemblies; production classes"/>
+  
+  <target name="compile.module.log4j-assemblies.tests" depends="register.custom.compilers,compile.module.log4j-assemblies.production" description="compile module log4j-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.log4j-assemblies" description="cleanup module">
+    <delete dir="${log4j-assemblies.output.dir}"/>
+    <delete dir="${log4j-assemblies.testoutput.dir}"/>
+  </target>
+</project>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-ce" default="compile.module.pdi-ce">
+  <dirname property="module.pdi-ce.basedir" file="${ant.file.module_pdi-ce}"/>
+  
+  <property name="module.jdk.home.pdi-ce" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-ce" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-ce" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-ce" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-ce.output.dir" value="${module.pdi-ce.basedir}/target/classes"/>
+  <property name="pdi-ce.testoutput.dir" value="${module.pdi-ce.basedir}/target/test-classes"/>
+  
+  <path id="pdi-ce.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-ce.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-ce}"/>
+    <path refid="library.maven:_pentaho:pentaho-application-launcher:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.6.classpath"/>
+  </path>
+  
+  <path id="pdi-ce.runtime.production.module.classpath">
+    <pathelement location="${pdi-ce.output.dir}"/>
+    <path refid="library.maven:_pentaho:pentaho-application-launcher:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.6.classpath"/>
+  </path>
+  
+  <path id="pdi-ce.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-ce}"/>
+    <pathelement location="${pdi-ce.output.dir}"/>
+    <path refid="library.maven:_pentaho:pentaho-application-launcher:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-ce.runtime.module.classpath">
+    <pathelement location="${pdi-ce.testoutput.dir}"/>
+    <pathelement location="${pdi-ce.output.dir}"/>
+    <path refid="library.maven:_pentaho:pentaho-application-launcher:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.3.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-ce">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-ce">
+    <patternset refid="excluded.from.module.pdi-ce"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pdi-ce" depends="compile.module.pdi-ce.production,compile.module.pdi-ce.tests" description="Compile module pdi-ce"/>
+  
+  <target name="compile.module.pdi-ce.production" depends="register.custom.compilers" description="Compile module pdi-ce; production classes"/>
+  
+  <target name="compile.module.pdi-ce.tests" depends="register.custom.compilers,compile.module.pdi-ce.production" description="compile module pdi-ce; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-ce" description="cleanup module">
+    <delete dir="${pdi-ce.output.dir}"/>
+    <delete dir="${pdi-ce.testoutput.dir}"/>
+  </target>
+</project>

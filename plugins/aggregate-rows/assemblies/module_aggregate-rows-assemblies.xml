@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_aggregate-rows-assemblies" default="compile.module.aggregate-rows-assemblies">
+  <dirname property="module.aggregate-rows-assemblies.basedir" file="${ant.file.module_aggregate-rows-assemblies}"/>
+  
+  <property name="module.jdk.home.aggregate-rows-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.aggregate-rows-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.aggregate-rows-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.aggregate-rows-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="aggregate-rows-assemblies.output.dir" value="${module.aggregate-rows-assemblies.basedir}/target/classes"/>
+  <property name="aggregate-rows-assemblies.testoutput.dir" value="${module.aggregate-rows-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="aggregate-rows-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="aggregate-rows-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.aggregate-rows-assemblies}"/>
+  </path>
+  
+  <path id="aggregate-rows-assemblies.runtime.production.module.classpath">
+    <pathelement location="${aggregate-rows-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="aggregate-rows-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.aggregate-rows-assemblies}"/>
+    <pathelement location="${aggregate-rows-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="aggregate-rows-assemblies.runtime.module.classpath">
+    <pathelement location="${aggregate-rows-assemblies.testoutput.dir}"/>
+    <pathelement location="${aggregate-rows-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.aggregate-rows-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.aggregate-rows-assemblies">
+    <patternset refid="excluded.from.module.aggregate-rows-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.aggregate-rows-assemblies" depends="compile.module.aggregate-rows-assemblies.production,compile.module.aggregate-rows-assemblies.tests" description="Compile module aggregate-rows-assemblies"/>
+  
+  <target name="compile.module.aggregate-rows-assemblies.production" depends="register.custom.compilers" description="Compile module aggregate-rows-assemblies; production classes"/>
+  
+  <target name="compile.module.aggregate-rows-assemblies.tests" depends="register.custom.compilers,compile.module.aggregate-rows-assemblies.production" description="compile module aggregate-rows-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.aggregate-rows-assemblies" description="cleanup module">
+    <delete dir="${aggregate-rows-assemblies.output.dir}"/>
+    <delete dir="${aggregate-rows-assemblies.testoutput.dir}"/>
+  </target>
+</project>

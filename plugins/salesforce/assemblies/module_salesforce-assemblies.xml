@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_salesforce-assemblies" default="compile.module.salesforce-assemblies">
+  <dirname property="module.salesforce-assemblies.basedir" file="${ant.file.module_salesforce-assemblies}"/>
+  
+  <property name="module.jdk.home.salesforce-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.salesforce-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.salesforce-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.salesforce-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="salesforce-assemblies.output.dir" value="${module.salesforce-assemblies.basedir}/target/classes"/>
+  <property name="salesforce-assemblies.testoutput.dir" value="${module.salesforce-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="salesforce-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="salesforce-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.salesforce-assemblies}"/>
+  </path>
+  
+  <path id="salesforce-assemblies.runtime.production.module.classpath">
+    <pathelement location="${salesforce-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="salesforce-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.salesforce-assemblies}"/>
+    <pathelement location="${salesforce-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="salesforce-assemblies.runtime.module.classpath">
+    <pathelement location="${salesforce-assemblies.testoutput.dir}"/>
+    <pathelement location="${salesforce-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.salesforce-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.salesforce-assemblies">
+    <patternset refid="excluded.from.module.salesforce-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.salesforce-assemblies" depends="compile.module.salesforce-assemblies.production,compile.module.salesforce-assemblies.tests" description="Compile module salesforce-assemblies"/>
+  
+  <target name="compile.module.salesforce-assemblies.production" depends="register.custom.compilers" description="Compile module salesforce-assemblies; production classes"/>
+  
+  <target name="compile.module.salesforce-assemblies.tests" depends="register.custom.compilers,compile.module.salesforce-assemblies.production" description="compile module salesforce-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.salesforce-assemblies" description="cleanup module">
+    <delete dir="${salesforce-assemblies.output.dir}"/>
+    <delete dir="${salesforce-assemblies.testoutput.dir}"/>
+  </target>
+</project>

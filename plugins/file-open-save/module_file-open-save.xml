@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_file-open-save" default="compile.module.file-open-save">
+  <dirname property="module.file-open-save.basedir" file="${ant.file.module_file-open-save}"/>
+  
+  <property name="module.jdk.home.file-open-save" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.file-open-save" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.file-open-save" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.file-open-save" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="file-open-save.output.dir" value="${module.file-open-save.basedir}/target/classes"/>
+  <property name="file-open-save.testoutput.dir" value="${module.file-open-save.basedir}/target/test-classes"/>
+  
+  <path id="file-open-save.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="file-open-save.module.production.classpath">
+    <path refid="${module.jdk.classpath.file-open-save}"/>
+  </path>
+  
+  <path id="file-open-save.runtime.production.module.classpath">
+    <pathelement location="${file-open-save.output.dir}"/>
+  </path>
+  
+  <path id="file-open-save.module.classpath">
+    <path refid="${module.jdk.classpath.file-open-save}"/>
+    <pathelement location="${file-open-save.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="file-open-save.runtime.module.classpath">
+    <pathelement location="${file-open-save.testoutput.dir}"/>
+    <pathelement location="${file-open-save.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.file-open-save">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.file-open-save">
+    <patternset refid="excluded.from.module.file-open-save"/>
+  </patternset>
+  
+  
+  <target name="compile.module.file-open-save" depends="compile.module.file-open-save.production,compile.module.file-open-save.tests" description="Compile module file-open-save"/>
+  
+  <target name="compile.module.file-open-save.production" depends="register.custom.compilers" description="Compile module file-open-save; production classes"/>
+  
+  <target name="compile.module.file-open-save.tests" depends="register.custom.compilers,compile.module.file-open-save.production" description="compile module file-open-save; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.file-open-save" description="cleanup module">
+    <delete dir="${file-open-save.output.dir}"/>
+    <delete dir="${file-open-save.testoutput.dir}"/>
+  </target>
+</project>

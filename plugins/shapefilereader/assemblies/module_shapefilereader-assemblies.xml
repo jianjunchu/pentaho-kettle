@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_shapefilereader-assemblies" default="compile.module.shapefilereader-assemblies">
+  <dirname property="module.shapefilereader-assemblies.basedir" file="${ant.file.module_shapefilereader-assemblies}"/>
+  
+  <property name="module.jdk.home.shapefilereader-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.shapefilereader-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.shapefilereader-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.shapefilereader-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="shapefilereader-assemblies.output.dir" value="${module.shapefilereader-assemblies.basedir}/target/classes"/>
+  <property name="shapefilereader-assemblies.testoutput.dir" value="${module.shapefilereader-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="shapefilereader-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="shapefilereader-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.shapefilereader-assemblies}"/>
+  </path>
+  
+  <path id="shapefilereader-assemblies.runtime.production.module.classpath">
+    <pathelement location="${shapefilereader-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="shapefilereader-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.shapefilereader-assemblies}"/>
+    <pathelement location="${shapefilereader-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="shapefilereader-assemblies.runtime.module.classpath">
+    <pathelement location="${shapefilereader-assemblies.testoutput.dir}"/>
+    <pathelement location="${shapefilereader-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.shapefilereader-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.shapefilereader-assemblies">
+    <patternset refid="excluded.from.module.shapefilereader-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.shapefilereader-assemblies" depends="compile.module.shapefilereader-assemblies.production,compile.module.shapefilereader-assemblies.tests" description="Compile module shapefilereader-assemblies"/>
+  
+  <target name="compile.module.shapefilereader-assemblies.production" depends="register.custom.compilers" description="Compile module shapefilereader-assemblies; production classes"/>
+  
+  <target name="compile.module.shapefilereader-assemblies.tests" depends="register.custom.compilers,compile.module.shapefilereader-assemblies.production" description="compile module shapefilereader-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.shapefilereader-assemblies" description="cleanup module">
+    <delete dir="${shapefilereader-assemblies.output.dir}"/>
+    <delete dir="${shapefilereader-assemblies.testoutput.dir}"/>
+  </target>
+</project>

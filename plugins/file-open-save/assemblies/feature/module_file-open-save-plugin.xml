@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_file-open-save-plugin" default="compile.module.file-open-save-plugin">
+  <dirname property="module.file-open-save-plugin.basedir" file="${ant.file.module_file-open-save-plugin}"/>
+  
+  <property name="module.jdk.home.file-open-save-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.file-open-save-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.file-open-save-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.file-open-save-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="file-open-save-plugin.output.dir" value="${module.file-open-save-plugin.basedir}/target/classes"/>
+  <property name="file-open-save-plugin.testoutput.dir" value="${module.file-open-save-plugin.basedir}/target/test-classes"/>
+  
+  <path id="file-open-save-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="file-open-save-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.file-open-save-plugin}"/>
+    <pathelement location="${file-open-save-core.output.dir}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.5.4.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.1.classpath"/>
+  </path>
+  
+  <path id="file-open-save-plugin.runtime.production.module.classpath">
+    <pathelement location="${file-open-save-plugin.output.dir}"/>
+    <path refid="file-open-save-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.5.4.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.1.classpath"/>
+  </path>
+  
+  <path id="file-open-save-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.file-open-save-plugin}"/>
+    <pathelement location="${file-open-save-plugin.output.dir}"/>
+    <pathelement location="${file-open-save-core.testoutput.dir}"/>
+    <pathelement location="${file-open-save-core.output.dir}"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.5.4.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="file-open-save-plugin.runtime.module.classpath">
+    <pathelement location="${file-open-save-plugin.testoutput.dir}"/>
+    <pathelement location="${file-open-save-plugin.output.dir}"/>
+    <path refid="file-open-save-core.runtime.module.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.9.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.5.4.classpath"/>
+    <path refid="library.maven:_com.googlecode.json-simple:json-simple:1.1.1.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.file-open-save-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.file-open-save-plugin">
+    <patternset refid="excluded.from.module.file-open-save-plugin"/>
+  </patternset>
+  
+  
+  <target name="compile.module.file-open-save-plugin" depends="compile.module.file-open-save-plugin.production,compile.module.file-open-save-plugin.tests" description="Compile module file-open-save-plugin"/>
+  
+  <target name="compile.module.file-open-save-plugin.production" depends="register.custom.compilers,compile.module.file-open-save-core" description="Compile module file-open-save-plugin; production classes"/>
+  
+  <target name="compile.module.file-open-save-plugin.tests" depends="register.custom.compilers,compile.module.file-open-save-plugin.production" description="compile module file-open-save-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.file-open-save-plugin" description="cleanup module">
+    <delete dir="${file-open-save-plugin.output.dir}"/>
+    <delete dir="${file-open-save-plugin.testoutput.dir}"/>
+  </target>
+</project>

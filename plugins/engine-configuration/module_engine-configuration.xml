@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_engine-configuration" default="compile.module.engine-configuration">
+  <dirname property="module.engine-configuration.basedir" file="${ant.file.module_engine-configuration}"/>
+  
+  <property name="module.jdk.home.engine-configuration" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.engine-configuration" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.engine-configuration" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.engine-configuration" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="engine-configuration.output.dir" value="${module.engine-configuration.basedir}/target/classes"/>
+  <property name="engine-configuration.testoutput.dir" value="${module.engine-configuration.basedir}/target/test-classes"/>
+  
+  <path id="engine-configuration.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="engine-configuration.module.production.classpath">
+    <path refid="${module.jdk.classpath.engine-configuration}"/>
+  </path>
+  
+  <path id="engine-configuration.runtime.production.module.classpath">
+    <pathelement location="${engine-configuration.output.dir}"/>
+  </path>
+  
+  <path id="engine-configuration.module.classpath">
+    <path refid="${module.jdk.classpath.engine-configuration}"/>
+    <pathelement location="${engine-configuration.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="engine-configuration.runtime.module.classpath">
+    <pathelement location="${engine-configuration.testoutput.dir}"/>
+    <pathelement location="${engine-configuration.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.engine-configuration">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.engine-configuration">
+    <patternset refid="excluded.from.module.engine-configuration"/>
+  </patternset>
+  
+  
+  <target name="compile.module.engine-configuration" depends="compile.module.engine-configuration.production,compile.module.engine-configuration.tests" description="Compile module engine-configuration"/>
+  
+  <target name="compile.module.engine-configuration.production" depends="register.custom.compilers" description="Compile module engine-configuration; production classes"/>
+  
+  <target name="compile.module.engine-configuration.tests" depends="register.custom.compilers,compile.module.engine-configuration.production" description="compile module engine-configuration; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.engine-configuration" description="cleanup module">
+    <delete dir="${engine-configuration.output.dir}"/>
+    <delete dir="${engine-configuration.testoutput.dir}"/>
+  </target>
+</project>

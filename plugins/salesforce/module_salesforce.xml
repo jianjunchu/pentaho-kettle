@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_salesforce" default="compile.module.salesforce">
+  <dirname property="module.salesforce.basedir" file="${ant.file.module_salesforce}"/>
+  
+  <property name="module.jdk.home.salesforce" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.salesforce" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.salesforce" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.salesforce" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="salesforce.output.dir" value="${module.salesforce.basedir}/target/classes"/>
+  <property name="salesforce.testoutput.dir" value="${module.salesforce.basedir}/target/test-classes"/>
+  
+  <path id="salesforce.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="salesforce.module.production.classpath">
+    <path refid="${module.jdk.classpath.salesforce}"/>
+  </path>
+  
+  <path id="salesforce.runtime.production.module.classpath">
+    <pathelement location="${salesforce.output.dir}"/>
+  </path>
+  
+  <path id="salesforce.module.classpath">
+    <path refid="${module.jdk.classpath.salesforce}"/>
+    <pathelement location="${salesforce.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="salesforce.runtime.module.classpath">
+    <pathelement location="${salesforce.testoutput.dir}"/>
+    <pathelement location="${salesforce.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.salesforce">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.salesforce">
+    <patternset refid="excluded.from.module.salesforce"/>
+  </patternset>
+  
+  
+  <target name="compile.module.salesforce" depends="compile.module.salesforce.production,compile.module.salesforce.tests" description="Compile module salesforce"/>
+  
+  <target name="compile.module.salesforce.production" depends="register.custom.compilers" description="Compile module salesforce; production classes"/>
+  
+  <target name="compile.module.salesforce.tests" depends="register.custom.compilers,compile.module.salesforce.production" description="compile module salesforce; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.salesforce" description="cleanup module">
+    <delete dir="${salesforce.output.dir}"/>
+    <delete dir="${salesforce.testoutput.dir}"/>
+  </target>
+</project>

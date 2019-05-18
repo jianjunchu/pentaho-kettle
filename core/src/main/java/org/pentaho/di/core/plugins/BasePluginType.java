@@ -711,7 +711,7 @@ public abstract class BasePluginType implements PluginTypeInterface {
           .map( URL::getFile )
           .collect( Collectors.toList() );
         Annotation annotation = clazz.getAnnotation( pluginType );
-
+        System.out.println(jarFilePlugin.getClassName() );
         handlePluginAnnotation( clazz, annotation, libraries, false, jarFilePlugin.getPluginFolder() );
       } catch ( Exception e ) {
         // Ignore for now, don't know if it's even possible.

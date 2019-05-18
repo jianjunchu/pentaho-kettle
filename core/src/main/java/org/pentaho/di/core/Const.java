@@ -1129,6 +1129,11 @@ public class Const {
    */
   public static final String XML_FILE_KETTLE_IMPORT_RULES = "kettle-import-rules.xml";
 
+  /**
+   * The XML file that contains the list of native import rules
+   */
+  public static final String  XML_FILE_KETTLE_FUNCITONS = "kettle-functions.xml";
+
   private static String[] emptyPaddedSpacesStrings;
 
   /**

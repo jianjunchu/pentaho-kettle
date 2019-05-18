@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-shapefilereader-plugin" default="compile.module.kettle-shapefilereader-plugin">
+  <dirname property="module.kettle-shapefilereader-plugin.basedir" file="${ant.file.module_kettle-shapefilereader-plugin}"/>
+  
+  <property name="module.jdk.home.kettle-shapefilereader-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-shapefilereader-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-shapefilereader-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-shapefilereader-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-shapefilereader-plugin.output.dir" value="${module.kettle-shapefilereader-plugin.basedir}/target/classes"/>
+  <property name="kettle-shapefilereader-plugin.testoutput.dir" value="${module.kettle-shapefilereader-plugin.basedir}/target/test-classes"/>
+  
+  <path id="kettle-shapefilereader-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-shapefilereader-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-shapefilereader-plugin}"/>
+    <pathelement location="${kettle-shapefilereader-plugin-core.output.dir}"/>
+  </path>
+  
+  <path id="kettle-shapefilereader-plugin.runtime.production.module.classpath">
+    <pathelement location="${kettle-shapefilereader-plugin.output.dir}"/>
+    <path refid="kettle-shapefilereader-plugin-core.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="kettle-shapefilereader-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-shapefilereader-plugin}"/>
+    <pathelement location="${kettle-shapefilereader-plugin.output.dir}"/>
+    <pathelement location="${kettle-shapefilereader-plugin-core.testoutput.dir}"/>
+    <pathelement location="${kettle-shapefilereader-plugin-core.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="kettle-shapefilereader-plugin.runtime.module.classpath">
+    <pathelement location="${kettle-shapefilereader-plugin.testoutput.dir}"/>
+    <pathelement location="${kettle-shapefilereader-plugin.output.dir}"/>
+    <path refid="kettle-shapefilereader-plugin-core.runtime.module.classpath"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-shapefilereader-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-shapefilereader-plugin">
+    <patternset refid="excluded.from.module.kettle-shapefilereader-plugin"/>
+  </patternset>
+  
+  <path id="kettle-shapefilereader-plugin.module.sourcepath">
+    <dirset dir="${module.kettle-shapefilereader-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-shapefilereader-plugin" depends="compile.module.kettle-shapefilereader-plugin.production,compile.module.kettle-shapefilereader-plugin.tests" description="Compile module kettle-shapefilereader-plugin"/>
+  
+  <target name="compile.module.kettle-shapefilereader-plugin.production" depends="register.custom.compilers,compile.module.kettle-shapefilereader-plugin-core" description="Compile module kettle-shapefilereader-plugin; production classes">
+    <mkdir dir="${kettle-shapefilereader-plugin.output.dir}"/>
+    <javac2 destdir="${kettle-shapefilereader-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-shapefilereader-plugin}/javac">
+      <compilerarg line="${compiler.args.kettle-shapefilereader-plugin}"/>
+      <bootclasspath refid="kettle-shapefilereader-plugin.module.bootclasspath"/>
+      <classpath refid="kettle-shapefilereader-plugin.module.production.classpath"/>
+      <src refid="kettle-shapefilereader-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-shapefilereader-plugin"/>
+    </javac2>
+    
+    <copy todir="${kettle-shapefilereader-plugin.output.dir}">
+      <fileset dir="${module.kettle-shapefilereader-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-shapefilereader-plugin.tests" depends="register.custom.compilers,compile.module.kettle-shapefilereader-plugin.production" description="compile module kettle-shapefilereader-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-shapefilereader-plugin" description="cleanup module">
+    <delete dir="${kettle-shapefilereader-plugin.output.dir}"/>
+    <delete dir="${kettle-shapefilereader-plugin.testoutput.dir}"/>
+  </target>
+</project>
