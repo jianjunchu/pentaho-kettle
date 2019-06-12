@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_dummy-assemblies" default="compile.module.dummy-assemblies">
+  <dirname property="module.dummy-assemblies.basedir" file="${ant.file.module_dummy-assemblies}"/>
+  
+  <property name="module.jdk.home.dummy-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.dummy-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.dummy-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.dummy-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="dummy-assemblies.output.dir" value="${module.dummy-assemblies.basedir}/target/classes"/>
+  <property name="dummy-assemblies.testoutput.dir" value="${module.dummy-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="dummy-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="dummy-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.dummy-assemblies}"/>
+  </path>
+  
+  <path id="dummy-assemblies.runtime.production.module.classpath">
+    <pathelement location="${dummy-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="dummy-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.dummy-assemblies}"/>
+    <pathelement location="${dummy-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="dummy-assemblies.runtime.module.classpath">
+    <pathelement location="${dummy-assemblies.testoutput.dir}"/>
+    <pathelement location="${dummy-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.dummy-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.dummy-assemblies">
+    <patternset refid="excluded.from.module.dummy-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.dummy-assemblies" depends="compile.module.dummy-assemblies.production,compile.module.dummy-assemblies.tests" description="Compile module dummy-assemblies"/>
+  
+  <target name="compile.module.dummy-assemblies.production" depends="register.custom.compilers" description="Compile module dummy-assemblies; production classes"/>
+  
+  <target name="compile.module.dummy-assemblies.tests" depends="register.custom.compilers,compile.module.dummy-assemblies.production" description="compile module dummy-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.dummy-assemblies" description="cleanup module">
+    <delete dir="${dummy-assemblies.output.dir}"/>
+    <delete dir="${dummy-assemblies.testoutput.dir}"/>
+  </target>
+</project>

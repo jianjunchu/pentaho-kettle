@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static java.util.Collections.singletonList;
@@ -93,7 +94,7 @@ public class BlockingQueueStreamSourceTest {
   @Test
   public void rowIterableBlocksTillRowReceived() throws Exception {
     streamSource.open();
-    Iterator<String> iterator = streamSource.observable().blockingIterable().iterator();
+    Iterator<String> iterator = streamSource.flowable().blockingIterable().iterator();
 
     // first call .hasNext() on the iterator while streamSource is empty
     Future<Boolean> hasNext = execSvc.submit( iterator::hasNext );
@@ -113,7 +114,7 @@ public class BlockingQueueStreamSourceTest {
   public void streamIsPausable() throws InterruptedException, ExecutionException, TimeoutException {
     streamSource.open();
 
-    Iterator<String> iter = streamSource.observable().blockingIterable().iterator();
+    Iterator<String> iter = streamSource.flowable().blockingIterable().iterator();
     Future<String> nextString = execSvc.submit( iter::next );
 
     // add a row
@@ -157,7 +158,7 @@ public class BlockingQueueStreamSourceTest {
       }
     };
     streamSource.open();
-    Iterator<String> iterator = streamSource.observable().blockingIterable().iterator();
+    Iterator<String> iterator = streamSource.flowable().blockingIterable().iterator();
 
     Future<List<String>> iterLoop = execSvc.submit( () -> {
       List<String> strings = new ArrayList<>();
@@ -168,6 +169,35 @@ public class BlockingQueueStreamSourceTest {
     } );
     final List<String> quickly = getQuickly( iterLoop );
     assertThat( quickly.size(), equalTo( 4 ) );
+  }
+
+  @Test
+  public void bufferSizeLimitedToOneThousand() {
+    streamSource = new BlockingQueueStreamSource<String>( streamStep ) {
+      @Override public void open() {
+        for ( int i = 0; i < 1002; i++ ) {
+          acceptRows( singletonList( "new row " + i ) );
+        }
+      }
+    };
+    streamSource.open();
+    Iterator<String> iterator = streamSource.flowable().blockingIterable().iterator();
+
+    List<String> strings = new ArrayList<>();
+    do {
+      strings.add( iterator.next() );
+    } while ( strings.size() < 1000 );
+
+    assertThat( strings.size(), equalTo( 1000 ) );
+    Future<String> submit = execSvc.submit( iterator::next );
+    try {
+      submit.get( 10, TimeUnit.MILLISECONDS );
+    } catch ( InterruptedException | ExecutionException e ) {
+      fail();
+    } catch ( TimeoutException e ) {
+      return;  //passed, this is what we wanted.  There should be nothing left in the iterator
+    }
+    fail( "expected timeout" );
   }
 
   @Test
@@ -196,7 +226,7 @@ public class BlockingQueueStreamSourceTest {
       }
     };
     streamSource.open();
-    Iterator<String> iterator = streamSource.observable().blockingIterable().iterator();
+    Iterator<String> iterator = streamSource.flowable().blockingIterable().iterator();
 
     Future<List<String>> iterLoop = execSvc.submit( () -> {
       List<String> strings = new ArrayList<>();

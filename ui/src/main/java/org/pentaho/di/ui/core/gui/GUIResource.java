@@ -131,6 +131,8 @@ public class GUIResource {
 
   private ManagedColor colorHopOK;
 
+  private ManagedColor colorDeprecated;
+
   /* * * Fonts * * */
   private ManagedFont fontGraph;
 
@@ -324,6 +326,8 @@ public class GUIResource {
   private SwtUniversalImage imageWarning;
 
   private Image imageVersionBrowser;
+
+  private Image imageDeprecated;
 
   private Image imageNew;
 
@@ -526,6 +530,7 @@ public class GUIResource {
 
     colorHopOK = new ManagedColor( display, 12, 178, 15 );
 
+    colorDeprecated = new ManagedColor( display, 246, 196, 56 );
     // Load all images from files...
     loadFonts();
     loadCommonImages();
@@ -632,6 +637,7 @@ public class GUIResource {
       imageWarning.dispose();
       imageVersionBrowser.dispose();
       imageClearText.dispose();
+      imageDeprecated.dispose();
       imageClearTextDisabled.dispose();
       imageExpandAll.dispose();
       imageSearchSmall.dispose();
@@ -1073,6 +1079,10 @@ public class GUIResource {
 
     // "ui/images/warning.png;
     imageWarning = SwtSvgImageUtil.getImageAsResource( display, BasePropertyHandler.getProperty( "Warning_image" ) );
+
+    // "ui/images/deprecated.svg
+    imageDeprecated = loadAsResource( display, BasePropertyHandler.getProperty( "Deprecated_image" ),
+      ConstUI.LARGE_ICON_SIZE );
 
     // "ui/images/version-history.png;
     imageVersionBrowser =
@@ -2084,6 +2094,13 @@ public class GUIResource {
     return colorHopOK.getColor();
   }
 
+  /**
+   * @return the default color the deprecated condition
+   */
+  public Color getColorDeprecated() {
+    return colorDeprecated.getColor();
+  }
+
   public void drawPentahoGradient( Display display, GC gc, Rectangle rect, boolean vertical ) {
     if ( !vertical ) {
       gc.setForeground( display.getSystemColor( SWT.COLOR_WIDGET_BACKGROUND ) );
@@ -2356,6 +2373,10 @@ public class GUIResource {
 
   public Image getImageVersionBrowser() {
     return imageVersionBrowser;
+  }
+
+  public Image getImageDeprecated() {
+    return imageDeprecated;
   }
 
   public Image getImageNew() {

@@ -23,11 +23,14 @@
 package org.pentaho.di.i18n;
 
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.pentaho.di.junit.rules.RestorePDIEnvironment;
 
 import java.util.Locale;
 
 public class GlobalMessageUtilTest {
+  @ClassRule public static RestorePDIEnvironment env = new RestorePDIEnvironment();
 
   @Test
   public void testGetLocaleString() {
@@ -42,8 +45,8 @@ public class GlobalMessageUtilTest {
   @Test
   public void isMissingKey() {
     Assert.assertTrue( GlobalMessageUtil.isMissingKey( null ) );
-    Assert.assertTrue( GlobalMessageUtil.isMissingKey( "" ) );
-    Assert.assertTrue( GlobalMessageUtil.isMissingKey( " " ) );
+    Assert.assertFalse( GlobalMessageUtil.isMissingKey( "" ) );
+    Assert.assertFalse( GlobalMessageUtil.isMissingKey( " " ) );
     Assert.assertTrue( GlobalMessageUtil.isMissingKey( "!foo!" ) );
     Assert.assertTrue( GlobalMessageUtil.isMissingKey( "!foo! " ) );
     Assert.assertTrue( GlobalMessageUtil.isMissingKey( " !foo!" ) );

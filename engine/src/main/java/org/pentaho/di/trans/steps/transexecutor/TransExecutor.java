@@ -22,10 +22,10 @@
 
 package org.pentaho.di.trans.steps.transexecutor;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Arrays;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -295,7 +295,7 @@ public class TransExecutor extends BaseStep implements StepInterface {
     TransExecutorParameters parameters = meta.getParameters();
 
     // A map where the final parameters and values are stored.
-    Map<String, String> resolvingValuesMap = new HashMap<String, String>();
+    Map<String, String> resolvingValuesMap = new LinkedHashMap<String, String>();
     for ( int i = 0; i < parameters.getVariable().length; i++ ) {
       resolvingValuesMap.put( parameters.getVariable()[i], null );
     }
@@ -331,39 +331,6 @@ public class TransExecutor extends BaseStep implements StepInterface {
       } catch ( Exception e ) {
         //Set the value to the first parameter in the resolvingValuesMap.
         resolvingValuesMap.put( (String) resolvingValuesMap.keySet().toArray()[i], null );
-      }
-    }
-    /////////////////////////////////////////////
-
-    /////////////////////////////////////////////
-    //If "Fields to use" ARE NOT provided and "Inherit all variables from transformation" IS checked.
-    boolean isFieldsToUseEmpty = true;
-    for ( int i = 0; i < fieldsToUse.size(); i++ ) {
-      if ( fieldsToUse.get( i ) != null ) {
-        isFieldsToUseEmpty = false;
-        break;
-      }
-    }
-    if ( parameters.isInheritingAllVariables() && isFieldsToUseEmpty ) {
-      //Check for parameter matches in the TRANSFORMATION TO EXECUTE parameters.
-      if ( getExecutorTrans().listParameters() != null ) {
-        List<String> transformationToExecuteParameters = Arrays.asList( getExecutorTrans().listParameters() );
-        for ( int i = 0; i < parameters.getVariable().length; i++ ) {
-          if ( transformationToExecuteParameters.contains( parameters.getVariable()[i] ) ) {
-            resolvingValuesMap.put( parameters.getVariable()[i],
-                getExecutorTrans().getParameterDefault( parameters.getVariable()[i] ) );
-          }
-        }
-      }
-      //Check for parameter matches in THIS transformation parameters.
-      if ( getTrans().listParameters() != null ) {
-        List<String> transformationParameters = Arrays.asList( getTrans().listParameters() );
-        for ( int i = 0; i < parameters.getVariable().length; i++ ) {
-          if ( transformationParameters.contains( parameters.getVariable()[i] ) ) {
-            resolvingValuesMap
-                .put( parameters.getVariable()[i], getTrans().getParameterValue( parameters.getVariable()[i] ) );
-          }
-        }
       }
     }
     /////////////////////////////////////////////

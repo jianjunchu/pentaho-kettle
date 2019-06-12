@@ -25,6 +25,9 @@ package org.pentaho.di.core.util.serialization;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
+import org.pentaho.di.core.plugins.PluginInterface;
+import org.pentaho.di.core.plugins.PluginRegistry;
+import org.pentaho.di.core.plugins.StepPluginType;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
@@ -80,9 +83,20 @@ public abstract class BaseSerializingMeta extends BaseStepMeta implements StepMe
    * Creates a copy of this stepMeta with variables globally substituted.
    */
   public StepMetaInterface withVariables( VariableSpace variables ) {
-    return StepMetaProps
-      .from( this )
-      .withVariables( variables )
-      .to( (StepMetaInterface) this.clone() );
+    try {
+      return StepMetaProps
+        .from( this )
+        .withVariables( variables )
+        .to( getNewMeta() );
+    } catch ( KettleException e ) {
+      throw new RuntimeException( e );
+    }
+  }
+
+  private StepMetaInterface getNewMeta() throws KettleException {
+    PluginRegistry pluginRegistry = PluginRegistry.getInstance();
+    String id = pluginRegistry.getPluginId( StepPluginType.class, this );
+    PluginInterface plugin = pluginRegistry.getPlugin( StepPluginType.class, id );
+    return (StepMetaInterface) pluginRegistry.loadClass( plugin );
   }
 }

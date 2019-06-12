@@ -31,6 +31,7 @@ import org.pentaho.metaverse.api.MetaverseAnalyzerException;
 import org.pentaho.metaverse.api.MetaverseException;
 import org.pentaho.metaverse.api.StepField;
 import org.pentaho.metaverse.api.analyzer.kettle.step.ExternalResourceStepAnalyzer;
+import org.pentaho.metaverse.api.analyzer.kettle.step.IClonableStepAnalyzer;
 import org.pentaho.metaverse.api.model.IExternalResourceInfo;
 
 import java.util.Collections;
@@ -57,7 +58,7 @@ public class JsonOutputAnalyzer extends ExternalResourceStepAnalyzer<JsonOutputM
 
   @Override
   public String getResourceOutputNodeType() {
-    return DictionaryConst.NODE_TYPE_JSON_FIELD;
+    return DictionaryConst.NODE_TYPE_FILE_FIELD;
   }
 
   @Override
@@ -77,7 +78,7 @@ public class JsonOutputAnalyzer extends ExternalResourceStepAnalyzer<JsonOutputM
 
   @Override
   public IMetaverseNode createResourceNode( final IExternalResourceInfo resource ) throws MetaverseException {
-    return createFileNode( resource.getName(), descriptor, DictionaryConst.NODE_TYPE_JSON_FILE );
+    return createFileNode( resource.getName(), descriptor, DictionaryConst.NODE_TYPE_FILE );
   }
 
   @Override
@@ -99,5 +100,10 @@ public class JsonOutputAnalyzer extends ExternalResourceStepAnalyzer<JsonOutputM
     return meta.writesToFile()
       && ( meta.getOperationType() == JsonOutputMeta.OPERATION_TYPE_WRITE_TO_FILE
       || meta.getOperationType() == JsonOutputMeta.OPERATION_TYPE_BOTH );
+  }
+
+  @Override
+  public IClonableStepAnalyzer newInstance() {
+    return new JsonOutputAnalyzer();
   }
 }

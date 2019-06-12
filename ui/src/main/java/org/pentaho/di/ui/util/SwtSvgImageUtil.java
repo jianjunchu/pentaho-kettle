@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -142,7 +142,8 @@ public class SwtSvgImageUtil {
     return u.getAsBitmapForSize( display, width, height );
   }
 
-  private static SwtUniversalImage getUniversalImageInternal( Display display, ClassLoader classLoader, String filename ) {
+  private static SwtUniversalImage getUniversalImageInternal( Display display,
+                                                              ClassLoader classLoader, String filename ) {
     SwtUniversalImage result = loadFromClassLoader( display, classLoader, filename );
     if ( result == null ) {
       result = loadFromClassLoader( display, classLoader, "/" + filename );
@@ -160,7 +161,6 @@ public class SwtSvgImageUtil {
    * Load image from several sources.
    */
   public static SwtUniversalImage getUniversalImage( Display display, ClassLoader classLoader, String filename ) {
-
     if ( StringUtils.isBlank( filename ) ) {
       log.logError( "Unable to load image [" + filename + "]" );
       return getImageAsResource( display, NO_IMAGE );

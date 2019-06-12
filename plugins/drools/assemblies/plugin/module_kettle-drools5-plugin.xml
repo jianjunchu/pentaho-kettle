@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-drools5-plugin" default="compile.module.kettle-drools5-plugin">
+  <dirname property="module.kettle-drools5-plugin.basedir" file="${ant.file.module_kettle-drools5-plugin}"/>
+  
+  <property name="module.jdk.home.kettle-drools5-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-drools5-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-drools5-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-drools5-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-drools5-plugin.output.dir" value="${module.kettle-drools5-plugin.basedir}/target/classes"/>
+  <property name="kettle-drools5-plugin.testoutput.dir" value="${module.kettle-drools5-plugin.basedir}/target/test-classes"/>
+  
+  <path id="kettle-drools5-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-drools5-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-drools5-plugin}"/>
+    <pathelement location="${kettle-drools5-core.output.dir}"/>
+    <path refid="library.maven:_org.drools:knowledge-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-internal:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.drools:drools-core:6.4.0.final.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.drools:drools-compiler:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.antlr:antlr-runtime:3.5.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt.core.compiler:ecj:4.4.2.classpath"/>
+    <path refid="library.maven:_com.google.protobuf:protobuf-java:2.6.0.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.xstream:xstream:1.4.10.classpath"/>
+    <path refid="library.maven:_org.mvel:mvel2:2.2.8.final.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt:core:3.4.2.v_883_r34x.classpath"/>
+  </path>
+  
+  <path id="kettle-drools5-plugin.runtime.production.module.classpath">
+    <pathelement location="${kettle-drools5-plugin.output.dir}"/>
+    <path refid="kettle-drools5-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_org.drools:knowledge-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-internal:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.drools:drools-core:6.4.0.final.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.drools:drools-compiler:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.antlr:antlr-runtime:3.5.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt.core.compiler:ecj:4.4.2.classpath"/>
+    <path refid="library.maven:_com.google.protobuf:protobuf-java:2.6.0.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.xstream:xstream:1.4.10.classpath"/>
+    <path refid="library.maven:_org.mvel:mvel2:2.2.8.final.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt:core:3.4.2.v_883_r34x.classpath"/>
+  </path>
+  
+  <path id="kettle-drools5-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-drools5-plugin}"/>
+    <pathelement location="${kettle-drools5-plugin.output.dir}"/>
+    <pathelement location="${kettle-drools5-core.testoutput.dir}"/>
+    <pathelement location="${kettle-drools5-core.output.dir}"/>
+    <path refid="library.maven:_org.drools:knowledge-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-internal:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.drools:drools-core:6.4.0.final.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.drools:drools-compiler:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.antlr:antlr-runtime:3.5.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt.core.compiler:ecj:4.4.2.classpath"/>
+    <path refid="library.maven:_com.google.protobuf:protobuf-java:2.6.0.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.xstream:xstream:1.4.10.classpath"/>
+    <path refid="library.maven:_org.mvel:mvel2:2.2.8.final.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt:core:3.4.2.v_883_r34x.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="kettle-drools5-plugin.runtime.module.classpath">
+    <pathelement location="${kettle-drools5-plugin.testoutput.dir}"/>
+    <pathelement location="${kettle-drools5-plugin.output.dir}"/>
+    <path refid="kettle-drools5-core.runtime.module.classpath"/>
+    <path refid="library.maven:_org.drools:knowledge-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-api:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.kie:kie-internal:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.drools:drools-core:6.4.0.final.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.drools:drools-compiler:6.4.0.final.classpath"/>
+    <path refid="library.maven:_org.antlr:antlr-runtime:3.5.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt.core.compiler:ecj:4.4.2.classpath"/>
+    <path refid="library.maven:_com.google.protobuf:protobuf-java:2.6.0.classpath"/>
+    <path refid="library.maven:_com.thoughtworks.xstream:xstream:1.4.10.classpath"/>
+    <path refid="library.maven:_org.mvel:mvel2:2.2.8.final.classpath"/>
+    <path refid="library.maven:_org.eclipse.jdt:core:3.4.2.v_883_r34x.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-drools5-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-drools5-plugin">
+    <patternset refid="excluded.from.module.kettle-drools5-plugin"/>
+  </patternset>
+  
+  <path id="kettle-drools5-plugin.module.sourcepath">
+    <dirset dir="${module.kettle-drools5-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-drools5-plugin" depends="compile.module.kettle-drools5-plugin.production,compile.module.kettle-drools5-plugin.tests" description="Compile module kettle-drools5-plugin"/>
+  
+  <target name="compile.module.kettle-drools5-plugin.production" depends="register.custom.compilers,compile.module.kettle-drools5-core" description="Compile module kettle-drools5-plugin; production classes">
+    <mkdir dir="${kettle-drools5-plugin.output.dir}"/>
+    <javac2 destdir="${kettle-drools5-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-drools5-plugin}/javac">
+      <compilerarg line="${compiler.args.kettle-drools5-plugin}"/>
+      <bootclasspath refid="kettle-drools5-plugin.module.bootclasspath"/>
+      <classpath refid="kettle-drools5-plugin.module.production.classpath"/>
+      <src refid="kettle-drools5-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-drools5-plugin"/>
+    </javac2>
+    
+    <copy todir="${kettle-drools5-plugin.output.dir}">
+      <fileset dir="${module.kettle-drools5-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-drools5-plugin.tests" depends="register.custom.compilers,compile.module.kettle-drools5-plugin.production" description="compile module kettle-drools5-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-drools5-plugin" description="cleanup module">
+    <delete dir="${kettle-drools5-plugin.output.dir}"/>
+    <delete dir="${kettle-drools5-plugin.testoutput.dir}"/>
+  </target>
+</project>

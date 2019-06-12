@@ -32,6 +32,7 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.parameters.DuplicateParamException;
 import org.pentaho.di.core.parameters.NamedParams;
 import org.pentaho.di.core.parameters.UnknownParamException;
 import org.pentaho.di.core.util.CurrentDirectoryResolver;
@@ -48,11 +49,14 @@ import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.resource.ResourceDefinition;
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.mapping.MappingIODefinition;
 import org.pentaho.metastore.api.IMetaStore;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -218,12 +222,21 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
 
   public static void activateParams( VariableSpace childVariableSpace, NamedParams childNamedParams, VariableSpace parent, String[] listParameters,
                                      String[] mappingVariables, String[] inputFields ) {
+    activateParams(  childVariableSpace,  childNamedParams,  parent, listParameters, mappingVariables,  inputFields, true );
+  }
+
+  public static void activateParams( VariableSpace childVariableSpace, NamedParams childNamedParams, VariableSpace parent, String[] listParameters,
+                                     String[] mappingVariables, String[] inputFields, boolean isPassingAllParameters ) {
     Map<String, String> parameters = new HashMap<>();
     Set<String> subTransParameters = new HashSet<>( Arrays.asList( listParameters ) );
 
     if ( mappingVariables != null ) {
       for ( int i = 0; i < mappingVariables.length; i++ ) {
         parameters.put( mappingVariables[ i ], parent.environmentSubstitute( inputFields[ i ] ) );
+        //If inputField value is not empty then create it in variableSpace of step(Parent)
+        if ( !Utils.isEmpty( Const.trim( parent.environmentSubstitute( inputFields[ i ] ) ) ) ) {
+          parent.setVariable( mappingVariables[ i ], parent.environmentSubstitute( inputFields[ i ] ) );
+        }
       }
     }
 
@@ -232,7 +245,9 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
       // parent parameter.
       if ( parameters.containsKey( variableName ) ) {
         parameters.put( variableName, parent.getVariable( variableName ) );
-      } else if ( ArrayUtils.contains( listParameters, variableName ) ) {
+        // added  isPassingAllParameters check since we don't need to overwrite the child value if the
+        // isPassingAllParameters is not checked
+      } else if ( ArrayUtils.contains( listParameters, variableName ) && isPassingAllParameters ) {
         // there is a definition only in Transformation properties - params tab
         parameters.put( variableName, parent.getVariable( variableName ) );
       }
@@ -248,12 +263,22 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
           // this is explicitly checked for up front
         }
       } else {
+        try {
+          childNamedParams.addParameterDefinition( key, "", "" );
+          childNamedParams.setParameterValue( key, value );
+        } catch ( DuplicateParamException e ) {
+          // this was explicitly checked before
+        } catch ( UnknownParamException e ) {
+          // this is explicitly checked for up front
+        }
+
         childVariableSpace.setVariable( key, value );
       }
     }
 
     childNamedParams.activateParameters();
   }
+
 
   /**
    * @return the specificationMethod
@@ -416,5 +441,19 @@ public abstract class StepWithMappingMeta extends BaseSerializingMeta implements
         childTransMeta.setVariable( variableName, replaceBy.getVariable( variableName ) );
       }
     }
+  }
+
+  /**
+   * @return the inputMappings
+   */
+  public List<MappingIODefinition> getInputMappings() {
+    return Collections.emptyList();
+  }
+
+  /**
+   * @return the outputMappings
+   */
+  public List<MappingIODefinition> getOutputMappings() {
+    return Collections.emptyList();
   }
 }

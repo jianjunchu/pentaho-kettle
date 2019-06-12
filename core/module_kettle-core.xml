@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-core" default="compile.module.kettle-core">
+  <dirname property="module.kettle-core.basedir" file="${ant.file.module_kettle-core}"/>
+  
+  <property name="module.jdk.home.kettle-core" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-core" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-core" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-core" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-core.output.dir" value="${module.kettle-core.basedir}/target/classes"/>
+  <property name="kettle-core.testoutput.dir" value="${module.kettle-core.basedir}/target/test-classes"/>
+  
+  <path id="kettle-core.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-core.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-core}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.3.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_org.owasp.encoder:encoder:1.2.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-bridge:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-css:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-gvt:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-svg-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-transcoder:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-codec:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-ext:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-xml:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-anim:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-parser:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-script:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-awt-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-constants:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-i18n:1.9.1.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis-ext:1.3.04.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.2.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.2.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.7.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.4.1.classpath"/>
+    <path refid="library.maven:_dom4j:dom4j:1.6.1.classpath"/>
+    <path refid="library.maven:_org.eclipse.jetty:jetty-util:8.1.15.v20140411.classpath"/>
+    <path refid="library.maven:_jug-lgpl:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_com.jcraft:jsch:0.1.54.classpath"/>
+    <path refid="library.maven:_com.jcraft:jzlib:1.0.7.classpath"/>
+    <path refid="library.maven:_ognl:ognl:2.6.9.classpath"/>
+    <path refid="library.maven:_net.sf.scannotation:scannotation:1.0.2.classpath"/>
+    <path refid="library.maven:_com.wcohen:com.wcohen.secondstring:0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.20.0-ga.classpath"/>
+    <path refid="library.maven:_org.samba.jcifs:jcifs:1.3.3.classpath"/>
+    <path refid="library.maven:_org.apache.karaf:org.apache.karaf.main:3.0.3.classpath"/>
+    <path refid="library.maven:_org.codehaus.woodstox:wstx-asl:3.2.4.classpath"/>
+    <path refid="library.maven:_stax:stax-api:1.0.1.classpath"/>
+    <path refid="library.maven:_pentaho:simple-jndi:1.0.0.classpath"/>
+  </path>
+  
+  <path id="kettle-core.runtime.production.module.classpath">
+    <pathelement location="${kettle-core.output.dir}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.3.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_org.owasp.encoder:encoder:1.2.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-bridge:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-css:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-gvt:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-svg-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-transcoder:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-codec:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-ext:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-xml:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-anim:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-parser:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-script:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-awt-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-constants:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-i18n:1.9.1.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis-ext:1.3.04.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.2.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.2.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.7.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.4.1.classpath"/>
+    <path refid="library.maven:_dom4j:dom4j:1.6.1.classpath"/>
+    <path refid="library.maven:_org.eclipse.jetty:jetty-util:8.1.15.v20140411.classpath"/>
+    <path refid="library.maven:_jug-lgpl:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_com.jcraft:jsch:0.1.54.classpath"/>
+    <path refid="library.maven:_com.jcraft:jzlib:1.0.7.classpath"/>
+    <path refid="library.maven:_ognl:ognl:2.6.9.classpath"/>
+    <path refid="library.maven:_net.sf.scannotation:scannotation:1.0.2.classpath"/>
+    <path refid="library.maven:_com.wcohen:com.wcohen.secondstring:0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.20.0-ga.classpath"/>
+    <path refid="library.maven:_org.samba.jcifs:jcifs:1.3.3.classpath"/>
+    <path refid="library.maven:_org.apache.karaf:org.apache.karaf.main:3.0.3.classpath"/>
+    <path refid="library.maven:_pentaho:simple-jndi:1.0.0.classpath"/>
+  </path>
+  
+  <path id="kettle-core.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-core}"/>
+    <pathelement location="${kettle-core.output.dir}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.3.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_org.owasp.encoder:encoder:1.2.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-bridge:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-css:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-gvt:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-svg-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-transcoder:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-codec:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-ext:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-xml:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-anim:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-parser:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-script:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-awt-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-constants:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-i18n:1.9.1.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis-ext:1.3.04.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.2.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.2.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.7.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.4.1.classpath"/>
+    <path refid="library.maven:_dom4j:dom4j:1.6.1.classpath"/>
+    <path refid="library.maven:_org.eclipse.jetty:jetty-util:8.1.15.v20140411.classpath"/>
+    <path refid="library.maven:_jug-lgpl:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_com.jcraft:jsch:0.1.54.classpath"/>
+    <path refid="library.maven:_com.jcraft:jzlib:1.0.7.classpath"/>
+    <path refid="library.maven:_ognl:ognl:2.6.9.classpath"/>
+    <path refid="library.maven:_net.sf.scannotation:scannotation:1.0.2.classpath"/>
+    <path refid="library.maven:_com.wcohen:com.wcohen.secondstring:0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.20.0-ga.classpath"/>
+    <path refid="library.maven:_org.samba.jcifs:jcifs:1.3.3.classpath"/>
+    <path refid="library.maven:_org.apache.karaf:org.apache.karaf.main:3.0.3.classpath"/>
+    <path refid="library.maven:_org.codehaus.woodstox:wstx-asl:3.2.4.classpath"/>
+    <path refid="library.maven:_stax:stax-api:1.0.1.classpath"/>
+    <path refid="library.maven:_pentaho:simple-jndi:1.0.0.classpath"/>
+    <path refid="library.maven:_org.hamcrest:java-hamcrest:2.0.0.0.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-module-junit4:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-module-junit4-common:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-reflect:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-core:1.7.3.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-mockito:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-mockito-common:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-support:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mockito:mockito-core:1.10.19.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.3.2.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.3.2.release.classpath"/>
+    <path refid="library.maven:_xmlunit:xmlunit:1.5.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+  </path>
+  
+  <path id="kettle-core.runtime.module.classpath">
+    <pathelement location="${kettle-core.testoutput.dir}"/>
+    <pathelement location="${kettle-core.output.dir}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.7.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-log4j12:1.7.7.classpath"/>
+    <path refid="library.maven:_log4j:log4j:1.2.17.classpath"/>
+    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.3.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_org.owasp.encoder:encoder:1.2.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-bridge:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-css:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-gvt:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-svg-dom:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-transcoder:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-codec:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-ext:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-xml:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-anim:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-parser:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-script:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-awt-util:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-constants:1.9.1.classpath"/>
+    <path refid="library.maven:_org.apache.xmlgraphics:batik-i18n:1.9.1.classpath"/>
+    <path refid="library.maven:_xml-apis:xml-apis-ext:1.3.04.classpath"/>
+    <path refid="library.maven:_commons-collections:commons-collections:3.2.2.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_commons-io:commons-io:2.2.classpath"/>
+    <path refid="library.maven:_commons-dbcp:commons-dbcp:1.4.classpath"/>
+    <path refid="library.maven:_commons-pool:commons-pool:1.5.7.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-compress:1.4.1.classpath"/>
+    <path refid="library.maven:_dom4j:dom4j:1.6.1.classpath"/>
+    <path refid="library.maven:_org.eclipse.jetty:jetty-util:8.1.15.v20140411.classpath"/>
+    <path refid="library.maven:_jug-lgpl:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_com.jcraft:jsch:0.1.54.classpath"/>
+    <path refid="library.maven:_com.jcraft:jzlib:1.0.7.classpath"/>
+    <path refid="library.maven:_ognl:ognl:2.6.9.classpath"/>
+    <path refid="library.maven:_net.sf.scannotation:scannotation:1.0.2.classpath"/>
+    <path refid="library.maven:_com.wcohen:com.wcohen.secondstring:0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.20.0-ga.classpath"/>
+    <path refid="library.maven:_org.samba.jcifs:jcifs:1.3.3.classpath"/>
+    <path refid="library.maven:_org.apache.karaf:org.apache.karaf.main:3.0.3.classpath"/>
+    <path refid="library.maven:_org.codehaus.woodstox:wstx-asl:3.2.4.classpath"/>
+    <path refid="library.maven:_stax:stax-api:1.0.1.classpath"/>
+    <path refid="library.maven:_pentaho:simple-jndi:1.0.0.classpath"/>
+    <path refid="library.maven:_org.hamcrest:java-hamcrest:2.0.0.0.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-module-junit4:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-module-junit4-common:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-reflect:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-core:1.7.3.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-mockito:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-mockito-common:1.7.3.classpath"/>
+    <path refid="library.maven:_org.powermock:powermock-api-support:1.7.3.classpath"/>
+    <path refid="library.maven:_org.mockito:mockito-core:1.10.19.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.1.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-test:4.3.2.release.classpath"/>
+    <path refid="library.maven:_org.springframework:spring-core:4.3.2.release.classpath"/>
+    <path refid="library.maven:_xmlunit:xmlunit:1.5.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-core">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-core">
+    <patternset refid="excluded.from.module.kettle-core"/>
+  </patternset>
+  
+  <path id="kettle-core.module.sourcepath">
+    <dirset dir="${module.kettle-core.basedir}">
+      <include name="target/generated-sources/license"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-core" depends="compile.module.kettle-core.production,compile.module.kettle-core.tests" description="Compile module kettle-core"/>
+  
+  <target name="compile.module.kettle-core.production" depends="register.custom.compilers" description="Compile module kettle-core; production classes">
+    <mkdir dir="${kettle-core.output.dir}"/>
+    <javac2 destdir="${kettle-core.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-core}/javac">
+      <compilerarg line="${compiler.args.kettle-core}"/>
+      <bootclasspath refid="kettle-core.module.bootclasspath"/>
+      <classpath refid="kettle-core.module.production.classpath"/>
+      <src refid="kettle-core.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-core"/>
+    </javac2>
+    
+    <copy todir="${kettle-core.output.dir}">
+      <fileset dir="${module.kettle-core.basedir}/target/generated-sources/license">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-core.tests" depends="register.custom.compilers,compile.module.kettle-core.production" description="compile module kettle-core; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-core" description="cleanup module">
+    <delete dir="${kettle-core.output.dir}"/>
+    <delete dir="${kettle-core.testoutput.dir}"/>
+  </target>
+</project>

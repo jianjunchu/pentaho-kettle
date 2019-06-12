@@ -78,6 +78,11 @@ public class StepDialogFragmentType extends BaseFragmentType implements PluginTy
   }
 
   @Override
+  protected String extractSuggestion( Annotation annotation ) {
+    return null;
+  }
+
+  @Override
   public void handlePluginAnnotation( Class<?> clazz, java.lang.annotation.Annotation annotation,
     List<String> libraries, boolean nativePluginType, URL pluginFolder ) throws KettlePluginException {
     if ( ( (PluginDialog) annotation ).pluginType() == PluginDialog.PluginType.STEP ) {

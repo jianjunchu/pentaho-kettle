@@ -62,6 +62,8 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
+import javax.print.DocFlavor;
+
 /**
  * Meta Data class for the Select Values Step.
  *
@@ -129,6 +131,7 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
     }
     return selectName;
   }
+
 
   /**
    * @param selectRename
@@ -283,6 +286,8 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
         selectFields[i].setRename( XMLHandler.getTagValue( line, "rename" ) );
         selectFields[i].setLength( Const.toInt( XMLHandler.getTagValue( line, "length" ), UNDEFINED ) ); // $NON-NtagLS-1$
         selectFields[i].setPrecision( Const.toInt( XMLHandler.getTagValue( line, "precision" ), UNDEFINED ) );
+        selectFields[i].setFunctionExpession( XMLHandler.getTagValue(line, "function"));
+        selectFields[i].setPadChar( XMLHandler.getTagValue(line, "pad_char"));
       }
       selectingAndSortingUnspecifiedFields =
           "Y".equalsIgnoreCase( XMLHandler.getTagValue( fields, "select_unspecified" ) );
@@ -411,6 +416,8 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
           if ( !v.getName().equals( metaChange.getRename() ) && !Utils.isEmpty( metaChange.getRename() ) ) {
             v.setName( metaChange.getRename() );
             v.setOrigin( name );
+            // need to reinsert to check name conflicts
+            inputRowMeta.setValueMeta( idx, v );
           }
           // Change the type?
           if ( metaChange.getType() != ValueMetaInterface.TYPE_NONE && v.getType() != metaChange.getType() ) {
@@ -509,6 +516,11 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
         retval.append( "        " ).append( XMLHandler.addTagValue( getXmlCode( "FIELD_PRECISION" ), selectFields[i]
             .getPrecision() ) );
       }
+      if(selectFields[i].getFunctionExpession()!=null)
+        retval.append("        ").append(XMLHandler.addTagValue(getXmlCode("FIELD_FUNCTION"),      selectFields[i].getFunctionExpession()));
+      if(selectFields[i].getPadChar()!=null)
+      retval.append("        ").append(XMLHandler.addTagValue(getXmlCode("FIELD_PADCHAR"),      selectFields[i].getPadChar()));
+
       retval.append( "      </field>" );
     }
     retval.append( "        " ).append( XMLHandler.addTagValue( getXmlCode( "SELECT_UNSPECIFIED" ),
@@ -542,6 +554,9 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
         selectFields[i].setLength( (int) rep.getStepAttributeInteger( id_step, i, getRepCode( "FIELD_LENGTH" ) ) );
         selectFields[i].setPrecision( (int) rep.getStepAttributeInteger( id_step, i, getRepCode(
             "FIELD_PRECISION" ) ) );
+        selectFields[i].setFunctionExpession(rep.getStepAttributeString (id_step, i, getRepCode("FIELD_FUNCTION")));
+        selectFields[i].setPadChar(rep.getStepAttributeString (id_step, i, getRepCode("FIELD_PADCHAR")));
+
       }
       selectingAndSortingUnspecifiedFields = rep.getStepAttributeBoolean( id_step, getRepCode( "SELECT_UNSPECIFIED" ) );
 
@@ -590,6 +605,8 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
             .getLength() );
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "FIELD_PRECISION" ), selectFields[i]
             .getPrecision() );
+        rep.saveStepAttribute(id_transformation, id_step, i, getRepCode("FIELD_FUNCTION"),  selectFields[i].getFunctionExpession());
+        rep.saveStepAttribute(id_transformation, id_step, i, getRepCode("FIELD_PADCHAR"),  selectFields[i].getPadChar());
       }
       rep.saveStepAttribute( id_transformation, id_step, getRepCode( "SELECT_UNSPECIFIED" ),
           selectingAndSortingUnspecifiedFields );
@@ -928,6 +945,14 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
     @Injection( name = "FIELD_PRECISION", group = "FIELDS" )
     private int precision = UNDEFINED;
 
+    /**function for the cloumn */
+    @Injection( name = "FUNCTION_EXPR", group = "FIELDS" )
+    private String functionExpression;
+
+    /**padChar for the cloumn */
+    @Injection( name = "PAD_CHAR", group = "FIELDS" )
+    private String padChar;
+
     public String getName() {
       return name;
     }
@@ -960,6 +985,13 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
       this.precision = precision;
     }
 
+    public String getFunctionExpession()
+    {
+      return functionExpression;
+    }
+
+    public void setFunctionExpession(String s){ functionExpression=s; }
+
     @Override
     public SelectField clone() {
       try {
@@ -968,5 +1000,10 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
         throw new RuntimeException( e );
       }
     }
+
+    public void setPadChar(String padChar) { this.padChar = padChar; }
+
+    public String getPadChar() { return this.padChar; }
+
   }
 }

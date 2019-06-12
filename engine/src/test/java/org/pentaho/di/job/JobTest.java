@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -24,6 +24,7 @@ package org.pentaho.di.job;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.logging.BaseLogTable;
@@ -32,12 +33,17 @@ import org.pentaho.di.core.logging.JobLogTable;
 import org.pentaho.di.core.logging.LogStatus;
 import org.pentaho.di.core.logging.LogTableField;
 import org.pentaho.di.core.variables.VariableSpace;
+import org.pentaho.di.repository.Repository;
 import org.pentaho.di.trans.HasDatabasesInterface;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,6 +101,100 @@ public class JobTest {
     table.setTimeoutInDays( STRING_DEFAULT );
     table.setTableName( STRING_DEFAULT );
     table.setFields( new ArrayList<LogTableField>() );
+  }
+
+  @Test
+  public void testNewJobWithContainerObjectId() {
+    Repository repository = mock( Repository.class );
+    JobMeta meta = mock( JobMeta.class );
+
+    String carteId = UUID.randomUUID().toString();
+    doReturn( carteId ).when( meta ).getContainerObjectId();
+
+    Job job = new Job( repository, meta );
+
+    assertEquals( carteId, job.getContainerObjectId() );
+  }
+
+  /**
+   * This test demonstrates the issue fixed in PDI-17398.
+   * When a job is scheduled twice, it gets the same log channel Id and both logs get merged
+   */
+  @Test
+  public void testTwoJobsGetSameLogChannelId() {
+    Repository repository = mock( Repository.class );
+    JobMeta meta = mock( JobMeta.class );
+
+    Job job1 = new Job( repository, meta );
+    Job job2 = new Job( repository, meta );
+
+    assertEquals( job1.getLogChannelId(), job2.getLogChannelId() );
+  }
+
+  /**
+   * This test demonstrates the fix for PDI-17398.
+   * Two schedules -> two Carte object Ids -> two log channel Ids
+   */
+  @Test
+  public void testTwoJobsGetDifferentLogChannelIdWithDifferentCarteId() {
+    Repository repository = mock( Repository.class );
+    JobMeta meta1 = mock( JobMeta.class );
+    JobMeta meta2 = mock( JobMeta.class );
+
+    String carteId1 = UUID.randomUUID().toString();
+    String carteId2 = UUID.randomUUID().toString();
+
+    doReturn( carteId1 ).when( meta1 ).getContainerObjectId();
+    doReturn( carteId2 ).when( meta2 ).getContainerObjectId();
+
+    Job job1 = new Job( repository, meta1 );
+    Job job2 = new Job( repository, meta2 );
+
+    assertNotEquals( job1.getContainerObjectId(), job2.getContainerObjectId() );
+    assertNotEquals( job1.getLogChannelId(), job2.getLogChannelId() );
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithFilename( ) {
+    Job jobTest = new Job(  );
+    boolean hasFilename = true;
+    boolean hasRepoDir = false;
+    jobTest.copyVariablesFrom( null );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    jobTest.setInternalEntryCurrentDirectory( hasFilename, hasRepoDir );
+
+    assertEquals( "file:///C:/SomeFilenameDirectory", jobTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
+
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithRepository( ) {
+    Job jobTest = new Job(  );
+    boolean hasFilename = false;
+    boolean hasRepoDir = true;
+    jobTest.copyVariablesFrom( null );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    jobTest.setInternalEntryCurrentDirectory( hasFilename, hasRepoDir );
+
+    assertEquals( "/SomeRepDirectory", jobTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithoutFilenameOrRepository( ) {
+    Job jobTest = new Job(  );
+    jobTest.copyVariablesFrom( null );
+    boolean hasFilename = false;
+    boolean hasRepoDir = false;
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    jobTest.setVariable( Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    jobTest.setInternalEntryCurrentDirectory( hasFilename, hasRepoDir );
+
+    assertEquals( "Original value defined at run execution", jobTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY )  );
   }
 
 }

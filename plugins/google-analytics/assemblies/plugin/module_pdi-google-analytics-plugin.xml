@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-google-analytics-plugin" default="compile.module.pdi-google-analytics-plugin">
+  <dirname property="module.pdi-google-analytics-plugin.basedir" file="${ant.file.module_pdi-google-analytics-plugin}"/>
+  
+  <property name="module.jdk.home.pdi-google-analytics-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-google-analytics-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-google-analytics-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-google-analytics-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-google-analytics-plugin.output.dir" value="${module.pdi-google-analytics-plugin.basedir}/target/classes"/>
+  <property name="pdi-google-analytics-plugin.testoutput.dir" value="${module.pdi-google-analytics-plugin.basedir}/target/test-classes"/>
+  
+  <path id="pdi-google-analytics-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-google-analytics-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-google-analytics-plugin}"/>
+    <pathelement location="${pdi-google-analytics-plugin-core.output.dir}"/>
+    <pathelement location="${kettle-engine.output.dir}"/>
+    <pathelement location="${kettle-core.output.dir}"/>
+    <pathelement location="${kettle-ui-swt.output.dir}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse:jface:3.3.0-i20070606-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse:swt:3.3.0-v3346.classpath"/>
+    <path refid="library.maven:_org.eclipse.core:commands:3.3.0-i20070605-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse.equinox:common:3.6.200-v20130402-1505.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+  </path>
+  
+  <path id="pdi-google-analytics-plugin.runtime.production.module.classpath">
+    <pathelement location="${pdi-google-analytics-plugin.output.dir}"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.maven:_com.google.api-client:google-api-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava-jdk5:13.0.classpath"/>
+    <path refid="library.maven:_com.google.apis:google-api-services-analytics:v3-rev116-1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client-jackson2:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.oauth-client:google-oauth-client:1.20.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.google.code.findbugs:jsr305:1.3.9.classpath"/>
+  </path>
+  
+  <path id="pdi-google-analytics-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-google-analytics-plugin}"/>
+    <pathelement location="${pdi-google-analytics-plugin.output.dir}"/>
+    <pathelement location="${pdi-google-analytics-plugin-core.testoutput.dir}"/>
+    <pathelement location="${pdi-google-analytics-plugin-core.output.dir}"/>
+    <pathelement location="${kettle-engine.testoutput.dir}"/>
+    <pathelement location="${kettle-engine.output.dir}"/>
+    <pathelement location="${kettle-core.testoutput.dir}"/>
+    <pathelement location="${kettle-core.output.dir}"/>
+    <pathelement location="${kettle-ui-swt.testoutput.dir}"/>
+    <pathelement location="${kettle-ui-swt.output.dir}"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse:jface:3.3.0-i20070606-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse:swt:3.3.0-v3346.classpath"/>
+    <path refid="library.maven:_org.eclipse.core:commands:3.3.0-i20070605-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse.equinox:common:3.6.200-v20130402-1505.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.maven:_com.google.api-client:google-api-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava-jdk5:13.0.classpath"/>
+    <path refid="library.maven:_com.google.apis:google-api-services-analytics:v3-rev116-1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client-jackson2:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.oauth-client:google-oauth-client:1.20.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.google.code.findbugs:jsr305:1.3.9.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-google-analytics-plugin.runtime.module.classpath">
+    <pathelement location="${pdi-google-analytics-plugin.testoutput.dir}"/>
+    <pathelement location="${pdi-google-analytics-plugin.output.dir}"/>
+    <path refid="pdi-google-analytics-plugin-core.runtime.module.classpath"/>
+    <path refid="kettle-engine.runtime.module.classpath"/>
+    <path refid="kettle-core.runtime.module.classpath"/>
+    <path refid="kettle-ui-swt.runtime.module.classpath"/>
+    <path refid="library.maven:_pentaho:metastore:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-vfs2:2.2.classpath"/>
+    <path refid="library.maven:_org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.6.classpath"/>
+    <path refid="library.maven:_org.eclipse:jface:3.3.0-i20070606-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse:swt:3.3.0-v3346.classpath"/>
+    <path refid="library.maven:_org.eclipse.core:commands:3.3.0-i20070605-0010.classpath"/>
+    <path refid="library.maven:_org.eclipse.equinox:common:3.6.200-v20130402-1505.classpath"/>
+    <path refid="library.maven:_commons-lang:commons-lang:2.6.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.maven:_com.google.api-client:google-api-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava-jdk5:13.0.classpath"/>
+    <path refid="library.maven:_com.google.apis:google-api-services-analytics:v3-rev116-1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.http-client:google-http-client-jackson2:1.20.0.classpath"/>
+    <path refid="library.maven:_com.google.oauth-client:google-oauth-client:1.20.0.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.9.2.classpath"/>
+    <path refid="library.maven:_com.google.code.findbugs:jsr305:1.3.9.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-google-analytics-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-google-analytics-plugin">
+    <patternset refid="excluded.from.module.pdi-google-analytics-plugin"/>
+  </patternset>
+  
+  <path id="pdi-google-analytics-plugin.module.sourcepath">
+    <dirset dir="${module.pdi-google-analytics-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pdi-google-analytics-plugin" depends="compile.module.pdi-google-analytics-plugin.production,compile.module.pdi-google-analytics-plugin.tests" description="Compile module pdi-google-analytics-plugin"/>
+  
+  <target name="compile.module.pdi-google-analytics-plugin.production" depends="register.custom.compilers,compile.module.pdi-google-analytics-plugin-core,compile.module.kettle-engine,compile.module.kettle-core,compile.module.kettle-ui-swt" description="Compile module pdi-google-analytics-plugin; production classes">
+    <mkdir dir="${pdi-google-analytics-plugin.output.dir}"/>
+    <javac2 destdir="${pdi-google-analytics-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pdi-google-analytics-plugin}/javac">
+      <compilerarg line="${compiler.args.pdi-google-analytics-plugin}"/>
+      <bootclasspath refid="pdi-google-analytics-plugin.module.bootclasspath"/>
+      <classpath refid="pdi-google-analytics-plugin.module.production.classpath"/>
+      <src refid="pdi-google-analytics-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pdi-google-analytics-plugin"/>
+    </javac2>
+    
+    <copy todir="${pdi-google-analytics-plugin.output.dir}">
+      <fileset dir="${module.pdi-google-analytics-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pdi-google-analytics-plugin.tests" depends="register.custom.compilers,compile.module.pdi-google-analytics-plugin.production" description="compile module pdi-google-analytics-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-google-analytics-plugin" description="cleanup module">
+    <delete dir="${pdi-google-analytics-plugin.output.dir}"/>
+    <delete dir="${pdi-google-analytics-plugin.testoutput.dir}"/>
+  </target>
+</project>

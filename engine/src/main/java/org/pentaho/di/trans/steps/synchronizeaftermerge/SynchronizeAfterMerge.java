@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -109,7 +109,7 @@ public class SynchronizeAfterMerge extends BaseStep implements StepInterface {
          */
 
         if ( log.isRowLevel() ) {
-          logRowlevel( BaseMessages.getString( PKG, "SynchronizeAfterMerge.InsertRow", row.toString() ) );
+          logRowlevel( BaseMessages.getString( PKG, "SynchronizeAfterMerge.InsertRow", Arrays.toString( row ) ) );
         }
 
         // The values to insert are those in the update section
@@ -867,7 +867,7 @@ public class SynchronizeAfterMerge extends BaseStep implements StepInterface {
           data.releaseSavepoint = false;
         }
 
-        data.commitSize = Integer.parseInt( environmentSubstitute( "" + meta.getCommitSize() ) );
+        data.commitSize = Integer.parseInt( environmentSubstitute( meta.getCommitSize() ) );
         data.batchMode = data.commitSize > 0 && meta.useBatchUpdate();
 
         // Batch updates are not supported on PostgreSQL (and look-a-likes) together with error handling (PDI-366)
@@ -897,7 +897,7 @@ public class SynchronizeAfterMerge extends BaseStep implements StepInterface {
         } else {
           data.db.connect( getPartitionID() );
         }
-        data.db.setCommit( meta.getCommitSize() );
+        data.db.setCommit( data.commitSize );
 
         return true;
       } catch ( KettleException ke ) {

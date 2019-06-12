@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_version-checker" default="compile.module.version-checker">
+  <dirname property="module.version-checker.basedir" file="${ant.file.module_version-checker}"/>
+  
+  <property name="module.jdk.home.version-checker" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.version-checker" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.version-checker" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.version-checker" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="version-checker.output.dir" value="${module.version-checker.basedir}/target/classes"/>
+  <property name="version-checker.testoutput.dir" value="${module.version-checker.basedir}/target/test-classes"/>
+  
+  <path id="version-checker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="version-checker.module.production.classpath">
+    <path refid="${module.jdk.classpath.version-checker}"/>
+  </path>
+  
+  <path id="version-checker.runtime.production.module.classpath">
+    <pathelement location="${version-checker.output.dir}"/>
+  </path>
+  
+  <path id="version-checker.module.classpath">
+    <path refid="${module.jdk.classpath.version-checker}"/>
+    <pathelement location="${version-checker.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="version-checker.runtime.module.classpath">
+    <pathelement location="${version-checker.testoutput.dir}"/>
+    <pathelement location="${version-checker.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.version-checker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.version-checker">
+    <patternset refid="excluded.from.module.version-checker"/>
+  </patternset>
+  
+  
+  <target name="compile.module.version-checker" depends="compile.module.version-checker.production,compile.module.version-checker.tests" description="Compile module version-checker"/>
+  
+  <target name="compile.module.version-checker.production" depends="register.custom.compilers" description="Compile module version-checker; production classes"/>
+  
+  <target name="compile.module.version-checker.tests" depends="register.custom.compilers,compile.module.version-checker.production" description="compile module version-checker; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.version-checker" description="cleanup module">
+    <delete dir="${version-checker.output.dir}"/>
+    <delete dir="${version-checker.testoutput.dir}"/>
+  </target>
+</project>

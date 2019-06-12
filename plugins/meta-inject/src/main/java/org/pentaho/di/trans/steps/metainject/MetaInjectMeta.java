@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -51,6 +51,7 @@ import org.pentaho.di.resource.ResourceEntry;
 import org.pentaho.di.resource.ResourceEntry.ResourceType;
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.di.resource.ResourceReference;
+import org.pentaho.di.trans.ISubTransAwareMeta;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransHopMeta;
 import org.pentaho.di.trans.TransMeta;
@@ -77,7 +78,7 @@ import java.util.Map.Entry;
 @InjectionSupported( localizationPrefix = "MetaInject.Injection.", groups = { "SOURCE_OUTPUT_FIELDS",
   "MAPPING_FIELDS" } )
 public class MetaInjectMeta extends BaseStepMeta implements StepMetaInterface, StepMetaChangeListenerInterface,
-  HasRepositoryDirectories {
+  HasRepositoryDirectories, ISubTransAwareMeta {
 
   private static Class<?> PKG = MetaInjectMeta.class; // for i18n purposes, needed by Translator2!!
 
@@ -493,6 +494,13 @@ public class MetaInjectMeta extends BaseStepMeta implements StepMetaInterface, S
     this.specificationMethod = specificationMethod;
   }
 
+  @Override
+  public TransMeta fetchTransMeta( StepMetaInterface stepMeta, Repository rep, IMetaStore metastore, VariableSpace space ) throws KettleException {
+    return ( stepMeta != null && stepMeta instanceof MetaInjectMeta )
+        ? loadTransformationMeta( (MetaInjectMeta) stepMeta, rep, metastore, space ) : null;
+
+  }
+
   @Deprecated
   public static final synchronized TransMeta loadTransformationMeta( MetaInjectMeta mappingMeta, Repository rep,
                                                                      VariableSpace space ) throws KettleException {
@@ -774,7 +782,6 @@ public class MetaInjectMeta extends BaseStepMeta implements StepMetaInterface, S
   /**
    * Load the referenced object
    *
-   * @param meta      The metadata that references
    * @param index     the object index to load
    * @param rep       the repository
    * @param metaStore metaStore
@@ -890,7 +897,7 @@ public class MetaInjectMeta extends BaseStepMeta implements StepMetaInterface, S
           Map<TargetStepAttribute, SourceStepField> sourceMapping = toMeta.getTargetSourceMapping();
           for ( Entry<TargetStepAttribute, SourceStepField> entry : sourceMapping.entrySet() ) {
             SourceStepField value = entry.getValue();
-            if ( value.getStepname().equals( oldMeta.getName() ) ) {
+            if ( value.getStepname() != null && value.getStepname().equals( oldMeta.getName() ) ) {
               value.setStepname( newMeta.getName() );
             }
           }

@@ -54,11 +54,16 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.di.core.parameters.NamedParams;
+import org.pentaho.di.core.parameters.NamedParamsDefault;
+import org.pentaho.di.core.parameters.UnknownParamException;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.variables.Variables;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.repository.Repository;
+import org.pentaho.di.repository.RepositoryDirectory;
+import org.pentaho.di.repository.RepositoryDirectoryInterface;
 import org.pentaho.di.resource.ResourceNamingInterface;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.metastore.api.IMetaStore;
@@ -226,6 +231,37 @@ public class JobEntryTransTest {
   }
 
   @Test
+  public void testPrepareFieldNamesParameters() throws UnknownParamException {
+    // array of params
+    String[] parameterNames = new String[2];
+    parameterNames[0] = "param1";
+    parameterNames[1] = "param2";
+
+    // array of fieldNames params
+    String[] parameterFieldNames = new String[1];
+    parameterFieldNames[0] = "StreamParam1";
+
+    // array of parameterValues params
+    String[] parameterValues = new String[2];
+    parameterValues[1] = "ValueParam2";
+
+
+    JobEntryTrans jet = new JobEntryTrans();
+    VariableSpace variableSpace = new Variables();
+    jet.copyVariablesFrom( variableSpace );
+
+    //at this point StreamColumnNameParams are already inserted in namedParams
+    NamedParams namedParam = Mockito.mock( NamedParamsDefault.class );
+    Mockito.doReturn( "value1" ).when( namedParam ).getParameterValue(  "param1" );
+    Mockito.doReturn( "value2" ).when( namedParam ).getParameterValue(  "param2" );
+
+    jet.prepareFieldNamesParameters( parameterNames, parameterFieldNames, parameterValues, namedParam, jet );
+
+    Assert.assertEquals( "value1", jet.getVariable( "param1" ) );
+    Assert.assertEquals( null, jet.getVariable( "param2" ) );
+  }
+
+  @Test
   public void testGetTransMeta() throws KettleException {
     String param1 = "param1";
     String param2 = "param2";
@@ -236,6 +272,10 @@ public class JobEntryTransTest {
 
     JobEntryTrans jobEntryTrans = spy( getJobEntryTrans() );
     Repository rep = Mockito.mock( Repository.class );
+    RepositoryDirectory repositoryDirectory = Mockito.mock( RepositoryDirectory.class );
+    RepositoryDirectoryInterface repositoryDirectoryInterface = Mockito.mock( RepositoryDirectoryInterface.class );
+    Mockito.doReturn( repositoryDirectoryInterface ).when( rep ).loadRepositoryDirectoryTree();
+    Mockito.doReturn( repositoryDirectory ).when( repositoryDirectoryInterface ).findDirectory( "/home/admin" );
 
     TransMeta meta = new TransMeta();
     meta.setVariable( param2, "childValue2 should be override" );
@@ -266,5 +306,48 @@ public class JobEntryTransTest {
     Assert.assertEquals( parentValue1, transMeta.getVariable( param1 ) );
     Assert.assertEquals( parentValue2, transMeta.getVariable( param2 ) );
     Assert.assertEquals( childValue3, transMeta.getVariable( param3 ) );
+  }
+
+  @Test
+  public void testGetTransMetaRepo() throws KettleException {
+    String param1 = "dir";
+    String param2 = "file";
+    String parentValue1 = "/home/admin";
+    String parentValue2 = "test";
+
+    JobEntryTrans jobEntryTrans = spy( getJobEntryTrans() );
+    Repository rep = Mockito.mock( Repository.class );
+    RepositoryDirectory repositoryDirectory = Mockito.mock( RepositoryDirectory.class );
+    RepositoryDirectoryInterface repositoryDirectoryInterface = Mockito.mock( RepositoryDirectoryInterface.class );
+    Mockito.doReturn( repositoryDirectoryInterface ).when( rep ).loadRepositoryDirectoryTree();
+    Mockito.doReturn( repositoryDirectory ).when( repositoryDirectoryInterface ).findDirectory( parentValue1 );
+
+    TransMeta meta = new TransMeta();
+    meta.setVariable( param2, "childValue2 should be override" );
+
+    Mockito.doReturn( meta ).when( rep )
+            .loadTransformation( Mockito.eq( "test" ), Mockito.anyObject(), Mockito.anyObject(), Mockito.anyBoolean(),
+                    Mockito.anyObject() );
+
+    VariableSpace parentSpace = new Variables();
+    parentSpace.setVariable( param1, parentValue1 );
+    parentSpace.setVariable( param2, parentValue2 );
+
+    jobEntryTrans.setDirectory( "${dir}" );
+    jobEntryTrans.setTransname( "${file}" );
+
+    Mockito.doNothing().when( jobEntryTrans ).logBasic( Mockito.anyString() );
+    jobEntryTrans.setSpecificationMethod( ObjectLocationSpecificationMethod.REPOSITORY_BY_NAME );
+
+    TransMeta transMeta;
+    jobEntryTrans.setPassingAllParameters( false );
+    transMeta = jobEntryTrans.getTransMeta( rep, null, parentSpace );
+    Assert.assertEquals( null, transMeta.getVariable( param1 ) );
+    Assert.assertEquals( parentValue2, transMeta.getVariable( param2 ) );
+
+    jobEntryTrans.setPassingAllParameters( true );
+    transMeta = jobEntryTrans.getTransMeta( rep, null, parentSpace );
+    Assert.assertEquals( parentValue1, transMeta.getVariable( param1 ) );
+    Assert.assertEquals( parentValue2, transMeta.getVariable( param2 ) );
   }
 }

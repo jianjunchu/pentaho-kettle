@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-sap-plugin" default="compile.module.kettle-sap-plugin">
+  <dirname property="module.kettle-sap-plugin.basedir" file="${ant.file.module_kettle-sap-plugin}"/>
+  
+  <property name="module.jdk.home.kettle-sap-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-sap-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-sap-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-sap-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-sap-plugin.output.dir" value="${module.kettle-sap-plugin.basedir}/target/classes"/>
+  <property name="kettle-sap-plugin.testoutput.dir" value="${module.kettle-sap-plugin.basedir}/target/test-classes"/>
+  
+  <path id="kettle-sap-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-sap-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-sap-plugin}"/>
+    <pathelement location="${kettle-sap-plugin-core.output.dir}"/>
+    <path refid="library.maven:_ascsapjco3wrp:ascsapjco3wrp:20100529.classpath"/>
+  </path>
+  
+  <path id="kettle-sap-plugin.runtime.production.module.classpath">
+    <pathelement location="${kettle-sap-plugin.output.dir}"/>
+    <path refid="kettle-sap-plugin-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_ascsapjco3wrp:ascsapjco3wrp:20100529.classpath"/>
+  </path>
+  
+  <path id="kettle-sap-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-sap-plugin}"/>
+    <pathelement location="${kettle-sap-plugin.output.dir}"/>
+    <pathelement location="${kettle-sap-plugin-core.testoutput.dir}"/>
+    <pathelement location="${kettle-sap-plugin-core.output.dir}"/>
+    <path refid="library.maven:_ascsapjco3wrp:ascsapjco3wrp:20100529.classpath"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="kettle-sap-plugin.runtime.module.classpath">
+    <pathelement location="${kettle-sap-plugin.testoutput.dir}"/>
+    <pathelement location="${kettle-sap-plugin.output.dir}"/>
+    <path refid="kettle-sap-plugin-core.runtime.module.classpath"/>
+    <path refid="library.maven:_ascsapjco3wrp:ascsapjco3wrp:20100529.classpath"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-sap-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-sap-plugin">
+    <patternset refid="excluded.from.module.kettle-sap-plugin"/>
+  </patternset>
+  
+  <path id="kettle-sap-plugin.module.sourcepath">
+    <dirset dir="${module.kettle-sap-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-sap-plugin" depends="compile.module.kettle-sap-plugin.production,compile.module.kettle-sap-plugin.tests" description="Compile module kettle-sap-plugin"/>
+  
+  <target name="compile.module.kettle-sap-plugin.production" depends="register.custom.compilers,compile.module.kettle-sap-plugin-core" description="Compile module kettle-sap-plugin; production classes">
+    <mkdir dir="${kettle-sap-plugin.output.dir}"/>
+    <javac2 destdir="${kettle-sap-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-sap-plugin}/javac">
+      <compilerarg line="${compiler.args.kettle-sap-plugin}"/>
+      <bootclasspath refid="kettle-sap-plugin.module.bootclasspath"/>
+      <classpath refid="kettle-sap-plugin.module.production.classpath"/>
+      <src refid="kettle-sap-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-sap-plugin"/>
+    </javac2>
+    
+    <copy todir="${kettle-sap-plugin.output.dir}">
+      <fileset dir="${module.kettle-sap-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-sap-plugin.tests" depends="register.custom.compilers,compile.module.kettle-sap-plugin.production" description="compile module kettle-sap-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-sap-plugin" description="cleanup module">
+    <delete dir="${kettle-sap-plugin.output.dir}"/>
+    <delete dir="${kettle-sap-plugin.testoutput.dir}"/>
+  </target>
+</project>

@@ -117,6 +117,8 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
 
   private static final int DIALOG_WIDTH = 357, DIALOG_HEIGHT = 165, DIALOG_COLOR = SWT.COLOR_WHITE;
 
+  protected static final String HOME_PATH = "/home", PUBLIC_PATH = "/public";
+
   /**
    * Allows for lookup of a UIRepositoryDirectory by ObjectId. This allows the reuse of instances that are inside a UI
    * tree.
@@ -663,6 +665,15 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
 
   // Object being dragged from the hierarchical folder tree
   public void onDragFromGlobalTree( DropEvent event ) {
+    for ( UIRepositoryDirectory uiRepositoryDirectory : this.getSelectedFolderItems() ) {
+      String path = uiRepositoryDirectory.getDirectory().getPath();
+
+      if ( path.equals( HOME_PATH ) || path.equals( PUBLIC_PATH ) ) {
+        event.setAccepted( false );
+        return;
+      }
+    }
+
     event.setAccepted( true );
   }
 
@@ -837,7 +848,12 @@ public class BrowseController extends AbstractXulEventHandler implements IUISupp
     } else {
       setRepositoryItems( selectedFileItems );
     }
-    folderTree.setSelectedItems( this.selectedFolderItems );
+
+    if ( selectedFileItems.isEmpty() ) {
+      // we only need to call this once when the tree selection changes, in which case the selectedFileItems is empty
+      // calling this will hide the history tab which we want to have visible when a file is selected and selectedFileItems is not empty
+      folderTree.setSelectedItems( this.selectedFolderItems );
+    }
   }
 
   public Binding getSelectedItemsBinding() {

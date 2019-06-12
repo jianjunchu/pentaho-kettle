@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_shapefilereader" default="compile.module.shapefilereader">
+  <dirname property="module.shapefilereader.basedir" file="${ant.file.module_shapefilereader}"/>
+  
+  <property name="module.jdk.home.shapefilereader" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.shapefilereader" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.shapefilereader" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.shapefilereader" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="shapefilereader.output.dir" value="${module.shapefilereader.basedir}/target/classes"/>
+  <property name="shapefilereader.testoutput.dir" value="${module.shapefilereader.basedir}/target/test-classes"/>
+  
+  <path id="shapefilereader.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="shapefilereader.module.production.classpath">
+    <path refid="${module.jdk.classpath.shapefilereader}"/>
+  </path>
+  
+  <path id="shapefilereader.runtime.production.module.classpath">
+    <pathelement location="${shapefilereader.output.dir}"/>
+  </path>
+  
+  <path id="shapefilereader.module.classpath">
+    <path refid="${module.jdk.classpath.shapefilereader}"/>
+    <pathelement location="${shapefilereader.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="shapefilereader.runtime.module.classpath">
+    <pathelement location="${shapefilereader.testoutput.dir}"/>
+    <pathelement location="${shapefilereader.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.shapefilereader">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.shapefilereader">
+    <patternset refid="excluded.from.module.shapefilereader"/>
+  </patternset>
+  
+  
+  <target name="compile.module.shapefilereader" depends="compile.module.shapefilereader.production,compile.module.shapefilereader.tests" description="Compile module shapefilereader"/>
+  
+  <target name="compile.module.shapefilereader.production" depends="register.custom.compilers" description="Compile module shapefilereader; production classes"/>
+  
+  <target name="compile.module.shapefilereader.tests" depends="register.custom.compilers,compile.module.shapefilereader.production" description="compile module shapefilereader; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.shapefilereader" description="cleanup module">
+    <delete dir="${shapefilereader.output.dir}"/>
+    <delete dir="${shapefilereader.testoutput.dir}"/>
+  </target>
+</project>

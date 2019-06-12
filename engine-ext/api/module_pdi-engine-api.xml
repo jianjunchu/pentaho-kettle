@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-engine-api" default="compile.module.pdi-engine-api">
+  <dirname property="module.pdi-engine-api.basedir" file="${ant.file.module_pdi-engine-api}"/>
+  
+  <property name="module.jdk.home.pdi-engine-api" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-engine-api" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-engine-api" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-engine-api" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-engine-api.output.dir" value="${module.pdi-engine-api.basedir}/target/classes"/>
+  <property name="pdi-engine-api.testoutput.dir" value="${module.pdi-engine-api.basedir}/target/test-classes"/>
+  
+  <path id="pdi-engine-api.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-engine-api.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-engine-api}"/>
+    <path refid="library.maven:_javax.websocket:javax.websocket-api:1.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.reactivestreams:reactive-streams:1.0.0.classpath"/>
+  </path>
+  
+  <path id="pdi-engine-api.runtime.production.module.classpath">
+    <pathelement location="${pdi-engine-api.output.dir}"/>
+    <path refid="library.maven:_javax.websocket:javax.websocket-api:1.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.reactivestreams:reactive-streams:1.0.0.classpath"/>
+  </path>
+  
+  <path id="pdi-engine-api.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-engine-api}"/>
+    <pathelement location="${pdi-engine-api.output.dir}"/>
+    <path refid="library.maven:_javax.websocket:javax.websocket-api:1.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.reactivestreams:reactive-streams:1.0.0.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-engine-api.runtime.module.classpath">
+    <pathelement location="${pdi-engine-api.testoutput.dir}"/>
+    <pathelement location="${pdi-engine-api.output.dir}"/>
+    <path refid="library.maven:_javax.websocket:javax.websocket-api:1.0.classpath"/>
+    <path refid="library.maven:_com.google.guava:guava:17.0.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.reactivestreams:reactive-streams:1.0.0.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-engine-api">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-engine-api">
+    <patternset refid="excluded.from.module.pdi-engine-api"/>
+  </patternset>
+  
+  <path id="pdi-engine-api.module.sourcepath">
+    <dirset dir="${module.pdi-engine-api.basedir}">
+      <include name="target/generated-sources/license"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pdi-engine-api" depends="compile.module.pdi-engine-api.production,compile.module.pdi-engine-api.tests" description="Compile module pdi-engine-api"/>
+  
+  <target name="compile.module.pdi-engine-api.production" depends="register.custom.compilers" description="Compile module pdi-engine-api; production classes">
+    <mkdir dir="${pdi-engine-api.output.dir}"/>
+    <javac2 destdir="${pdi-engine-api.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pdi-engine-api}/javac">
+      <compilerarg line="${compiler.args.pdi-engine-api}"/>
+      <bootclasspath refid="pdi-engine-api.module.bootclasspath"/>
+      <classpath refid="pdi-engine-api.module.production.classpath"/>
+      <src refid="pdi-engine-api.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pdi-engine-api"/>
+    </javac2>
+    
+    <copy todir="${pdi-engine-api.output.dir}">
+      <fileset dir="${module.pdi-engine-api.basedir}/target/generated-sources/license">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pdi-engine-api.tests" depends="register.custom.compilers,compile.module.pdi-engine-api.production" description="compile module pdi-engine-api; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-engine-api" description="cleanup module">
+    <delete dir="${pdi-engine-api.output.dir}"/>
+    <delete dir="${pdi-engine-api.testoutput.dir}"/>
+  </target>
+</project>

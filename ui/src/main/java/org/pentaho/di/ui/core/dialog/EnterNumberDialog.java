@@ -24,6 +24,8 @@ package org.pentaho.di.ui.core.dialog;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -43,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.i18n.BaseMessages;
+import org.pentaho.di.ui.core.ConstUI;
 import org.pentaho.di.ui.core.FormDataBuilder;
 import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.di.ui.core.gui.GUIResource;
@@ -144,16 +147,24 @@ public class EnterNumberDialog extends Dialog {
     Control lastControl = wNumber;
     if ( StringUtils.isNotBlank( checkboxLabel ) ) {
       wCheckbox = new Button( shell, SWT.CHECK );
+      props.setLook( wCheckbox );
       fdCheckbox = new FormData();
       fdCheckbox.left = new FormAttachment( 0, 0 );
       fdCheckbox.top = new FormAttachment( wNumber, BaseDialog.ELEMENT_SPACING );
+      fdCheckbox.width = ConstUI.CHECKBOX_WIDTH;
       wCheckbox.setLayoutData( fdCheckbox );
 
-      wlCheckbox = new Label( shell, SWT.NONE );
+      wlCheckbox = new Label( shell, SWT.LEFT );
+      wlCheckbox.addMouseListener( new MouseAdapter() {
+        @Override public void mouseDown( MouseEvent mouseEvent ) {
+          // toggle the checkbox when the label is clicked
+          wCheckbox.setSelection( !wCheckbox.getSelection() );
+        }
+      } );
       wlCheckbox.setText( checkboxLabel );
       props.setLook( wlCheckbox );
       fdlCheckbox = new FormData();
-      fdlCheckbox.left = new FormAttachment( wCheckbox, BaseDialog.ELEMENT_SPACING );
+      fdlCheckbox.left = new FormAttachment( wCheckbox, 0 );
       fdlCheckbox.top = new FormAttachment( wCheckbox, 0, SWT.CENTER );
       wlCheckbox.setLayoutData( fdlCheckbox );
       lastControl = wlCheckbox;

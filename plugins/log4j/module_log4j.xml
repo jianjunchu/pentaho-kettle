@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_log4j" default="compile.module.log4j">
+  <dirname property="module.log4j.basedir" file="${ant.file.module_log4j}"/>
+  
+  <property name="module.jdk.home.log4j" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.log4j" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.log4j" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.log4j" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="log4j.output.dir" value="${module.log4j.basedir}/target/classes"/>
+  <property name="log4j.testoutput.dir" value="${module.log4j.basedir}/target/test-classes"/>
+  
+  <path id="log4j.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="log4j.module.production.classpath">
+    <path refid="${module.jdk.classpath.log4j}"/>
+  </path>
+  
+  <path id="log4j.runtime.production.module.classpath">
+    <pathelement location="${log4j.output.dir}"/>
+  </path>
+  
+  <path id="log4j.module.classpath">
+    <path refid="${module.jdk.classpath.log4j}"/>
+    <pathelement location="${log4j.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="log4j.runtime.module.classpath">
+    <pathelement location="${log4j.testoutput.dir}"/>
+    <pathelement location="${log4j.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.log4j">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.log4j">
+    <patternset refid="excluded.from.module.log4j"/>
+  </patternset>
+  
+  
+  <target name="compile.module.log4j" depends="compile.module.log4j.production,compile.module.log4j.tests" description="Compile module log4j"/>
+  
+  <target name="compile.module.log4j.production" depends="register.custom.compilers" description="Compile module log4j; production classes"/>
+  
+  <target name="compile.module.log4j.tests" depends="register.custom.compilers,compile.module.log4j.production" description="compile module log4j; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.log4j" description="cleanup module">
+    <delete dir="${log4j.output.dir}"/>
+    <delete dir="${log4j.testoutput.dir}"/>
+  </target>
+</project>

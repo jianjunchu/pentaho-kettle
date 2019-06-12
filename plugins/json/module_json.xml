@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_json" default="compile.module.json">
+  <dirname property="module.json.basedir" file="${ant.file.module_json}"/>
+  
+  <property name="module.jdk.home.json" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.json" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.json" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.json" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="json.output.dir" value="${module.json.basedir}/target/classes"/>
+  <property name="json.testoutput.dir" value="${module.json.basedir}/target/test-classes"/>
+  
+  <path id="json.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="json.module.production.classpath">
+    <path refid="${module.jdk.classpath.json}"/>
+  </path>
+  
+  <path id="json.runtime.production.module.classpath">
+    <pathelement location="${json.output.dir}"/>
+  </path>
+  
+  <path id="json.module.classpath">
+    <path refid="${module.jdk.classpath.json}"/>
+    <pathelement location="${json.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="json.runtime.module.classpath">
+    <pathelement location="${json.testoutput.dir}"/>
+    <pathelement location="${json.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.json">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.json">
+    <patternset refid="excluded.from.module.json"/>
+  </patternset>
+  
+  
+  <target name="compile.module.json" depends="compile.module.json.production,compile.module.json.tests" description="Compile module json"/>
+  
+  <target name="compile.module.json.production" depends="register.custom.compilers" description="Compile module json; production classes"/>
+  
+  <target name="compile.module.json.tests" depends="register.custom.compilers,compile.module.json.production" description="compile module json; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.json" description="cleanup module">
+    <delete dir="${json.output.dir}"/>
+    <delete dir="${json.testoutput.dir}"/>
+  </target>
+</project>

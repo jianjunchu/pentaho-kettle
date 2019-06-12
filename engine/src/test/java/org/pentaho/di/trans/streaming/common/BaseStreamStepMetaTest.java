@@ -96,6 +96,7 @@ public class BaseStreamStepMetaTest {
   @Mock private Repository repo;
   @Mock private BaseStreamStepMeta.MappingMetaRetriever mappingMetaRetriever;
   @Mock private TransMeta subTransMeta;
+  @Mock private TransMeta transMeta;
 
   @BeforeClass
   public static void setUpBeforeClass() throws KettleException {
@@ -117,6 +118,8 @@ public class BaseStreamStepMetaTest {
     when( subTransMeta.getPrevStepFields( anyString() ) ).thenReturn( prevRowMeta );
     when( subTransMeta.getSteps() ).thenReturn( singletonList( subTransStepMeta ) );
     when( subTransStepMeta.getStepMetaInterface() ).thenReturn( stepMetaInterface );
+    when( subTransStepMeta.getName() ).thenReturn( "SubStepName" );
+    meta.mappingMetaRetriever = mappingMetaRetriever;
   }
 
   @Step ( id = "StuffStream", name = "Stuff Stream" )
@@ -191,6 +194,19 @@ public class BaseStreamStepMetaTest {
   }
 
   @Test
+  public void testCheckErrorsOnSubStepName() {
+    List<CheckResultInterface> remarks = new ArrayList<>();
+    Variables space = new Variables();
+
+    meta.setBatchSize( "10" );
+    meta.setBatchDuration( "10" );
+    meta.setSubStep( "MissingStep" );
+    meta.check( remarks, null, null, null, null, null, null, space, null, null );
+    assertEquals( 1, remarks.size() );
+    assertEquals( "Unable to complete \"null\".  Cannot return fields from \"MissingStep\" because it does not exist in the sub-transformation.", remarks.get( 0 ).getText() );
+  }
+
+  @Test
   public void testCheckErrorsOnVariablesSubstituteError() {
     List<CheckResultInterface> remarks = new ArrayList<>();
     Variables space = new Variables();
@@ -222,6 +238,7 @@ public class BaseStreamStepMetaTest {
     startingMeta.setBatchDuration( "1000" );
     startingMeta.setBatchSize( "100" );
     startingMeta.setTransformationPath( "aPath" );
+    startingMeta.setParallelism( "4" );
     testRoundTrip( startingMeta );
   }
 
@@ -308,6 +325,21 @@ public class BaseStreamStepMetaTest {
     assertEquals( "someName", stuffStreamMeta.getTransformationPath() );
   }
 
+  @Test
+  public void testGetFileName() {
+    meta = new StuffStreamMeta();
+    String testPathName = "transformationPathName";
+    String testFileName = "testFileName";
+
+    // verify that when the fileName is not set, we get the transformation path
+    meta.setTransformationPath( testPathName );
+    assertThat( meta.getFileName(), equalTo( testPathName ) );
+
+    // verify that when the fileName is set, we get it
+    meta.setFileName( testFileName );
+    assertThat( meta.getFileName(), equalTo( testFileName ) );
+  }
+
   // Checks that a serialization->deserialization does not alter meta fields
   private void testRoundTrip( BaseStreamStepMeta thisMeta ) {
     StuffStreamMeta startingMeta = (StuffStreamMeta) thisMeta;
@@ -323,6 +355,7 @@ public class BaseStreamStepMetaTest {
     assertThat( startingMeta.getBatchDuration(), equalTo( metaToRoundTrip.getBatchDuration() ) );
     assertThat( startingMeta.getBatchSize(), equalTo( metaToRoundTrip.getBatchSize() ) );
     assertThat( startingMeta.getTransformationPath(), equalTo( metaToRoundTrip.getTransformationPath() ) );
+    assertThat( startingMeta.getParallelism(), equalTo( metaToRoundTrip.getParallelism() ) );
 
     assertThat( startingMeta.stuff, equalTo( metaToRoundTrip.stuff ) );
   }

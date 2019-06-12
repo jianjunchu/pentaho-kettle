@@ -320,10 +320,10 @@ public class TransMeta extends AbstractMeta
         .getString( PKG, "TransMeta.TransformationType.SingleThreaded" ) );
 
     /** The code corresponding to the transformation type. */
-    private String code;
+    private final String code;
 
     /** The description of the transformation type. */
-    private String description;
+    private final String description;
 
     /**
      * Instantiates a new transformation type.
@@ -333,7 +333,7 @@ public class TransMeta extends AbstractMeta
      * @param description
      *          the description
      */
-    private TransformationType( String code, String description ) {
+    TransformationType( String code, String description ) {
       this.code = code;
       this.description = description;
     }
@@ -1381,6 +1381,10 @@ public class TransMeta extends AbstractMeta
    * @return The list of the preceding steps
    */
   public List<StepMeta> findPreviousSteps( StepMeta stepMeta, boolean info ) {
+    if ( stepMeta == null ) {
+      return new ArrayList<>();
+    }
+
     String cacheKey = getStepMetaCacheKey( stepMeta, info );
     List<StepMeta> previousSteps = previousStepCache.get( cacheKey );
     if ( previousSteps == null ) {
@@ -4663,7 +4667,7 @@ public class TransMeta extends AbstractMeta
             remarks.add( cr );
 
             if ( transLogTable.getTableName() != null ) {
-              if ( logdb.checkTableExists( transLogTable.getTableName() ) ) {
+              if ( logdb.checkTableExists( transLogTable.getSchemaName(), transLogTable.getTableName() ) ) {
                 cr =
                     new CheckResult( CheckResultInterface.TYPE_RESULT_OK, BaseMessages
                         .getString( PKG, "TransMeta.CheckResult.TypeResultOK.LoggingTableExists.Description",
@@ -5550,7 +5554,7 @@ public class TransMeta extends AbstractMeta
     setChanged();
   }
 
-  protected List<SharedObjectInterface> getAllSharedObjects() {
+  @Override protected List<SharedObjectInterface> getAllSharedObjects() {
     List<SharedObjectInterface> shared = super.getAllSharedObjects();
     shared.addAll( steps );
     shared.addAll( partitionSchemas );
@@ -5652,9 +5656,8 @@ public class TransMeta extends AbstractMeta
       variables.setVariable( Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY, "Parent Job Repository Directory" );
     }
 
-    variables.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY,
-      variables.getVariable( repository != null ? Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY
-        : Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY ) );
+    setInternalEntryCurrentDirectory();
+
   }
 
   /**
@@ -5702,10 +5705,17 @@ public class TransMeta extends AbstractMeta
       variables.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_NAME, "" );
     }
 
-    variables.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY,
-        variables.getVariable( repository != null ? Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY
-          : Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY ) );
+    setInternalEntryCurrentDirectory();
+
   }
+
+  protected void setInternalEntryCurrentDirectory() {
+    variables.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, variables.getVariable(
+      repository != null ?  Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY
+        : filename != null ? Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY
+        : Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
+  }
+
 
   /**
    * Finds the mapping input step with the specified name. If no mapping input step is found, null is returned

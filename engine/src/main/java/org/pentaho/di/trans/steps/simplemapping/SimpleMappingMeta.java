@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2018 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -22,13 +22,9 @@
 
 package org.pentaho.di.trans.steps.simplemapping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
@@ -36,6 +32,7 @@ import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
@@ -50,6 +47,7 @@ import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.resource.ResourceEntry;
 import org.pentaho.di.resource.ResourceEntry.ResourceType;
 import org.pentaho.di.resource.ResourceReference;
+import org.pentaho.di.trans.ISubTransAwareMeta;
 import org.pentaho.di.trans.StepWithMappingMeta;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -68,6 +66,9 @@ import org.pentaho.di.trans.steps.mappingoutput.MappingOutputMeta;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Meta-data for the Mapping step: contains name of the (sub-)transformation to execute
  *
@@ -76,7 +77,8 @@ import org.w3c.dom.Node;
  *
  */
 
-public class SimpleMappingMeta extends StepWithMappingMeta implements StepMetaInterface, HasRepositoryInterface {
+public class SimpleMappingMeta extends StepWithMappingMeta implements StepMetaInterface, HasRepositoryInterface,
+  ISubTransAwareMeta {
 
   private static Class<?> PKG = SimpleMappingMeta.class; // for i18n purposes, needed by Translator2!!
 
@@ -470,17 +472,12 @@ public class SimpleMappingMeta extends StepWithMappingMeta implements StepMetaIn
 
   @Override
   public StepIOMetaInterface getStepIOMeta() {
+    StepIOMetaInterface ioMeta = super.getStepIOMeta( false );
     if ( ioMeta == null ) {
       ioMeta = new StepIOMeta( true, true, false, false, false, false );
+      setStepIOMeta( ioMeta );
     }
     return ioMeta;
-  }
-
-  /**
-   * Remove the cached {@link StepIOMeta} so it is recreated when it is next accessed.
-   */
-  public void resetStepIoMeta() {
-    ioMeta = null;
   }
 
   public boolean excludeFromRowLayoutVerification() {
@@ -572,4 +569,17 @@ public class SimpleMappingMeta extends StepWithMappingMeta implements StepMetaIn
     this.outputMapping = outputMapping;
   }
 
+  @Override
+  public List<MappingIODefinition> getInputMappings() {
+    final List<MappingIODefinition> inputMappings = new ArrayList();
+    inputMappings.add( inputMapping );
+    return inputMappings;
+  }
+
+  @Override
+  public List<MappingIODefinition> getOutputMappings() {
+    final List<MappingIODefinition> outputMappings = new ArrayList();
+    outputMappings.add( outputMapping );
+    return outputMappings;
+  }
 }

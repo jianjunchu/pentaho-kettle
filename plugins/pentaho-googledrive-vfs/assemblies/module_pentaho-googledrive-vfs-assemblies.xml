@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pentaho-googledrive-vfs-assemblies" default="compile.module.pentaho-googledrive-vfs-assemblies">
+  <dirname property="module.pentaho-googledrive-vfs-assemblies.basedir" file="${ant.file.module_pentaho-googledrive-vfs-assemblies}"/>
+  
+  <property name="module.jdk.home.pentaho-googledrive-vfs-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pentaho-googledrive-vfs-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pentaho-googledrive-vfs-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pentaho-googledrive-vfs-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pentaho-googledrive-vfs-assemblies.output.dir" value="${module.pentaho-googledrive-vfs-assemblies.basedir}/target/classes"/>
+  <property name="pentaho-googledrive-vfs-assemblies.testoutput.dir" value="${module.pentaho-googledrive-vfs-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="pentaho-googledrive-vfs-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pentaho-googledrive-vfs-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.pentaho-googledrive-vfs-assemblies}"/>
+  </path>
+  
+  <path id="pentaho-googledrive-vfs-assemblies.runtime.production.module.classpath">
+    <pathelement location="${pentaho-googledrive-vfs-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="pentaho-googledrive-vfs-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.pentaho-googledrive-vfs-assemblies}"/>
+    <pathelement location="${pentaho-googledrive-vfs-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pentaho-googledrive-vfs-assemblies.runtime.module.classpath">
+    <pathelement location="${pentaho-googledrive-vfs-assemblies.testoutput.dir}"/>
+    <pathelement location="${pentaho-googledrive-vfs-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pentaho-googledrive-vfs-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pentaho-googledrive-vfs-assemblies">
+    <patternset refid="excluded.from.module.pentaho-googledrive-vfs-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pentaho-googledrive-vfs-assemblies" depends="compile.module.pentaho-googledrive-vfs-assemblies.production,compile.module.pentaho-googledrive-vfs-assemblies.tests" description="Compile module pentaho-googledrive-vfs-assemblies"/>
+  
+  <target name="compile.module.pentaho-googledrive-vfs-assemblies.production" depends="register.custom.compilers" description="Compile module pentaho-googledrive-vfs-assemblies; production classes"/>
+  
+  <target name="compile.module.pentaho-googledrive-vfs-assemblies.tests" depends="register.custom.compilers,compile.module.pentaho-googledrive-vfs-assemblies.production" description="compile module pentaho-googledrive-vfs-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pentaho-googledrive-vfs-assemblies" description="cleanup module">
+    <delete dir="${pentaho-googledrive-vfs-assemblies.output.dir}"/>
+    <delete dir="${pentaho-googledrive-vfs-assemblies.testoutput.dir}"/>
+  </target>
+</project>

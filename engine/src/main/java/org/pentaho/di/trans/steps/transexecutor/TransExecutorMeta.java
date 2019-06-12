@@ -22,13 +22,9 @@
 
 package org.pentaho.di.trans.steps.transexecutor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.ObjectLocationSpecificationMethod;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
@@ -38,6 +34,7 @@ import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaFactory;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
@@ -52,6 +49,7 @@ import org.pentaho.di.repository.StringObjectId;
 import org.pentaho.di.resource.ResourceEntry;
 import org.pentaho.di.resource.ResourceEntry.ResourceType;
 import org.pentaho.di.resource.ResourceReference;
+import org.pentaho.di.trans.ISubTransAwareMeta;
 import org.pentaho.di.trans.StepWithMappingMeta;
 import org.pentaho.di.trans.Trans;
 import org.pentaho.di.trans.TransMeta;
@@ -69,13 +67,17 @@ import org.pentaho.di.trans.step.errorhandling.StreamInterface.StreamType;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Meta-data for the Trans Executor step.
  *
  * @author Matt
  * @since 18-mar-2013
  */
-public class TransExecutorMeta extends StepWithMappingMeta implements StepMetaInterface, HasRepositoryInterface {
+public class TransExecutorMeta extends StepWithMappingMeta implements StepMetaInterface, HasRepositoryInterface,
+  ISubTransAwareMeta {
 
   private static Class<?> PKG = TransExecutorMeta.class; // for i18n purposes, needed by Translator2!!
 
@@ -663,6 +665,7 @@ public class TransExecutorMeta extends StepWithMappingMeta implements StepMetaIn
 
   @Override
   public StepIOMetaInterface getStepIOMeta() {
+    StepIOMetaInterface ioMeta = super.getStepIOMeta( false );
     if ( ioMeta == null ) {
 
       ioMeta = new StepIOMeta( true, true, true, false, true, false );
@@ -675,6 +678,7 @@ public class TransExecutorMeta extends StepWithMappingMeta implements StepMetaIn
         "TransExecutorMeta.ResultFilesStream.Description" ), StreamIcon.TARGET, null ) );
       ioMeta.addStream( new Stream( StreamType.TARGET, executorsOutputStepMeta, BaseMessages.getString( PKG,
         "TransExecutorMeta.ExecutorOutputStream.Description" ), StreamIcon.OUTPUT, null ) );
+      setStepIOMeta( ioMeta );
     }
     return ioMeta;
   }
@@ -1194,5 +1198,34 @@ public class TransExecutorMeta extends StepWithMappingMeta implements StepMetaIn
     setExecutorsOutputStepMeta( null );
     return true;
 
+  }
+
+  @Override
+  public boolean cleanAfterHopFromRemove( StepMeta toStep ) {
+    if ( null == toStep || null == toStep.getName() ) {
+      return false;
+    }
+
+    boolean hasChanged = false;
+    String toStepName = toStep.getName();
+
+    if ( getExecutionResultTargetStepMeta() != null
+      && toStepName.equals( getExecutionResultTargetStepMeta().getName() ) ) {
+      setExecutionResultTargetStepMeta( null );
+      hasChanged = true;
+    } else if ( getOutputRowsSourceStepMeta() != null
+      && toStepName.equals( getOutputRowsSourceStepMeta().getName() ) ) {
+      setOutputRowsSourceStepMeta( null );
+      hasChanged = true;
+    } else if ( getResultFilesTargetStepMeta() != null
+      && toStepName.equals( getResultFilesTargetStepMeta().getName() ) ) {
+      setResultFilesTargetStepMeta( null );
+      hasChanged = true;
+    } else if ( getExecutorsOutputStepMeta() != null
+      && toStepName.equals( getExecutorsOutputStepMeta().getName() ) ) {
+      setExecutorsOutputStepMeta( null );
+      hasChanged = true;
+    }
+    return hasChanged;
   }
 }

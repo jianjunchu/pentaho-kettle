@@ -284,7 +284,7 @@ public class TextFileOutput extends BaseStep implements StepInterface {
     int flushInterval = 0;
     if ( var != null ) {
       try {
-        Integer.parseInt( var );
+        flushInterval = Integer.parseInt( var );
       } catch ( Exception ex ) {
         // Do nothing
       }
@@ -445,7 +445,7 @@ public class TextFileOutput extends BaseStep implements StepInterface {
 
     Object[] row = getRow(); // This also waits for a row to be finished.
 
-    if ( ( row != null ) && ( ( meta.getOutputFields().length == 0 ) || first ) ) {
+    if ( row != null  && first ) {
       data.outputRowMeta = getInputRowMeta().clone();
     }
 

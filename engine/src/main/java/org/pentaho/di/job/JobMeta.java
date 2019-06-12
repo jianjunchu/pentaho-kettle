@@ -262,7 +262,7 @@ public class JobMeta extends AbstractMeta
    * @return the job entry copy
    */
   public static final JobEntryCopy createStartEntry() {
-    JobEntrySpecial jobEntrySpecial = new JobEntrySpecial( STRING_SPECIAL_START, true, false );
+    JobEntrySpecial jobEntrySpecial = new JobEntrySpecial( BaseMessages.getString( PKG, "JobMeta.StartJobEntry.Name" ), true, false );
     JobEntryCopy jobEntry = new JobEntryCopy();
     jobEntry.setObjectId( null );
     jobEntry.setEntry( jobEntrySpecial );
@@ -279,7 +279,7 @@ public class JobMeta extends AbstractMeta
    * @return the job entry copy
    */
   public static final JobEntryCopy createDummyEntry() {
-    JobEntrySpecial jobEntrySpecial = new JobEntrySpecial( STRING_SPECIAL_DUMMY, false, true );
+    JobEntrySpecial jobEntrySpecial = new JobEntrySpecial( BaseMessages.getString( PKG, "JobMeta.DummyJobEntry.Name" ), false, true );
     JobEntryCopy jobEntry = new JobEntryCopy();
     jobEntry.setObjectId( null );
     jobEntry.setEntry( jobEntrySpecial );
@@ -2358,13 +2358,15 @@ public class JobMeta extends AbstractMeta
     }
     updateCurrentDir();
   }
-
-  private void updateCurrentDir() {
+  // changed to protected for testing purposes
+  protected void updateCurrentDir() {
     String prevCurrentDir = variables.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY );
     String currentDir = variables.getVariable(
       repository != null
           ? Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY
-          : Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY );
+          : filename != null
+            ? Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY
+            : Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY );
     variables.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, currentDir );
     fireCurrentDirectoryChanged( prevCurrentDir, currentDir );
   }
@@ -2408,9 +2410,15 @@ public class JobMeta extends AbstractMeta
       variables.setVariable( Const.INTERNAL_VARIABLE_JOB_FILENAME_NAME, "" );
     }
 
+    setInternalEntryCurrentDirectory();
+
+  }
+
+  protected void setInternalEntryCurrentDirectory() {
     variables.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, variables.getVariable(
-        repository != null ? Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY
-            : Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY ) );
+      repository != null ? Const.INTERNAL_VARIABLE_JOB_REPOSITORY_DIRECTORY
+        : filename != null ? Const.INTERNAL_VARIABLE_JOB_FILENAME_DIRECTORY
+        : Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
   }
 
   @Deprecated

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_get-previous-row-field-plugin" default="compile.module.get-previous-row-field-plugin">
+  <dirname property="module.get-previous-row-field-plugin.basedir" file="${ant.file.module_get-previous-row-field-plugin}"/>
+  
+  <property name="module.jdk.home.get-previous-row-field-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.get-previous-row-field-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.get-previous-row-field-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.get-previous-row-field-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="get-previous-row-field-plugin.output.dir" value="${module.get-previous-row-field-plugin.basedir}/target/classes"/>
+  <property name="get-previous-row-field-plugin.testoutput.dir" value="${module.get-previous-row-field-plugin.basedir}/target/test-classes"/>
+  
+  <path id="get-previous-row-field-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="get-previous-row-field-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.get-previous-row-field-plugin}"/>
+    <pathelement location="${get-previous-row-field-core.output.dir}"/>
+  </path>
+  
+  <path id="get-previous-row-field-plugin.runtime.production.module.classpath">
+    <pathelement location="${get-previous-row-field-plugin.output.dir}"/>
+    <path refid="get-previous-row-field-core.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="get-previous-row-field-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.get-previous-row-field-plugin}"/>
+    <pathelement location="${get-previous-row-field-plugin.output.dir}"/>
+    <pathelement location="${get-previous-row-field-core.testoutput.dir}"/>
+    <pathelement location="${get-previous-row-field-core.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.4.classpath"/>
+  </path>
+  
+  <path id="get-previous-row-field-plugin.runtime.module.classpath">
+    <pathelement location="${get-previous-row-field-plugin.testoutput.dir}"/>
+    <pathelement location="${get-previous-row-field-plugin.output.dir}"/>
+    <path refid="get-previous-row-field-core.runtime.module.classpath"/>
+    <path refid="library.maven:_junit:junit:4.4.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.get-previous-row-field-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.get-previous-row-field-plugin">
+    <patternset refid="excluded.from.module.get-previous-row-field-plugin"/>
+  </patternset>
+  
+  <path id="get-previous-row-field-plugin.module.sourcepath">
+    <dirset dir="${module.get-previous-row-field-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.get-previous-row-field-plugin" depends="compile.module.get-previous-row-field-plugin.production,compile.module.get-previous-row-field-plugin.tests" description="Compile module get-previous-row-field-plugin"/>
+  
+  <target name="compile.module.get-previous-row-field-plugin.production" depends="register.custom.compilers,compile.module.get-previous-row-field-core" description="Compile module get-previous-row-field-plugin; production classes">
+    <mkdir dir="${get-previous-row-field-plugin.output.dir}"/>
+    <javac2 destdir="${get-previous-row-field-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.get-previous-row-field-plugin}/javac">
+      <compilerarg line="${compiler.args.get-previous-row-field-plugin}"/>
+      <bootclasspath refid="get-previous-row-field-plugin.module.bootclasspath"/>
+      <classpath refid="get-previous-row-field-plugin.module.production.classpath"/>
+      <src refid="get-previous-row-field-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.get-previous-row-field-plugin"/>
+    </javac2>
+    
+    <copy todir="${get-previous-row-field-plugin.output.dir}">
+      <fileset dir="${module.get-previous-row-field-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.get-previous-row-field-plugin.tests" depends="register.custom.compilers,compile.module.get-previous-row-field-plugin.production" description="compile module get-previous-row-field-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.get-previous-row-field-plugin" description="cleanup module">
+    <delete dir="${get-previous-row-field-plugin.output.dir}"/>
+    <delete dir="${get-previous-row-field-plugin.testoutput.dir}"/>
+  </target>
+</project>

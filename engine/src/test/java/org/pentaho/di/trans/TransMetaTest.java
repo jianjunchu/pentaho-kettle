@@ -59,7 +59,7 @@ import org.pentaho.di.trans.step.StepPartitioningMeta;
 import org.pentaho.di.trans.steps.datagrid.DataGridMeta;
 import org.pentaho.di.trans.steps.dummytrans.DummyTransMeta;
 import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputMeta;
-import org.pentaho.di.trans.steps.userdefinedjavaclass.StepDefinition;
+import org.pentaho.di.trans.steps.userdefinedjavaclass.InfoStepDefinition;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassDef;
 import org.pentaho.di.trans.steps.userdefinedjavaclass.UserDefinedJavaClassMeta;
 import org.pentaho.metastore.api.IMetaStore;
@@ -374,7 +374,7 @@ public class TransMetaTest {
       "public boolean processRow( StepMetaInterface smi, StepDataInterface sdi ) throws KettleException { return "
         + "false; }";
     UserDefinedJavaClassMeta udjcMeta = new UserDefinedJavaClassMeta();
-    udjcMeta.getInfoStepDefinitions().add( new StepDefinition( dg2.getName(), dg2.getName(), dg2, "info_data" ) );
+    udjcMeta.getInfoStepDefinitions().add( new InfoStepDefinition( dg2.getName(), dg2.getName(), dg2, "info_data" ) );
     udjcMeta.replaceDefinitions( singletonList(
       new UserDefinedJavaClassDef( UserDefinedJavaClassDef.ClassType.TRANSFORM_CLASS, "MainClass", UDJC_METHOD ) ) );
 
@@ -770,6 +770,15 @@ public class TransMetaTest {
     assertThat( new String[] { "field3", "field4", "field5", "outputField" }, equalTo( results.getFieldNames() ) );
   }
 
+  @Test
+  public void findPreviousStepsNullMeta( ) {
+    TransMeta transMeta = new TransMeta( new Variables() );
+    List<StepMeta> result = transMeta.findPreviousSteps( null, false );
+
+    assertThat( 0, equalTo( result.size() ) );
+    assertThat( result, equalTo( new ArrayList<>() ) );
+  }
+
   private void wireUpTestTransMeta( TransMeta transMeta, StepMeta toBeAppended1, StepMeta toBeAppended2,
                                     StepMeta append, StepMeta after ) {
     transMeta.addStep( append );
@@ -815,5 +824,45 @@ public class TransMetaTest {
     StepMeta stepMeta = mock( StepMeta.class );
     when( stepMeta.getName() ).thenReturn( name );
     return stepMeta;
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithFilename( ) {
+    TransMeta transMetaTest = new TransMeta(  );
+    transMetaTest.setFilename( "hasFilename" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    transMetaTest.setInternalEntryCurrentDirectory();
+
+    assertEquals( "file:///C:/SomeFilenameDirectory",  transMetaTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY )  );
+
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithRepository( ) {
+    TransMeta transMetaTest = new TransMeta(  );
+    RepositoryDirectoryInterface path = mock( RepositoryDirectoryInterface.class );
+
+    when( path.getPath() ).thenReturn( "aPath" );
+    transMetaTest.setRepository( mock( Repository.class ) );
+    transMetaTest.setRepositoryDirectory( path );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    transMetaTest.setInternalEntryCurrentDirectory();
+
+    assertEquals( "/SomeRepDirectory", transMetaTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
+  }
+
+  @Test
+  public void testSetInternalEntryCurrentDirectoryWithoutFilenameOrRepository( ) {
+    TransMeta transMetaTest = new TransMeta(  );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY, "Original value defined at run execution" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_FILENAME_DIRECTORY, "file:///C:/SomeFilenameDirectory" );
+    transMetaTest.setVariable( Const.INTERNAL_VARIABLE_TRANSFORMATION_REPOSITORY_DIRECTORY, "/SomeRepDirectory" );
+    transMetaTest.setInternalEntryCurrentDirectory();
+
+    assertEquals( "Original value defined at run execution", transMetaTest.getVariable( Const.INTERNAL_VARIABLE_ENTRY_CURRENT_DIRECTORY ) );
   }
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-salesforce-plugin" default="compile.module.pdi-salesforce-plugin">
+  <dirname property="module.pdi-salesforce-plugin.basedir" file="${ant.file.module_pdi-salesforce-plugin}"/>
+  
+  <property name="module.jdk.home.pdi-salesforce-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-salesforce-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-salesforce-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-salesforce-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-salesforce-plugin.output.dir" value="${module.pdi-salesforce-plugin.basedir}/target/classes"/>
+  <property name="pdi-salesforce-plugin.testoutput.dir" value="${module.pdi-salesforce-plugin.basedir}/target/test-classes"/>
+  
+  <path id="pdi-salesforce-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-salesforce-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-salesforce-plugin}"/>
+    <pathelement location="${pdi-salesforce-core.output.dir}"/>
+    <path refid="library.maven:_com.force.api:force-wsc:41.0.0.classpath"/>
+    <path refid="library.maven:_com.force.api:force-partner-api:41.0.0.classpath"/>
+  </path>
+  
+  <path id="pdi-salesforce-plugin.runtime.production.module.classpath">
+    <pathelement location="${pdi-salesforce-plugin.output.dir}"/>
+    <path refid="pdi-salesforce-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_com.force.api:force-wsc:41.0.0.classpath"/>
+    <path refid="library.maven:_com.force.api:force-partner-api:41.0.0.classpath"/>
+  </path>
+  
+  <path id="pdi-salesforce-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-salesforce-plugin}"/>
+    <pathelement location="${pdi-salesforce-plugin.output.dir}"/>
+    <pathelement location="${pdi-salesforce-core.testoutput.dir}"/>
+    <pathelement location="${pdi-salesforce-core.output.dir}"/>
+    <path refid="library.maven:_com.force.api:force-wsc:41.0.0.classpath"/>
+    <path refid="library.maven:_com.force.api:force-partner-api:41.0.0.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-salesforce-plugin.runtime.module.classpath">
+    <pathelement location="${pdi-salesforce-plugin.testoutput.dir}"/>
+    <pathelement location="${pdi-salesforce-plugin.output.dir}"/>
+    <path refid="pdi-salesforce-core.runtime.module.classpath"/>
+    <path refid="library.maven:_com.force.api:force-wsc:41.0.0.classpath"/>
+    <path refid="library.maven:_com.force.api:force-partner-api:41.0.0.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-salesforce-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-salesforce-plugin">
+    <patternset refid="excluded.from.module.pdi-salesforce-plugin"/>
+  </patternset>
+  
+  <path id="pdi-salesforce-plugin.module.sourcepath">
+    <dirset dir="${module.pdi-salesforce-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pdi-salesforce-plugin" depends="compile.module.pdi-salesforce-plugin.production,compile.module.pdi-salesforce-plugin.tests" description="Compile module pdi-salesforce-plugin"/>
+  
+  <target name="compile.module.pdi-salesforce-plugin.production" depends="register.custom.compilers,compile.module.pdi-salesforce-core" description="Compile module pdi-salesforce-plugin; production classes">
+    <mkdir dir="${pdi-salesforce-plugin.output.dir}"/>
+    <javac2 destdir="${pdi-salesforce-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pdi-salesforce-plugin}/javac">
+      <compilerarg line="${compiler.args.pdi-salesforce-plugin}"/>
+      <bootclasspath refid="pdi-salesforce-plugin.module.bootclasspath"/>
+      <classpath refid="pdi-salesforce-plugin.module.production.classpath"/>
+      <src refid="pdi-salesforce-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pdi-salesforce-plugin"/>
+    </javac2>
+    
+    <copy todir="${pdi-salesforce-plugin.output.dir}">
+      <fileset dir="${module.pdi-salesforce-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pdi-salesforce-plugin.tests" depends="register.custom.compilers,compile.module.pdi-salesforce-plugin.production" description="compile module pdi-salesforce-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-salesforce-plugin" description="cleanup module">
+    <delete dir="${pdi-salesforce-plugin.output.dir}"/>
+    <delete dir="${pdi-salesforce-plugin.testoutput.dir}"/>
+  </target>
+</project>

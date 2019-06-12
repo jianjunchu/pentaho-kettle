@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-engine-configuration" default="compile.module.pdi-engine-configuration">
+  <dirname property="module.pdi-engine-configuration.basedir" file="${ant.file.module_pdi-engine-configuration}"/>
+  
+  <property name="module.jdk.home.pdi-engine-configuration" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-engine-configuration" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-engine-configuration" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-engine-configuration" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-engine-configuration.output.dir" value="${module.pdi-engine-configuration.basedir}/target/classes"/>
+  <property name="pdi-engine-configuration.testoutput.dir" value="${module.pdi-engine-configuration.basedir}/target/test-classes"/>
+  
+  <path id="pdi-engine-configuration.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-engine-configuration.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-engine-configuration}"/>
+    <pathelement location="${pdi-engine-configuration-impl.output.dir}"/>
+    <pathelement location="${pdi-engine-configuration-api.output.dir}"/>
+  </path>
+  
+  <path id="pdi-engine-configuration.runtime.production.module.classpath">
+    <pathelement location="${pdi-engine-configuration.output.dir}"/>
+    <path refid="pdi-engine-configuration-impl.runtime.production.module.classpath"/>
+    <path refid="pdi-engine-configuration-api.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="pdi-engine-configuration.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-engine-configuration}"/>
+    <pathelement location="${pdi-engine-configuration.output.dir}"/>
+    <pathelement location="${pdi-engine-configuration-impl.testoutput.dir}"/>
+    <pathelement location="${pdi-engine-configuration-impl.output.dir}"/>
+    <pathelement location="${pdi-engine-configuration-api.testoutput.dir}"/>
+    <pathelement location="${pdi-engine-configuration-api.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-engine-configuration.runtime.module.classpath">
+    <pathelement location="${pdi-engine-configuration.testoutput.dir}"/>
+    <pathelement location="${pdi-engine-configuration.output.dir}"/>
+    <path refid="pdi-engine-configuration-impl.runtime.module.classpath"/>
+    <path refid="pdi-engine-configuration-api.runtime.module.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-engine-configuration">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-engine-configuration">
+    <patternset refid="excluded.from.module.pdi-engine-configuration"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pdi-engine-configuration" depends="compile.module.pdi-engine-configuration.production,compile.module.pdi-engine-configuration.tests" description="Compile module pdi-engine-configuration"/>
+  
+  <target name="compile.module.pdi-engine-configuration.production" depends="register.custom.compilers,compile.module.pdi-engine-configuration-impl,compile.module.pdi-engine-configuration-api" description="Compile module pdi-engine-configuration; production classes"/>
+  
+  <target name="compile.module.pdi-engine-configuration.tests" depends="register.custom.compilers,compile.module.pdi-engine-configuration.production" description="compile module pdi-engine-configuration; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-engine-configuration" description="cleanup module">
+    <delete dir="${pdi-engine-configuration.output.dir}"/>
+    <delete dir="${pdi-engine-configuration.testoutput.dir}"/>
+  </target>
+</project>

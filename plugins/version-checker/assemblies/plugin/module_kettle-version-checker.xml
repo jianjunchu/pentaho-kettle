@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-version-checker" default="compile.module.kettle-version-checker">
+  <dirname property="module.kettle-version-checker.basedir" file="${ant.file.module_kettle-version-checker}"/>
+  
+  <property name="module.jdk.home.kettle-version-checker" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-version-checker" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-version-checker" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-version-checker" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-version-checker.output.dir" value="${module.kettle-version-checker.basedir}/target/classes"/>
+  <property name="kettle-version-checker.testoutput.dir" value="${module.kettle-version-checker.basedir}/target/test-classes"/>
+  
+  <path id="kettle-version-checker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-version-checker.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-version-checker}"/>
+    <pathelement location="${kettle-version-checker-core.output.dir}"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.safehaus.jug:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_pentaho:pentaho-versionchecker:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+  </path>
+  
+  <path id="kettle-version-checker.runtime.production.module.classpath">
+    <pathelement location="${kettle-version-checker.output.dir}"/>
+    <path refid="kettle-version-checker-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.safehaus.jug:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_pentaho:pentaho-versionchecker:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+  </path>
+  
+  <path id="kettle-version-checker.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-version-checker}"/>
+    <pathelement location="${kettle-version-checker.output.dir}"/>
+    <pathelement location="${kettle-version-checker-core.testoutput.dir}"/>
+    <pathelement location="${kettle-version-checker-core.output.dir}"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.safehaus.jug:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_pentaho:pentaho-versionchecker:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  <path id="kettle-version-checker.runtime.module.classpath">
+    <pathelement location="${kettle-version-checker.testoutput.dir}"/>
+    <pathelement location="${kettle-version-checker.output.dir}"/>
+    <path refid="kettle-version-checker-core.runtime.module.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.3.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.safehaus.jug:jug-lgpl:2.0.0.classpath"/>
+    <path refid="library.maven:_pentaho:pentaho-versionchecker:9.0.0.0-snapshot.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.6.classpath"/>
+    <path refid="library.maven:_junit:junit:4.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-version-checker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-version-checker">
+    <patternset refid="excluded.from.module.kettle-version-checker"/>
+  </patternset>
+  
+  <path id="kettle-version-checker.module.sourcepath">
+    <dirset dir="${module.kettle-version-checker.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-version-checker" depends="compile.module.kettle-version-checker.production,compile.module.kettle-version-checker.tests" description="Compile module kettle-version-checker"/>
+  
+  <target name="compile.module.kettle-version-checker.production" depends="register.custom.compilers,compile.module.kettle-version-checker-core" description="Compile module kettle-version-checker; production classes">
+    <mkdir dir="${kettle-version-checker.output.dir}"/>
+    <javac2 destdir="${kettle-version-checker.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-version-checker}/javac">
+      <compilerarg line="${compiler.args.kettle-version-checker}"/>
+      <bootclasspath refid="kettle-version-checker.module.bootclasspath"/>
+      <classpath refid="kettle-version-checker.module.production.classpath"/>
+      <src refid="kettle-version-checker.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-version-checker"/>
+    </javac2>
+    
+    <copy todir="${kettle-version-checker.output.dir}">
+      <fileset dir="${module.kettle-version-checker.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-version-checker.tests" depends="register.custom.compilers,compile.module.kettle-version-checker.production" description="compile module kettle-version-checker; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-version-checker" description="cleanup module">
+    <delete dir="${kettle-version-checker.output.dir}"/>
+    <delete dir="${kettle-version-checker.testoutput.dir}"/>
+  </target>
+</project>

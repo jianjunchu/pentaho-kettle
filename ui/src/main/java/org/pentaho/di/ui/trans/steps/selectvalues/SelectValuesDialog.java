@@ -2,7 +2,7 @@
  *
  * Pentaho Data Integration
  *
- * Copyright (C) 2002-2017 by Hitachi Vantara : http://www.pentaho.com
+ * Copyright (C) 2002-2019 by Hitachi Vantara : http://www.pentaho.com
  *
  *******************************************************************************
  *
@@ -238,7 +238,7 @@ public class SelectValuesDialog extends BaseStepDialog implements StepDialogInte
     fdlFields.top = new FormAttachment( 0, 0 );
     wlFields.setLayoutData( fdlFields );
 
-    final int fieldsCols = 4;
+    final int fieldsCols = 6;
     final int fieldsRows = input.getSelectFields().length;
 
     ColumnInfo[] colinf = new ColumnInfo[fieldsCols];
@@ -259,6 +259,8 @@ public class SelectValuesDialog extends BaseStepDialog implements StepDialogInte
       new ColumnInfo(
         BaseMessages.getString( PKG, "SelectValuesDialog.ColumnInfo.Precision" ), ColumnInfo.COLUMN_TYPE_TEXT,
         false );
+    colinf[4]=new ColumnInfo(BaseMessages.getString(PKG, "SelectValuesDialog.ColumnInfo.FieldFunction"), ColumnInfo.COLUMN_TYPE_TEXT,   false ); //$NON-NLS-1$
+    colinf[5]=new ColumnInfo(BaseMessages.getString(PKG, "SelectValuesDialog.ColumnInfo.CharPad"), ColumnInfo.COLUMN_TYPE_TEXT,   false ); //Tony 20171107
 
     fieldColumns.add( colinf[0] );
     wFields =
@@ -485,6 +487,7 @@ public class SelectValuesDialog extends BaseStepDialog implements StepDialogInte
     // ///////////////////////////////////////////////////////////
 
     fdTabFolder = new FormData();
+    fdTabFolder.width = 680;
     fdTabFolder.left = new FormAttachment( 0, 0 );
     fdTabFolder.top = new FormAttachment( wStepname, margin );
     fdTabFolder.right = new FormAttachment( 100, 0 );
@@ -618,6 +621,11 @@ public class SelectValuesDialog extends BaseStepDialog implements StepDialogInte
             .getLength() );
         item.setText( 4, input.getSelectFields()[i].getPrecision() < 0 ? "" : "" + input.getSelectFields()[i]
             .getPrecision() );
+        if (input.getSelectFields()[i].getFunctionExpession()!=null)
+          item.setText( 5, input.getSelectFields()[i].getFunctionExpession());
+        if (input.getSelectFields()[i].getPadChar()!=null)
+          item.setText( 6, input.getSelectFields()[i].getPadChar());
+
       }
       wFields.setRowNums();
       wFields.optWidth( true );
@@ -730,6 +738,9 @@ public class SelectValuesDialog extends BaseStepDialog implements StepDialogInte
       }
       input.getSelectFields()[i].setLength( Const.toInt( item.getText( 3 ), -2 ) );
       input.getSelectFields()[i].setPrecision( Const.toInt( item.getText( 4 ), -2 ) );
+      input.getSelectFields()[i].setFunctionExpession(item.getText(5));
+      input.getSelectFields()[i].setPadChar(item.getText(6));
+
 
       if ( input.getSelectFields()[i].getLength() < -2 ) {
         input.getSelectFields()[i].setLength( -2 );

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdi-core-plugins-assemblies" default="compile.module.pdi-core-plugins-assemblies">
+  <dirname property="module.pdi-core-plugins-assemblies.basedir" file="${ant.file.module_pdi-core-plugins-assemblies}"/>
+  
+  <property name="module.jdk.home.pdi-core-plugins-assemblies" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdi-core-plugins-assemblies" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdi-core-plugins-assemblies" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdi-core-plugins-assemblies" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdi-core-plugins-assemblies.output.dir" value="${module.pdi-core-plugins-assemblies.basedir}/target/classes"/>
+  <property name="pdi-core-plugins-assemblies.testoutput.dir" value="${module.pdi-core-plugins-assemblies.basedir}/target/test-classes"/>
+  
+  <path id="pdi-core-plugins-assemblies.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdi-core-plugins-assemblies.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdi-core-plugins-assemblies}"/>
+  </path>
+  
+  <path id="pdi-core-plugins-assemblies.runtime.production.module.classpath">
+    <pathelement location="${pdi-core-plugins-assemblies.output.dir}"/>
+  </path>
+  
+  <path id="pdi-core-plugins-assemblies.module.classpath">
+    <path refid="${module.jdk.classpath.pdi-core-plugins-assemblies}"/>
+    <pathelement location="${pdi-core-plugins-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="pdi-core-plugins-assemblies.runtime.module.classpath">
+    <pathelement location="${pdi-core-plugins-assemblies.testoutput.dir}"/>
+    <pathelement location="${pdi-core-plugins-assemblies.output.dir}"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdi-core-plugins-assemblies">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdi-core-plugins-assemblies">
+    <patternset refid="excluded.from.module.pdi-core-plugins-assemblies"/>
+  </patternset>
+  
+  
+  <target name="compile.module.pdi-core-plugins-assemblies" depends="compile.module.pdi-core-plugins-assemblies.production,compile.module.pdi-core-plugins-assemblies.tests" description="Compile module pdi-core-plugins-assemblies"/>
+  
+  <target name="compile.module.pdi-core-plugins-assemblies.production" depends="register.custom.compilers" description="Compile module pdi-core-plugins-assemblies; production classes"/>
+  
+  <target name="compile.module.pdi-core-plugins-assemblies.tests" depends="register.custom.compilers,compile.module.pdi-core-plugins-assemblies.production" description="compile module pdi-core-plugins-assemblies; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdi-core-plugins-assemblies" description="cleanup module">
+    <delete dir="${pdi-core-plugins-assemblies.output.dir}"/>
+    <delete dir="${pdi-core-plugins-assemblies.testoutput.dir}"/>
+  </target>
+</project>

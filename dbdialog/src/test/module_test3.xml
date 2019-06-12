@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_test3" default="compile.module.test3">
+  <dirname property="module.test3.basedir" file="${ant.file.module_test3}"/>
+  
+  <property name="module.jdk.home.test3" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.test3" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.test3" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.test3" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="test3.output.dir" value="${module.test3.basedir}/../../../out/production/test3"/>
+  <property name="test3.testoutput.dir" value="${module.test3.basedir}/../../../out/test/test3"/>
+  
+  <path id="test3.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="test3.module.production.classpath">
+    <path refid="${module.jdk.classpath.test3}"/>
+    <pathelement location="${core.output.dir}"/>
+    <pathelement location="${engine-ext.output.dir}"/>
+    <pathelement location="${test.output.dir}"/>
+  </path>
+  
+  <path id="test3.runtime.production.module.classpath">
+    <pathelement location="${test3.output.dir}"/>
+    <path refid="core.runtime.production.module.classpath"/>
+    <path refid="engine-ext.runtime.production.module.classpath"/>
+    <path refid="test.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="test3.module.classpath">
+    <path refid="${module.jdk.classpath.test3}"/>
+    <pathelement location="${test3.output.dir}"/>
+    <pathelement location="${core.testoutput.dir}"/>
+    <pathelement location="${core.output.dir}"/>
+    <pathelement location="${engine-ext.testoutput.dir}"/>
+    <pathelement location="${engine-ext.output.dir}"/>
+    <pathelement location="${test.testoutput.dir}"/>
+    <pathelement location="${test.output.dir}"/>
+  </path>
+  
+  <path id="test3.runtime.module.classpath">
+    <pathelement location="${test3.testoutput.dir}"/>
+    <pathelement location="${test3.output.dir}"/>
+    <path refid="core.runtime.module.classpath"/>
+    <path refid="engine-ext.runtime.module.classpath"/>
+    <path refid="test.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.dbdialog">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.engine">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.it">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.it1">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.test2">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.test3">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.test4">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  <patternset id="excluded.from.module.ui">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.test3">
+    <patternset refid="excluded.from.module.dbdialog"/>
+    <patternset refid="excluded.from.module.engine"/>
+    <patternset refid="excluded.from.module.it"/>
+    <patternset refid="excluded.from.module.it1"/>
+    <patternset refid="excluded.from.module.test2"/>
+    <patternset refid="excluded.from.module.test3"/>
+    <patternset refid="excluded.from.module.test4"/>
+    <patternset refid="excluded.from.module.ui"/>
+  </patternset>
+  
+  <path id="test3.module.sourcepath">
+    <dirset dir="${module.test3.basedir}/../main">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}/../../../engine/src/main">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}/../../../integration/src/it">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}/../../../engine/src/it">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}/../../../ui/src/main">
+      <include name="java"/>
+    </dirset>
+  </path>
+  
+  <path id="test3.module.test.sourcepath">
+    <dirset dir="${module.test3.basedir}/../../../core/src/test">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}">
+      <include name="java"/>
+    </dirset>
+    <dirset dir="${module.test3.basedir}/../../../engine/src/test">
+      <include name="java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.test3" depends="compile.module.test3.production,compile.module.test3.tests" description="Compile modules test3"/>
+  
+  <target name="compile.module.test3.production" depends="register.custom.compilers,compile.module.core,compile.module.engine-ext,compile.module.test" description="Compile modules test3; production classes">
+    <mkdir dir="${test3.output.dir}"/>
+    <javac2 destdir="${test3.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.test3}/javac">
+      <compilerarg line="${compiler.args.test3}"/>
+      <bootclasspath refid="test3.module.bootclasspath"/>
+      <classpath refid="test3.module.production.classpath"/>
+      <src refid="test3.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.test3"/>
+    </javac2>
+    
+    <copy todir="${test3.output.dir}">
+      <fileset dir="${module.test3.basedir}/../main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/../../../engine/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/../../../integration/src/it/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/../../../engine/src/it/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/../../../ui/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.test3.tests" depends="register.custom.compilers,compile.module.test3.production" description="compile modules test3; test classes" unless="skip.tests">
+    <mkdir dir="${test3.testoutput.dir}"/>
+    <javac2 destdir="${test3.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.test3}/javac">
+      <compilerarg line="${compiler.args.test3}"/>
+      <bootclasspath refid="test3.module.bootclasspath"/>
+      <classpath refid="test3.module.classpath"/>
+      <src refid="test3.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.test3"/>
+    </javac2>
+    
+    <copy todir="${test3.testoutput.dir}">
+      <fileset dir="${module.test3.basedir}/../../../core/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.test3.basedir}/../../../engine/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.test3" description="cleanup module">
+    <delete dir="${test3.output.dir}"/>
+    <delete dir="${test3.testoutput.dir}"/>
+  </target>
+</project>

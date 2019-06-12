@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_plugins-aggregate-rows" default="compile.module.plugins-aggregate-rows">
+  <dirname property="module.plugins-aggregate-rows.basedir" file="${ant.file.module_plugins-aggregate-rows}"/>
+  
+  <property name="module.jdk.home.plugins-aggregate-rows" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.plugins-aggregate-rows" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.plugins-aggregate-rows" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.plugins-aggregate-rows" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="plugins-aggregate-rows.output.dir" value="${module.plugins-aggregate-rows.basedir}/../../../../../out/production/plugins-aggregate-rows"/>
+  <property name="plugins-aggregate-rows.testoutput.dir" value="${module.plugins-aggregate-rows.basedir}/../../../../../out/test/plugins-aggregate-rows"/>
+  
+  <path id="plugins-aggregate-rows.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="plugins-aggregate-rows.module.production.classpath">
+    <path refid="${module.jdk.classpath.plugins-aggregate-rows}"/>
+    <pathelement location="${test3.output.dir}"/>
+    <pathelement location="${core.output.dir}"/>
+    <pathelement location="${test1.output.dir}"/>
+  </path>
+  
+  <path id="plugins-aggregate-rows.runtime.production.module.classpath">
+    <pathelement location="${plugins-aggregate-rows.output.dir}"/>
+    <path refid="test3.runtime.production.module.classpath"/>
+    <path refid="core.runtime.production.module.classpath"/>
+    <path refid="test1.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="plugins-aggregate-rows.module.classpath">
+    <path refid="${module.jdk.classpath.plugins-aggregate-rows}"/>
+    <pathelement location="${plugins-aggregate-rows.output.dir}"/>
+    <pathelement location="${test3.testoutput.dir}"/>
+    <pathelement location="${test3.output.dir}"/>
+    <pathelement location="${core.testoutput.dir}"/>
+    <pathelement location="${core.output.dir}"/>
+    <pathelement location="${test1.testoutput.dir}"/>
+    <pathelement location="${test1.output.dir}"/>
+  </path>
+  
+  <path id="plugins-aggregate-rows.runtime.module.classpath">
+    <pathelement location="${plugins-aggregate-rows.testoutput.dir}"/>
+    <pathelement location="${plugins-aggregate-rows.output.dir}"/>
+    <path refid="test3.runtime.module.classpath"/>
+    <path refid="core.runtime.module.classpath"/>
+    <path refid="test1.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.plugins-aggregate-rows">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.plugins-aggregate-rows">
+    <patternset refid="excluded.from.module.plugins-aggregate-rows"/>
+  </patternset>
+  
+  <path id="plugins-aggregate-rows.module.sourcepath">
+    <dirset dir="${module.plugins-aggregate-rows.basedir}">
+      <include name="java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.plugins-aggregate-rows" depends="compile.module.plugins-aggregate-rows.production,compile.module.plugins-aggregate-rows.tests" description="Compile module plugins-aggregate-rows"/>
+  
+  <target name="compile.module.plugins-aggregate-rows.production" depends="register.custom.compilers,compile.module.test3,compile.module.core,compile.module.test1" description="Compile module plugins-aggregate-rows; production classes">
+    <mkdir dir="${plugins-aggregate-rows.output.dir}"/>
+    <javac2 destdir="${plugins-aggregate-rows.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plugins-aggregate-rows}/javac">
+      <compilerarg line="${compiler.args.plugins-aggregate-rows}"/>
+      <bootclasspath refid="plugins-aggregate-rows.module.bootclasspath"/>
+      <classpath refid="plugins-aggregate-rows.module.production.classpath"/>
+      <src refid="plugins-aggregate-rows.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.plugins-aggregate-rows"/>
+    </javac2>
+    
+    <copy todir="${plugins-aggregate-rows.output.dir}">
+      <fileset dir="${module.plugins-aggregate-rows.basedir}/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.plugins-aggregate-rows.tests" depends="register.custom.compilers,compile.module.plugins-aggregate-rows.production" description="compile module plugins-aggregate-rows; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.plugins-aggregate-rows" description="cleanup module">
+    <delete dir="${plugins-aggregate-rows.output.dir}"/>
+    <delete dir="${plugins-aggregate-rows.testoutput.dir}"/>
+  </target>
+</project>

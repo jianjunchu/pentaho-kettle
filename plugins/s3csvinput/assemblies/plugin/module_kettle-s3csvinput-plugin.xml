@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_kettle-s3csvinput-plugin" default="compile.module.kettle-s3csvinput-plugin">
+  <dirname property="module.kettle-s3csvinput-plugin.basedir" file="${ant.file.module_kettle-s3csvinput-plugin}"/>
+  
+  <property name="module.jdk.home.kettle-s3csvinput-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.kettle-s3csvinput-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.kettle-s3csvinput-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.kettle-s3csvinput-plugin" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="kettle-s3csvinput-plugin.output.dir" value="${module.kettle-s3csvinput-plugin.basedir}/target/classes"/>
+  <property name="kettle-s3csvinput-plugin.testoutput.dir" value="${module.kettle-s3csvinput-plugin.basedir}/target/test-classes"/>
+  
+  <path id="kettle-s3csvinput-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="kettle-s3csvinput-plugin.module.production.classpath">
+    <path refid="${module.jdk.classpath.kettle-s3csvinput-plugin}"/>
+    <pathelement location="${kettle-s3csvinput-plugin-core.output.dir}"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-core:1.11.275.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_software.amazon.ion:ion-java:1.0.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.6.7.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.6.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.6.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.6.7.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.8.1.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-s3:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-kms:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:jmespath-java:1.11.275.classpath"/>
+  </path>
+  
+  <path id="kettle-s3csvinput-plugin.runtime.production.module.classpath">
+    <pathelement location="${kettle-s3csvinput-plugin.output.dir}"/>
+    <path refid="kettle-s3csvinput-plugin-core.runtime.production.module.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-core:1.11.275.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_software.amazon.ion:ion-java:1.0.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.6.7.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.6.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.6.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.6.7.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.8.1.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-s3:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-kms:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:jmespath-java:1.11.275.classpath"/>
+  </path>
+  
+  <path id="kettle-s3csvinput-plugin.module.classpath">
+    <path refid="${module.jdk.classpath.kettle-s3csvinput-plugin}"/>
+    <pathelement location="${kettle-s3csvinput-plugin.output.dir}"/>
+    <pathelement location="${kettle-s3csvinput-plugin-core.testoutput.dir}"/>
+    <pathelement location="${kettle-s3csvinput-plugin-core.output.dir}"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-core:1.11.275.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_software.amazon.ion:ion-java:1.0.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.6.7.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.6.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.6.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.6.7.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.8.1.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-s3:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-kms:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:jmespath-java:1.11.275.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="kettle-s3csvinput-plugin.runtime.module.classpath">
+    <pathelement location="${kettle-s3csvinput-plugin.testoutput.dir}"/>
+    <pathelement location="${kettle-s3csvinput-plugin.output.dir}"/>
+    <path refid="kettle-s3csvinput-plugin-core.runtime.module.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-core:1.11.275.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.1.3.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.5.2.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.10.classpath"/>
+    <path refid="library.maven:_software.amazon.ion:ion-java:1.0.2.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-databind:2.6.7.1.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-annotations:2.6.0.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.core:jackson-core:2.6.7.classpath"/>
+    <path refid="library.maven:_com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.6.7.classpath"/>
+    <path refid="library.maven:_joda-time:joda-time:2.8.1.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-s3:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:aws-java-sdk-kms:1.11.275.classpath"/>
+    <path refid="library.maven:_com.amazonaws:jmespath-java:1.11.275.classpath"/>
+    <path refid="library.maven:_junit:junit:4.11.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.kettle-s3csvinput-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.kettle-s3csvinput-plugin">
+    <patternset refid="excluded.from.module.kettle-s3csvinput-plugin"/>
+  </patternset>
+  
+  <path id="kettle-s3csvinput-plugin.module.sourcepath">
+    <dirset dir="${module.kettle-s3csvinput-plugin.basedir}">
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.kettle-s3csvinput-plugin" depends="compile.module.kettle-s3csvinput-plugin.production,compile.module.kettle-s3csvinput-plugin.tests" description="Compile module kettle-s3csvinput-plugin"/>
+  
+  <target name="compile.module.kettle-s3csvinput-plugin.production" depends="register.custom.compilers,compile.module.kettle-s3csvinput-plugin-core" description="Compile module kettle-s3csvinput-plugin; production classes">
+    <mkdir dir="${kettle-s3csvinput-plugin.output.dir}"/>
+    <javac2 destdir="${kettle-s3csvinput-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.kettle-s3csvinput-plugin}/javac">
+      <compilerarg line="${compiler.args.kettle-s3csvinput-plugin}"/>
+      <bootclasspath refid="kettle-s3csvinput-plugin.module.bootclasspath"/>
+      <classpath refid="kettle-s3csvinput-plugin.module.production.classpath"/>
+      <src refid="kettle-s3csvinput-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.kettle-s3csvinput-plugin"/>
+    </javac2>
+    
+    <copy todir="${kettle-s3csvinput-plugin.output.dir}">
+      <fileset dir="${module.kettle-s3csvinput-plugin.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.kettle-s3csvinput-plugin.tests" depends="register.custom.compilers,compile.module.kettle-s3csvinput-plugin.production" description="compile module kettle-s3csvinput-plugin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.kettle-s3csvinput-plugin" description="cleanup module">
+    <delete dir="${kettle-s3csvinput-plugin.output.dir}"/>
+    <delete dir="${kettle-s3csvinput-plugin.testoutput.dir}"/>
+  </target>
+</project>

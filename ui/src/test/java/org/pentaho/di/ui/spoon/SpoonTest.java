@@ -404,18 +404,23 @@ public class SpoonTest {
   @Test
   public void testDelHop() throws Exception {
 
-    StepMetaInterface stepMetaInterface = Mockito.mock( StepMetaInterface.class );
-    StepMeta step = new StepMeta();
-    step.setStepMetaInterface( stepMetaInterface );
+    StepMetaInterface fromStepMetaInterface = Mockito.mock( StepMetaInterface.class );
+    StepMeta fromStep = new StepMeta();
+    fromStep.setStepMetaInterface( fromStepMetaInterface );
+
+    StepMetaInterface toStepMetaInterface = Mockito.mock( StepMetaInterface.class );
+    StepMeta toStep = new StepMeta();
+    toStep.setStepMetaInterface( toStepMetaInterface );
 
     TransHopMeta transHopMeta = new TransHopMeta();
-    transHopMeta.setFromStep( step );
+    transHopMeta.setFromStep( fromStep );
+    transHopMeta.setToStep( toStep );
 
     TransMeta transMeta = Mockito.mock( TransMeta.class );
 
     spoon.delHop( transMeta, transHopMeta );
-    Mockito.verify( stepMetaInterface, times( 1 ) ).cleanAfterHopFromRemove( );
-
+    Mockito.verify( fromStepMetaInterface, times( 1 ) ).cleanAfterHopFromRemove( toStep );
+    Mockito.verify( toStepMetaInterface, times( 1 ) ).cleanAfterHopToRemove( fromStep );
   }
 
   @Test
@@ -868,7 +873,7 @@ public class SpoonTest {
     boolean isSourceRepository, String repositoryName, String directoryName, String fileName, boolean
     isTransformation ) throws Exception {
     setLoadLastUsedJobLocalWithRepository( isSourceRepository, repositoryName, directoryName, fileName,
-      isTransformation, false);
+      isTransformation, false );
   }
 
   private void setLoadLastUsedJobLocalWithRepository( boolean isSourceRepository, String repositoryName,

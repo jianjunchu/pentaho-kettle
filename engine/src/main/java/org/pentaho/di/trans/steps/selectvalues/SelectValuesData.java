@@ -50,4 +50,5 @@ public class SelectValuesData extends BaseStepData implements StepDataInterface 
   public boolean select; // "normal" selection of fields.
   public boolean deselect; // de-select mode
   public boolean metadata; // change meta-data (rename & change length/precision)
+    public String[] padChar;
 }

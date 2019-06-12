@@ -33,9 +33,7 @@ import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleValueException;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaDate;
-import org.pentaho.di.core.row.value.ValueMetaInteger;
-import org.pentaho.di.core.row.value.ValueMetaString;
+import org.pentaho.di.core.row.value.*;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.repository.LongObjectId;
 import org.pentaho.di.repository.ObjectId;
@@ -178,7 +176,7 @@ public class KettleDatabaseRepositoryDatabaseDelegate extends KettleDatabaseRepo
           databaseMeta.getName(), databaseMeta.getPluginId(), DatabaseMeta.getAccessTypeDesc( databaseMeta
             .getAccessType() ), databaseMeta.getHostname(), databaseMeta.getDatabaseName(), databaseMeta
             .getDatabasePortNumberString(), databaseMeta.getUsername(), databaseMeta.getPassword(),
-          databaseMeta.getServername(), databaseMeta.getDataTablespace(), databaseMeta.getIndexTablespace(),databaseMeta.getCreateUser() ) );
+          databaseMeta.getServername(), databaseMeta.getDataTablespace(), databaseMeta.getIndexTablespace(),databaseMeta.getCreateUser(), databaseMeta.getOrganizerId()) );
       } else {
         // --> found entry with the same name...
 
@@ -284,7 +282,7 @@ public class KettleDatabaseRepositoryDatabaseDelegate extends KettleDatabaseRepo
 
   public synchronized ObjectId insertDatabase( String name, String type, String access, String host,
                                                String dbname, String port, String user, String pass, String servername, String data_tablespace,
-                                               String index_tablespace,String createUser ) throws KettleException {
+                                               String index_tablespace,String createUser,Long organizerId ) throws KettleException {
 
     ObjectId id = repository.connectionDelegate.getNextDatabaseID();
 
@@ -343,13 +341,16 @@ public class KettleDatabaseRepositoryDatabaseDelegate extends KettleDatabaseRepo
             KettleDatabaseRepository.FIELD_DATABASE_DATA_TBS ), data_tablespace );
     table.addValue( new ValueMetaString(
             KettleDatabaseRepository.FIELD_DATABASE_INDEX_TBS ), index_tablespace );
+
+    table.addValue( new ValueMetaInteger(
+            KettleDatabaseRepository.FIELD_DATABASE_ORGANIZER_ID ), organizerId);
     table.addValue( new ValueMetaDate(
             KettleDatabaseRepository.FIELD_CREATE_TIME ), date);
     table.addValue( new ValueMetaDate(
             KettleDatabaseRepository.FIELD_UPDATE_TIME ), date);
-    table.addValue( new ValueMetaDate(
+    table.addValue( new ValueMetaString(
             KettleDatabaseRepository.FIELD_CREATE_USER ), createUser);
-    table.addValue( new ValueMetaDate(
+    table.addValue( new ValueMetaString(
             KettleDatabaseRepository.FIELD_UPDATE_USER ), createUser);
 
     repository.connectionDelegate.getDatabase().prepareInsert(
@@ -441,7 +442,7 @@ public class KettleDatabaseRepositoryDatabaseDelegate extends KettleDatabaseRepo
             KettleDatabaseRepository.FIELD_DATABASE_INDEX_TBS ), index_tablespace );
     table.addValue( new ValueMetaString(
             KettleDatabaseRepository.FIELD_UPDATE_USER ), updateUser );
-    table.addValue( new ValueMetaString(
+    table.addValue( new ValueMetaDate(
             KettleDatabaseRepository.FIELD_UPDATE_TIME ), new Date() );
 
     repository.connectionDelegate.updateTableRow(

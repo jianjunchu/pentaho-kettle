@@ -87,7 +87,7 @@ public class SvgSupport {
    * Check by file name if image is PNG.
    */
   public static boolean isPngName( String name ) {
-    return name.toLowerCase().endsWith( PNG_EXTENSION );
+    return name==null?false:name.toLowerCase().endsWith( PNG_EXTENSION );
   }
 
   /**

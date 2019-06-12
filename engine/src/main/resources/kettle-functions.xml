@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<functions>
+
+    <!-- NOTE i18n arguments are : i18n package and key separated by colon (:)
+    --> 
+
+  <!-- function plugin example
+  <function id="udf1">
+    <classname>com.aofei.udf.UDFReplace</classname>
+    <description>i18n:org.pentaho.di.core.util.mask.AddressMask.Description.AddressMaskDescription</description>
+    <tooltip>i18n:org.pentaho.di.core.util.mask.AddressMask.Tooltip.AddressMaskDescription</tooltip>
+  </function>
+-->
+
+  <function id="AddressMask">
+    <classname>org.pentaho.di.core.util.mask.AddressMask</classname>
+    <description>i18n:org.pentaho.di.core.util.mask.AddressMask.Description.AddressMaskDescription</description>
+    <tooltip>i18n:org.pentaho.di.core.util.mask.AddressMask.Tooltip.AddressMaskDescription</tooltip>
+  </function>
+
+  <function id="CommonMask">
+    <classname>org.pentaho.di.core.util.mask.CommonMask</classname>
+    <description>CommonMask</description>
+    <tooltip>CommonMask</tooltip>
+  </function>
+
+  <function id="CreditMask">
+    <classname>org.pentaho.di.core.util.mask.CreditMask</classname>
+    <description>CreditMask</description>
+    <tooltip>CreditMask</tooltip>
+  </function>
+
+  <function id="EmployeeIdMask">
+    <classname>org.pentaho.di.core.util.mask.EmployeeIdMask</classname>
+    <description>EmployeeIdMask</description>
+    <tooltip>EmployeeIdMask</tooltip>
+  </function>
+
+  <function id="HalfMask">
+    <classname>org.pentaho.di.core.util.mask.HalfMask</classname>
+    <description>HalfMask</description>
+    <tooltip>HalfMask</tooltip>
+  </function>
+
+  <function id="IdCardMask">
+    <classname>org.pentaho.di.core.util.mask.IdCardMask</classname>
+    <description>IdCardMask</description>
+    <tooltip>IdCardMask</tooltip>
+  </function>
+
+  <function id="LicenceMask">
+    <classname>org.pentaho.di.core.util.mask.LicenceMask</classname>
+    <description>LicenceMask</description>
+    <tooltip>LicenceMask</tooltip>
+  </function>
+  
+    <function id="MoneyMask">
+    <classname>org.pentaho.di.core.util.mask.MoneyMask</classname>
+    <description>MoneyMask</description>
+    <tooltip>MoneyMask</tooltip>
+  </function>
+
+  <function id="NameMask">
+    <classname>org.pentaho.di.core.util.mask.NameMask</classname>
+    <description>NameMask</description>
+    <tooltip>NameMask</tooltip>
+  </function>
+
+
+  <function id="PhoneMask">
+    <classname>org.pentaho.di.core.util.mask.PhoneMask</classname>
+    <description>PhoneMask</description>
+    <tooltip>PhoneMask</tooltip>
+  </function>
+
+  
+</functions>

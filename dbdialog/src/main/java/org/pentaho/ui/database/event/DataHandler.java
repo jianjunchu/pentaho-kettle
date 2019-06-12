@@ -161,7 +161,7 @@ public class DataHandler extends AbstractXulEventHandler {
   protected XulTextbox indexTablespaceBox;
 
   // MS SQL Server specific
-  private XulTextbox serverInstanceBox;
+  protected XulTextbox serverInstanceBox;
 
   // Informix specific
   private XulTextbox serverNameBox;
@@ -764,7 +764,7 @@ public class DataHandler extends AbstractXulEventHandler {
     if ( meta.isUsingConnectionPool() ) {
       if ( poolSizeBox != null ) {
         try {
-          int initialPoolSize = Integer.parseInt( poolSizeBox.getValue() );
+          int initialPoolSize = Integer.parseInt( this.databaseMeta.environmentSubstitute( poolSizeBox.getValue() ) );
           meta.setInitialPoolSize( initialPoolSize );
         } catch ( NumberFormatException e ) {
           // TODO log exception and move on ...
@@ -773,7 +773,7 @@ public class DataHandler extends AbstractXulEventHandler {
 
       if ( maxPoolSizeBox != null ) {
         try {
-          int maxPoolSize = Integer.parseInt( maxPoolSizeBox.getValue() );
+          int maxPoolSize = Integer.parseInt( this.databaseMeta.environmentSubstitute( maxPoolSizeBox.getValue() ) );
           meta.setMaximumPoolSize( maxPoolSize );
         } catch ( NumberFormatException e ) {
           // TODO log exception and move on ...
@@ -1539,6 +1539,10 @@ public class DataHandler extends AbstractXulEventHandler {
   }
 
   protected void showMessage( DatabaseTestResults databaseTestResults ) {
+    // BACKLOG-23781 - provide a showMessage implementation for
+    // those that don't override it (PRD case)
+    String message = databaseTestResults.getMessage();
+    showMessage( message, message.length() > 300 );
   }
 
   public void handleUseSecurityCheckbox() {

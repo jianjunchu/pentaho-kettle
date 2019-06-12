@@ -27,6 +27,8 @@ import java.util.Date;
 public class SharedObjectBase {
   private boolean shared;
 
+  private Long organizerId;
+
   private Date changedDate;
 
   private String createUser;
@@ -67,5 +69,13 @@ public class SharedObjectBase {
 
   public void setUpdateUser(String updateUser) {
     this.updateUser = updateUser;
+  }
+
+  public Long getOrganizerId() {
+    return organizerId;
+  }
+
+  public void setOrganizerId(Long organizerId) {
+    this.organizerId = organizerId;
   }
 }
