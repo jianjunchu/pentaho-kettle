@@ -76,6 +76,8 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
   private String tableName;
   private String commitSize;
   private boolean truncateTable;
+  private boolean createTable;
+  private String  shardKeyField;
   private boolean ignoreErrors;
   private boolean useBatchUpdate;
 
@@ -358,6 +360,21 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
   }
 
   /**
+   * @return Returns the create table flag.
+   */
+  public boolean createTable() { return createTable; }
+
+  /**
+   * @param createTable The create table flag to set.
+   */
+  public void setCreateTable(boolean createTable) { this.createTable = createTable; }
+
+
+  public String getShardKeyField() { return shardKeyField; }
+
+  public void setShardKeyField(String shardKeyField) { this.shardKeyField = shardKeyField; }
+
+  /**
    * @param ignoreErrors
    *          The ignore errors flag to set.
    */
@@ -410,6 +427,9 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
       tableName = XMLHandler.getTagValue( stepnode, "table" );
       commitSize = XMLHandler.getTagValue( stepnode, "commit" );
       truncateTable = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "truncate" ) );
+      createTable  = "Y".equalsIgnoreCase(XMLHandler.getTagValue(stepnode, "create"));
+      shardKeyField = XMLHandler.getTagValue( stepnode, "shard_key_field" );
+
       ignoreErrors = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "ignore_errors" ) );
       useBatchUpdate = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "use_batch" ) );
 
@@ -468,6 +488,9 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
     retval.append( "    " + XMLHandler.addTagValue( "table", tableName ) );
     retval.append( "    " + XMLHandler.addTagValue( "commit", commitSize ) );
     retval.append( "    " + XMLHandler.addTagValue( "truncate", truncateTable ) );
+    retval.append( "    " + XMLHandler.addTagValue("create", createTable));
+    retval.append( "    " + XMLHandler.addTagValue("shard_key_field", shardKeyField));
+
     retval.append( "    " + XMLHandler.addTagValue( "ignore_errors", ignoreErrors ) );
     retval.append( "    " + XMLHandler.addTagValue( "use_batch", useBatchUpdate ) );
     retval.append( "    " + XMLHandler.addTagValue( "specify_fields", specifyFields ) );
@@ -504,6 +527,9 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
       tableName = rep.getStepAttributeString( id_step, "table" );
       commitSize = rep.getStepAttributeString( id_step, "commit" );
       truncateTable = rep.getStepAttributeBoolean( id_step, "truncate" );
+      createTable    =      rep.getStepAttributeBoolean(id_step, "create");
+      shardKeyField = rep.getStepAttributeString( id_step, "shard_key_field" );
+
       ignoreErrors = rep.getStepAttributeBoolean( id_step, "ignore_errors" );
       useBatchUpdate = rep.getStepAttributeBoolean( id_step, "use_batch" );
       specifyFields = rep.getStepAttributeBoolean( id_step, "specify_fields" );
@@ -542,6 +568,8 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
       rep.saveStepAttribute( id_transformation, id_step, "table", tableName );
       rep.saveStepAttribute( id_transformation, id_step, "commit", commitSize );
       rep.saveStepAttribute( id_transformation, id_step, "truncate", truncateTable );
+      rep.saveStepAttribute( id_transformation, id_step, "create", createTable);
+      rep.saveStepAttribute( id_transformation, id_step, "shard_key_field", shardKeyField);
       rep.saveStepAttribute( id_transformation, id_step, "ignore_errors", ignoreErrors );
       rep.saveStepAttribute( id_transformation, id_step, "use_batch", useBatchUpdate );
       rep.saveStepAttribute( id_transformation, id_step, "specify_fields", specifyFields );

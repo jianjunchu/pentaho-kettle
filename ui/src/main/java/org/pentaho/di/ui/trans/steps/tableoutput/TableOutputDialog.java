@@ -123,6 +123,10 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
   private Button wTruncate;
   private FormData fdlTruncate, fdTruncate;
 
+  private Label wlShardKeyField;
+  private TextVar wShardKeyField;
+  private FormData fdlShardKeyField, fdShardKeyField;
+
   private Label wlIgnore;
   private Button wIgnore;
   private FormData fdlIgnore, fdIgnore;
@@ -179,6 +183,10 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
 
   private Button wDoMapping;
   private FormData fdDoMapping;
+
+  private Label        wlCreateTable;
+  private Button       wCreateTable;
+  private FormData     fdlCreateTable, fdCreateTable;
 
   private TableOutputMeta input;
 
@@ -370,23 +378,58 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     };
     wTruncate.addSelectionListener( lsSelMod );
 
+    wlCreateTable=new Label(shell, SWT.RIGHT);
+    wlCreateTable.setText(BaseMessages.getString(PKG, "TableOutputDialog.CreateTable.Label"));
+    props.setLook(wlCreateTable);
+    fdlCreateTable=new FormData();
+    fdlCreateTable.left  = new FormAttachment(0, 0);
+    fdlCreateTable.top   = new FormAttachment(wTruncate, margin);
+    fdlCreateTable.right = new FormAttachment(middle, -margin);
+    wlCreateTable.setLayoutData(fdlCreateTable);
+    wCreateTable=new Button(shell, SWT.CHECK);
+    props.setLook(wCreateTable);
+    fdCreateTable=new FormData();
+    fdCreateTable.left  = new FormAttachment(middle, 0);
+    fdCreateTable.top   = new FormAttachment(wTruncate, margin);
+    fdCreateTable.right = new FormAttachment(100, 0);
+    wCreateTable.setLayoutData(fdCreateTable);
+    wCreateTable.addSelectionListener(lsSelMod);
+
+    // Shard Key Field ...
+    wlShardKeyField = new Label( shell, SWT.RIGHT );
+    wlShardKeyField.setText( BaseMessages.getString( PKG, "TableOutputDialog.ShardKeyField.Label" ) );
+    props.setLook( wlShardKeyField );
+    fdlShardKeyField = new FormData();
+    fdlShardKeyField.left = new FormAttachment( 0, 0 );
+    fdlShardKeyField.right = new FormAttachment( middle, -margin );
+    fdlShardKeyField.top = new FormAttachment( wCreateTable, margin );
+    wlShardKeyField.setLayoutData( fdlShardKeyField );
+    wShardKeyField = new TextVar( transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+    props.setLook( wShardKeyField );
+    wShardKeyField.addModifyListener( lsMod );
+    fdShardKeyField = new FormData();
+    fdShardKeyField.left = new FormAttachment( middle, 0 );
+    fdShardKeyField.top = new FormAttachment( wCreateTable, margin );
+    fdShardKeyField.right = new FormAttachment( 100, 0 );
+    wShardKeyField.setLayoutData( fdShardKeyField );
+
     // Ignore errors
-    wlIgnore = new Label( shell, SWT.RIGHT );
-    wlIgnore.setText( BaseMessages.getString( PKG, "TableOutputDialog.IgnoreInsertErrors.Label" ) );
-    props.setLook( wlIgnore );
-    fdlIgnore = new FormData();
-    fdlIgnore.left = new FormAttachment( 0, 0 );
-    fdlIgnore.top = new FormAttachment( wTruncate, margin );
-    fdlIgnore.right = new FormAttachment( middle, -margin );
-    wlIgnore.setLayoutData( fdlIgnore );
-    wIgnore = new Button( shell, SWT.CHECK );
-    props.setLook( wIgnore );
-    fdIgnore = new FormData();
-    fdIgnore.left = new FormAttachment( middle, 0 );
-    fdIgnore.top = new FormAttachment( wTruncate, margin );
-    fdIgnore.right = new FormAttachment( 100, 0 );
-    wIgnore.setLayoutData( fdIgnore );
-    wIgnore.addSelectionListener( lsSelMod );
+    wlIgnore=new Label(shell, SWT.RIGHT);
+    wlIgnore.setText(BaseMessages.getString(PKG, "TableOutputDialog.IgnoreInsertErrors.Label"));
+    props.setLook(wlIgnore);
+    fdlIgnore=new FormData();
+    fdlIgnore.left  = new FormAttachment(0, 0);
+    fdlIgnore.top   = new FormAttachment(wShardKeyField, margin);
+    fdlIgnore.right = new FormAttachment(middle, -margin);
+    wlIgnore.setLayoutData(fdlIgnore);
+    wIgnore=new Button(shell, SWT.CHECK);
+    props.setLook(wIgnore);
+    fdIgnore=new FormData();
+    fdIgnore.left  = new FormAttachment(middle, 0);
+    fdIgnore.top   = new FormAttachment(wShardKeyField, margin);
+    fdIgnore.right = new FormAttachment(100, 0);
+    wIgnore.setLayoutData(fdIgnore);
+    wIgnore.addSelectionListener(lsSelMod);
 
     // Specify fields
     wlSpecifyFields = new Label( shell, SWT.RIGHT );
@@ -1192,6 +1235,9 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     // Do we need to turn partitioning off?
     boolean useTruncate = wTruncate.getSelection() && enableTruncate;
 
+    //Do we create table
+    boolean useCreateTable = wCreateTable.getSelection();
+
     // Use the table-name specified or get it from a field?
     boolean useTablename = !( isTableNameInField );
 
@@ -1200,6 +1246,7 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     wBatch.setSelection( useBatch );
     wReturnKeys.setSelection( returnKeys );
     wTruncate.setSelection( useTruncate );
+    wCreateTable.setSelection(useCreateTable);
 
     wIgnore.setEnabled( useIgnore );
     wlIgnore.setEnabled( useIgnore );
@@ -1271,6 +1318,9 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     }
 
     wTruncate.setSelection( input.truncateTable() );
+    wCreateTable.setSelection(input.createTable());
+    wShardKeyField.setText( input.getShardKeyField()==null?"":input.getShardKeyField() );
+
     wIgnore.setSelection( input.ignoreErrors() );
     wBatch.setSelection( input.useBatchUpdate() );
 
@@ -1324,6 +1374,8 @@ public class TableOutputDialog extends BaseStepDialog implements StepDialogInter
     info.setDatabaseMeta( transMeta.findDatabase( wConnection.getText() ) );
     info.setCommitSize( wCommit.getText() );
     info.setTruncateTable( wTruncate.getSelection() );
+    info.setCreateTable( wCreateTable.getSelection() );
+    info.setShardKeyField(wShardKeyField.getText());
     info.setIgnoreErrors( wIgnore.getSelection() );
     info.setUseBatchUpdate( wBatch.getSelection() );
     info.setPartitioningEnabled( wUsePart.getSelection() );

@@ -26,6 +26,8 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseInterface;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.PartitionDatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseBatchException;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleException;
@@ -238,7 +240,33 @@ public class TableOutput extends BaseStep implements StepInterface {
     if ( Utils.isEmpty( tableName ) ) {
       throw new KettleStepException( "The tablename is not defined (empty)" );
     }
+    if(!data.DDLSynced && meta.createTable() ) // for both create table and alter table. so don't check whether table is exist.
+    {
+      data.DDLSynced=true;
 
+        String sqlScript="";
+        if(data.databaseMeta.getDatabaseTypeDesc().equals("MYSQL"))
+          if(!data.db.checkTableExists(tableName))
+          {
+            if(meta.getShardKeyField()!=null && meta.getShardKeyField().length()>0)
+              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+" shardkey="+ meta.getShardKeyField()+" DEFAULT CHARSET=utf8;";
+            else
+              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";
+          }else
+            sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";//alter table
+          else
+          sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true);
+
+        if(sqlScript!=null && sqlScript.length()>0)
+          try{
+            if(log.isBasic()) logBasic("create table sqlScript= "+sqlScript);
+            execsqlscript(sqlScript);
+          }catch (Exception ex)
+          {
+            ex.printStackTrace();
+          }
+
+    }
     insertStatement = data.preparedStatements.get( tableName );
     if ( insertStatement == null ) {
       String sql =
@@ -658,5 +686,67 @@ public class TableOutput extends BaseStep implements StepInterface {
 
   protected void setData( TableOutputData data ) {
     this.data = data;
+  }
+
+  private void execsqlscript(String sqlScript)
+  {
+    DatabaseMeta ci = data.databaseMeta;
+    if (ci==null) return;
+
+    StringBuffer message = new StringBuffer();
+
+    Database db = new Database(ci);
+    boolean first = true;
+    PartitionDatabaseMeta[] partitioningInformation = ci.getPartitioningInformation();
+
+    for (int partitionNr=0;first || (partitioningInformation!=null && partitionNr<partitioningInformation.length) ; partitionNr++)
+    {
+      first = false;
+      String partitionId = null;
+      if (partitioningInformation!=null && partitioningInformation.length>0)
+      {
+        partitionId = partitioningInformation[partitionNr].getPartitionId();
+      }
+      try
+      {
+        db.connect(partitionId);
+
+        // Multiple statements in the script need to be split into individual executable statements
+        List<String> statements = ci.getDatabaseInterface().parseStatements(sqlScript + Const.CR);
+
+        int nrstats = 0;
+        for(String sql : statements) {
+          log.logDetailed("launch DDL statement: "+Const.CR+sql);
+
+          // A DDL statement
+          nrstats++;
+          try
+          {
+            log.logDetailed("Executing SQL: "+Const.CR+sql);
+            db.execStatement(sql);
+            message.append(BaseMessages.getString(PKG, "SQLEditor.Log.SQLExecuted", sql));
+            message.append(Const.CR);
+          }
+          catch(Exception dbe)
+          {
+            String error = BaseMessages.getString(PKG, "SQLEditor.Log.SQLExecError", sql, dbe.toString());
+            message.append(error).append(Const.CR);
+          }
+        }
+        message.append(BaseMessages.getString(PKG, "SQLEditor.Log.StatsExecuted", Integer.toString(nrstats)));
+        if (partitionId!=null)
+          message.append(BaseMessages.getString(PKG, "SQLEditor.Log.OnPartition", partitionId));
+        message.append(Const.CR);
+      }
+      catch(KettleDatabaseException dbe)
+      {
+        String error = BaseMessages.getString(PKG, "SQLEditor.Error.CouldNotConnect.Message", (data.databaseMeta==null ? "" : data.databaseMeta.getName()), dbe.getMessage());
+        message.append(error).append(Const.CR);
+      }
+      finally
+      {
+        db.disconnect();
+      }
+    }
   }
 }
