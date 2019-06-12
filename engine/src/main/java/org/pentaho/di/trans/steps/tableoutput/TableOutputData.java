@@ -77,8 +77,9 @@ public class TableOutputData extends BaseStepData implements StepDataInterface {
   public Map<String, Integer> commitCounterMap;
 
   public int commitSize;
+  public boolean DDLSynced;
 
-  public TableOutputData() {
+    public TableOutputData() {
     super();
 
     db = null;
@@ -94,5 +95,6 @@ public class TableOutputData extends BaseStepData implements StepDataInterface {
     commitCounterMap = new HashMap<String, Integer>();
 
     releaseSavepoint = true;
-  }
+    DDLSynced = false;
+    }
 }
