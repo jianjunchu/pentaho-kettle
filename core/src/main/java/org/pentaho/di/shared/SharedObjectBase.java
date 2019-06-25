@@ -27,7 +27,13 @@ import java.util.Date;
 public class SharedObjectBase {
   private boolean shared;
 
+  private Long organizerId;
+
   private Date changedDate;
+
+  private String createUser;
+
+  private String updateUser;
 
   public SharedObjectBase() {
     changedDate = new Date();
@@ -47,5 +53,29 @@ public class SharedObjectBase {
 
   public void setChangedDate( Date changedDate ) {
     this.changedDate = changedDate;
+  }
+
+  public String getCreateUser() {
+    return createUser;
+  }
+
+  public void setCreateUser(String createUser) {
+    this.createUser = createUser;
+  }
+
+  public String getUpdateUser() {
+    return updateUser;
+  }
+
+  public void setUpdateUser(String updateUser) {
+    this.updateUser = updateUser;
+  }
+
+  public Long getOrganizerId() {
+    return organizerId;
+  }
+
+  public void setOrganizerId(Long organizerId) {
+    this.organizerId = organizerId;
   }
 }

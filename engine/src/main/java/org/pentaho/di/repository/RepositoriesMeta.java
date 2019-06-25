@@ -22,20 +22,7 @@
 
 package org.pentaho.di.repository;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.commons.io.IOUtils;
 import org.pentaho.di.core.Const;
-import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleRepositoryNotSupportedException;
@@ -44,6 +31,7 @@ import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.logging.LogLevel;
 import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.plugins.RepositoryPluginType;
+import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import org.pentaho.di.i18n.BaseMessages;
@@ -51,9 +39,14 @@ import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.kingbase.ktrl.system.repository.bean.RepositoryBean;
-import com.kingbase.ktrl.system.user.bean.LoginResponse;
-import com.kingbase.ktrl.system.user.util.UMStatus;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created on 31-mrt-2004
@@ -68,7 +61,6 @@ public class RepositoriesMeta {
   private List<RepositoryMeta> repositories; // List of repositories
   private LogChannel log;
   private String errorMessage;
-  private LoginResponse loginResponse;
 
   public RepositoriesMeta() {
     clear();
@@ -188,52 +180,52 @@ public class RepositoriesMeta {
     }
     return null;
   }
-//
-//  // We read the repositories from the file:
-//  //
-//  public boolean readData() throws KettleException {
-//    // Clear the information
-//    //
-//    clear();
-//
-//    File file = new File( getKettleLocalRepositoriesFile() );
-//    if ( !file.exists() || !file.isFile() ) {
-//      if ( log.isDetailed() ) {
-//        log.logDetailed( BaseMessages.getString( PKG, "RepositoryMeta.Log.NoRepositoryFileInLocalDirectory", file.getAbsolutePath() ) );
-//      }
-//      file = new File( getKettleUserRepositoriesFile() );
-//      if ( !file.exists() || !file.isFile() ) {
-//        return true; // nothing to read!
-//      }
-//    }
-//
-//    if ( log.isBasic() ) {
-//      log.logBasic( BaseMessages.getString( PKG, "RepositoryMeta.Log.ReadingXMLFile", file.getAbsoluteFile() ) );
-//    }
-//
-//    try {
-//      // Check and open XML document
-//      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
-//      DocumentBuilder db = dbf.newDocumentBuilder();
-//      Document doc;
-//      try {
-//        doc = db.parse( file );
-//      } catch ( FileNotFoundException ef ) {
-//        try ( InputStream is = getClass().getResourceAsStream( "/org/pentaho/di/repository/repositories.xml" ) ) {
-//          if ( is != null ) {
-//            doc = db.parse( is );
-//          } else {
-//            throw new KettleException( BaseMessages.getString( PKG, "RepositoryMeta.Error.OpeningFile", file.getAbsoluteFile() ), ef );
-//          }
-//        }
-//      }
-//      parseRepositoriesDoc( doc );
-//    } catch ( Exception e ) {
-//      throw new KettleException( BaseMessages.getString( PKG, "RepositoryMeta.Error.ReadingInfo" ), e );
-//    }
-//
-//    return true;
-//  }
+
+  // We read the repositories from the file:
+  //
+  public boolean readData() throws KettleException {
+    // Clear the information
+    //
+    clear();
+
+    File file = new File( getKettleLocalRepositoriesFile() );
+    if ( !file.exists() || !file.isFile() ) {
+      if ( log.isDetailed() ) {
+        log.logDetailed( BaseMessages.getString( PKG, "RepositoryMeta.Log.NoRepositoryFileInLocalDirectory", file.getAbsolutePath() ) );
+      }
+      file = new File( getKettleUserRepositoriesFile() );
+      if ( !file.exists() || !file.isFile() ) {
+        return true; // nothing to read!
+      }
+    }
+
+    if ( log.isBasic() ) {
+      log.logBasic( BaseMessages.getString( PKG, "RepositoryMeta.Log.ReadingXMLFile", file.getAbsoluteFile() ) );
+    }
+
+    try {
+      // Check and open XML document
+      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc;
+      try {
+        doc = db.parse( file );
+      } catch ( FileNotFoundException ef ) {
+        try ( InputStream is = getClass().getResourceAsStream( "/org/pentaho/di/repository/repositories.xml" ) ) {
+          if ( is != null ) {
+            doc = db.parse( is );
+          } else {
+            throw new KettleException( BaseMessages.getString( PKG, "RepositoryMeta.Error.OpeningFile", file.getAbsoluteFile() ), ef );
+          }
+        }
+      }
+      parseRepositoriesDoc( doc );
+    } catch ( Exception e ) {
+      throw new KettleException( BaseMessages.getString( PKG, "RepositoryMeta.Error.ReadingInfo" ), e );
+    }
+
+    return true;
+  }
 
   public String getKettleUserRepositoriesFile() {
     return Const.getKettleUserRepositoriesFile();
@@ -314,7 +306,7 @@ public class RepositoriesMeta {
       }
       try {
         RepositoryMeta repositoryMeta =
-          PluginRegistry.getInstance().loadClass( RepositoryPluginType.class, id, RepositoryMeta.class );
+                PluginRegistry.getInstance().loadClass( RepositoryPluginType.class, id, RepositoryMeta.class );
         if ( repositoryMeta != null ) {
           repositoryMeta.loadXML( repnode, databases );
           // Backward compatibility. Description is now required as it will be what gets displayed on the
@@ -325,7 +317,7 @@ public class RepositoriesMeta {
           addRepository( repositoryMeta );
           if ( log.isDebug() ) {
             log.logDebug( BaseMessages
-              .getString( PKG, "RepositoryMeta.Log.ReadRepository", repositoryMeta.getName() ) );
+                    .getString( PKG, "RepositoryMeta.Log.ReadRepository", repositoryMeta.getName() ) );
           }
         } else {
           unableToReadIds.append( id );
@@ -352,8 +344,8 @@ public class RepositoriesMeta {
     }
     if ( unableToReadIds != null && unableToReadIds.length() > 0 ) {
       errorMessage =
-        BaseMessages.getString( PKG, "RepositoryMeta.Error.ReadRepositoryIdNotAvailable", unableToReadIds
-          .substring( 0, unableToReadIds.lastIndexOf( "," ) ) );
+              BaseMessages.getString( PKG, "RepositoryMeta.Error.ReadRepositoryIdNotAvailable", unableToReadIds
+                      .substring( 0, unableToReadIds.lastIndexOf( "," ) ) );
     }
     if ( kettleException != null ) {
       throw kettleException;
@@ -412,159 +404,5 @@ public class RepositoriesMeta {
 
   public LogChannelInterface getLog() {
     return log;
-  }
-
-
-  // We read the repositories from the file:
-  //
-  public boolean readData_localFile() throws KettleException
-  {
-    // Clear the information
-    //
-    clear();
-
-    File file = new File(Const.getKettleLocalRepositoriesFile());
-    if (!file.exists() || !file.isFile())
-    {
-      log.logDetailed( BaseMessages.getString(PKG, "RepositoryMeta.Log.NoRepositoryFileInLocalDirectory", file.getAbsolutePath() ));
-      file = new File(Const.getKettleUserRepositoriesFile());
-      if (!file.exists() || !file.isFile())
-      {
-        return false; // nothing to read!
-      }
-    }
-
-    log.logBasic( BaseMessages.getString(PKG, "RepositoryMeta.Log.ReadingXMLFile", file.getAbsoluteFile() ) );
-
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
-    Document doc;
-
-    try
-    {
-      // Check and open XML document
-      dbf  = DocumentBuilderFactory.newInstance();
-      db   = dbf.newDocumentBuilder();
-      try
-      {
-        doc  = db.parse(file);
-      }
-      catch(FileNotFoundException ef)
-      {
-        InputStream is = getClass().getResourceAsStream("/org/pentaho/di/repository/repositories.xml");
-        if (is!=null)
-        {
-          doc = db.parse(is);
-        }
-        else
-        {
-          throw new KettleException(BaseMessages.getString(PKG, "RepositoryMeta.Error.OpeningFile", file.getAbsoluteFile()) , ef);
-
-        }
-      }
-      parseRepositoriesDoc(doc);
-    }
-    catch(Exception e)
-    {
-      throw new KettleException(BaseMessages.getString(PKG, "RepositoryMeta.Error.ReadingInfo"), e);
-    }
-
-    return true;
-  }
-  /**
-   * bug 20697  add by cli
-   * @param
-   * @return
-   */
-  public boolean readData() throws KettleException{
-    boolean success = false;
-    clear();
-    try {
-      if (loginResponse != null) {
-        String userID = loginResponse.getUser_id();
-        List<RepositoryBean> repBeans = loginResponse.getRep_list();
-        for (RepositoryBean repBean : repBeans) {
-          DatabaseMeta dbMeta = new DatabaseMeta(
-                  repBean.getRepositoryName(), repBean.getDbType(),
-                  repBean.getDbAccess(), repBean.getDbHost(),
-                  repBean.getDbName(), repBean.getDbPort(),
-                  repBean.getUserName(), repBean.getPassword());
-          dbMeta.addOptions();
-          addDatabase(dbMeta);
-          KettleDatabaseRepositoryMeta kdbRepMeta = new KettleDatabaseRepositoryMeta(
-                  "KettleDatabaseRepository",
-                  repBean.getRepositoryName(),
-                  repBean.getRepositoryName(), dbMeta);
-          kdbRepMeta.setUserID(userID);
-          KettleDatabaseRepositoryMeta.priviledge = loginResponse
-                  .getPriviledges();
-          addRepository(kdbRepMeta);
-        }
-        success = true;
-      }
-      else
-      {
-        try {
-          //xnren start 2015-5-19
-          //add login to server
-          Properties p = new Properties();
-          String propFile = Const.getKettleDirectory()+"/"+Const.KETTLE_PROPERTIES;
-          p.load(new FileInputStream(propFile));
-          String repUrl = p.getProperty("SERVER_URL");
-          repUrl = repUrl + "/login?action=login&user_name=admin&password=admin";
-          testConnection(repUrl);
-          //xnren end
-          if(loginResponse!=null){
-            readData();
-          }else {
-            return readData_localFile();
-          }
-        } catch(Exception e) {
-          throw new KettleException(BaseMessages.getString(PKG, "Kitchen.Error.NoRepDefinied"), e);
-        }
-      }
-
-    } catch (Exception e) {
-      log.logError(e.getMessage(), e);
-      throw new KettleException("Exception", e);
-    }
-    return success;
-  }
-
-  /**
-   * for bug 20697
-   * userd to test the connection when log to repository
-   * @param repUrl
-   * @return
-   */
-  public String testConnection(String repUrl){
-    clear();
-    String messages="OK";
-    URL url;
-    try {
-      url = new URL(repUrl);
-      URLConnection conn = url.openConnection() ;
-      InputStream in = conn.getInputStream();
-      String encoding = conn.getContentEncoding();
-      encoding = encoding == null ? "UTF-8" : encoding;
-      String body = IOUtils.toString(in, encoding);
-      LoginResponse loginResponse = LoginResponse.decode(body);
-      UMStatus um = loginResponse.getStatus();
-      if(um!=UMStatus.SUCCESS){
-        messages=um.getStatusMessage();
-      }else{
-        this.loginResponse = loginResponse;
-      }
-    } catch (MalformedURLException e) {
-      messages=BaseMessages.getString(PKG,"RepositoriesMeta.UncorrectURLFormat");
-      e.printStackTrace();
-    } catch (IOException e) {
-      messages=BaseMessages.getString(PKG,"RepositoriesMeta.WrongUsePass");
-      e.printStackTrace();
-    }catch (Exception e) {
-      messages="Exception";
-      e.printStackTrace();
-    }
-    return messages;
   }
 }

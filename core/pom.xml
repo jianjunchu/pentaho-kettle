@@ -50,6 +50,7 @@
     <xmlunit.version>1.5</xmlunit.version>
   </properties>
 
+
   <dependencies>
     <!-- Pentaho Dependencies -->
     <dependency>
@@ -516,12 +517,16 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <classifier>auphi</classifier>
+        </configuration>
         <executions>
           <execution>
             <goals>
               <goal>test-jar</goal>
             </goals>
             <configuration>
+
               <includes>
                 <include>org/pentaho/di/junit/**</include>
                 <include>org/pentaho/di/concurrency/**</include>
