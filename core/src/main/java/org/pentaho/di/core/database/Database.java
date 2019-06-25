@@ -191,7 +191,7 @@ public class Database implements VariableSpace, LoggingObjectInterface {
       throw new RuntimeException( "Unable to get list of instantiated value meta plugin classes", e );
     }
   }
-
+  boolean isDebug = true;
   /**
    * Construct a new Database Connection
    *
@@ -1378,7 +1378,7 @@ public class Database implements VariableSpace, LoggingObjectInterface {
    *
    * @param ps             The prepared statement to empty and close.
    * @param batch          true if you are using batch processing
-   * @param psBatchCounter The number of rows on the batch queue
+   * @param batchCounter The number of rows on the batch queue
    * @throws KettleDatabaseException
    */
   public void emptyAndCommit( PreparedStatement ps, boolean batch, int batchCounter ) throws KettleDatabaseException {
@@ -1696,7 +1696,12 @@ public class Database implements VariableSpace, LoggingObjectInterface {
   public ResultSet openQuery( String sql, RowMetaInterface params, Object[] data, int fetch_mode,
                               boolean lazyConversion ) throws KettleDatabaseException {
     ResultSet res;
-
+    if(log.isDebug())
+    {
+      debug(sql);
+      debug(params.getFieldNames());
+      debug(data);
+    }
     // Create a Statement
     try {
       log.snap( Metrics.METRIC_DATABASE_OPEN_QUERY_START, databaseMeta.getName() );
@@ -1768,6 +1773,26 @@ public class Database implements VariableSpace, LoggingObjectInterface {
     }
 
     return res;
+  }
+
+  private void debug(String sql) {
+    if(sql==null)
+      System.out.print("sql is null");
+    else
+      System.out.print(sql);
+  }
+
+  private void debug(Object[] data) {
+    if(data==null)
+      System.out.print("data is null");
+    else
+      for(int i=0;i<data.length;i++)
+      {
+        if(data[i]==null)
+          System.out.print(i+" null");
+        else
+          System.out.print(i +" "+ data[i].toString());
+      }
   }
 
   private boolean canWeSetFetchSize( Statement statement ) throws SQLException {

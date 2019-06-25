@@ -469,6 +469,9 @@ public class MySQLDatabaseMeta extends BaseDatabaseMeta implements DatabaseInter
   public void addDefaultOptions() {
     addExtraOption( getPluginId(), "defaultFetchSize", "500" );
     addExtraOption( getPluginId(), "useCursorFetch", "true" );
+    addExtraOption( getPluginId(), "characterEncoding", "UTF-8");
+    addExtraOption( getPluginId(), "useUnicode", "true");
+    addExtraOption( getPluginId(), "autoReconnect", "true");
   }
 
   @Override
