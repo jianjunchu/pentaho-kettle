@@ -860,8 +860,10 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
             db.connect();
 
             String schemaTable = databaseMeta.getQuotedSchemaTableCombination( schemaName, tableName );
-            String cr_table = db.getDDL( schemaTable, prev, tk, use_autoinc, pk );
 
+
+            //String cr_table = db.getDDL( schemaTable, prev, tk, use_autoinc, pk );
+            String cr_table = getDDL( schemaTable, db,prev, tk, use_autoinc, pk );
             // Empty string means: nothing to do: set it to null...
             if ( cr_table == null || cr_table.length() == 0 ) {
               cr_table = null;
@@ -885,6 +887,33 @@ public class TableOutputMeta extends BaseStepMeta implements StepMetaInterface, 
     }
 
     return retval;
+  }
+
+  /**
+   * get DDL statement
+   * @param tableName
+   * @param db
+   * @param rowMeta
+   * @param tk
+   * @param use_autoinc
+   * @param pk
+   * @return
+   * @throws KettleDatabaseException
+   */
+  public String getDDL(String tableName,Database db,RowMetaInterface rowMeta,String tk, boolean use_autoinc, String pk) throws KettleDatabaseException {
+    String sqlScript;
+    if(db.getDatabaseMeta().getDatabaseTypeDesc().equals("MYSQL"))
+      if(!db.checkTableExists(tableName))
+      {
+        if(getShardKeyField()!=null && getShardKeyField().length()>0)
+          sqlScript = db.getDDL(tableName,rowMeta,tk, use_autoinc, getShardKeyField(), true).replace(";", "")+" shardkey="+ getShardKeyField()+" DEFAULT CHARSET=utf8;";
+        else
+          sqlScript = db.getDDL(tableName,rowMeta,tk, use_autoinc, pk, true).replace(";", "")+"DEFAULT CHARSET=utf8;";
+      }else
+        sqlScript = db.getDDL(tableName,rowMeta,tk, use_autoinc, pk, true).replace(";", "")+"DEFAULT CHARSET=utf8;";//alter table
+    else
+      sqlScript = db.getDDL(tableName,rowMeta,tk, use_autoinc, pk, true);
+    return sqlScript;
   }
 
   public RowMetaInterface getRequiredFields( VariableSpace space ) throws KettleException {

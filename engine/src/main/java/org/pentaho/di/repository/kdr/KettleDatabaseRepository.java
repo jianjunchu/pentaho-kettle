@@ -1300,6 +1300,12 @@ public class KettleDatabaseRepository extends KettleDatabaseRepositoryBase {
       + quote( KettleDatabaseRepository.FIELD_STEP_ATTRIBUTE_ID_TRANSFORMATION ) + " = ? ", id_transformation );
   }
 
+  public synchronized void delStepAttributesByStepId( ObjectId id_step ) throws KettleException {
+    connectionDelegate.performDelete( "DELETE FROM "
+            + quoteTable( KettleDatabaseRepository.TABLE_R_STEP_ATTRIBUTE ) + " WHERE "
+            + quote( KettleDatabaseRepository.FIELD_STEP_ATTRIBUTE_ID_STEP ) + " = ? ", id_step );
+  }
+
   public synchronized void delTransAttributes( ObjectId id_transformation ) throws KettleException {
     connectionDelegate.performDelete( "DELETE FROM "
       + quoteTable( KettleDatabaseRepository.TABLE_R_TRANS_ATTRIBUTE ) + " WHERE "

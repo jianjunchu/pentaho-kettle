@@ -152,12 +152,12 @@ public class ParseMailInputTest {
     Header ex2 = new Header( HDR_EX2, HDR_EX2V );
 
     // for fixed [PDI-6532]
-    when( message.getMatchingHeaders( AdditionalMatchers.aryEq( new String[] { HDR_EX1 } ) ) ).thenReturn(
+   /* when( message.getMatchingHeaders( AdditionalMatchers.aryEq( new String[] { HDR_EX1 } ) ) ).thenReturn(
       getEnum( new Header[] { ex1 } ) );
     when( message.getMatchingHeaders( AdditionalMatchers.aryEq( new String[] { HDR_EX2 } ) ) ).thenReturn(
       getEnum( new Header[] { ex2 } ) );
     when( message.getMatchingHeaders( AdditionalMatchers.aryEq( new String[] { HDR_EX1, HDR_EX2 } ) ) ).thenReturn(
-      getEnum( new Header[] { ex1, ex2 } ) );
+      getEnum( new Header[] { ex1, ex2 } ) );*/
 
     // for previous implementation
     when( message.getHeader( eq( HDR_EX1 ) ) ).thenReturn( new String[] { ex1.getValue() } );

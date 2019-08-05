@@ -122,12 +122,10 @@ public class KettleDatabaseRepositoryStepDelegate extends KettleDatabaseReposito
 
   /**
    * Create a new step by loading the metadata from the specified repository.
-   *
-   * @param rep
    * @param stepId
    * @param databases
-   * @param counters
    * @param partitionSchemas
+   * @return
    * @throws KettleException
    */
   public StepMeta loadStepMeta( ObjectId stepId, List<DatabaseMeta> databases,
@@ -235,6 +233,10 @@ public class KettleDatabaseRepositoryStepDelegate extends KettleDatabaseReposito
           ? -1 : stepMeta.getLocation().x, stepMeta.getLocation() == null ? -1 : stepMeta.getLocation().y,
         stepMeta.isDrawn(), stepMeta.getCopiesString() ) );
 
+        if(this.getNrStepAttributes(stepMeta.getObjectId())>0)//avoid duplicate indx
+        {
+          repository.delStepAttributesByStepId(stepMeta.getObjectId());
+        }
       // Save partitioning selection for the step
       //
       repository.stepDelegate.saveStepPartitioningMeta(

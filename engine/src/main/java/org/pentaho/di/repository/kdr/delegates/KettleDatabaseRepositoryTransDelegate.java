@@ -406,6 +406,7 @@ public class KettleDatabaseRepositoryTransDelegate extends KettleDatabaseReposit
         monitor.done();
       }
     } catch ( KettleDatabaseException dbe ) {
+      dbe.printStackTrace();
       // Oops, roll back!
       repository.rollback();
 

@@ -244,18 +244,18 @@ public class TableOutput extends BaseStep implements StepInterface {
     {
       data.DDLSynced=true;
 
-        String sqlScript="";
-        if(data.databaseMeta.getDatabaseTypeDesc().equals("MYSQL"))
-          if(!data.db.checkTableExists(tableName))
-          {
-            if(meta.getShardKeyField()!=null && meta.getShardKeyField().length()>0)
-              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+" shardkey="+ meta.getShardKeyField()+" DEFAULT CHARSET=utf8;";
-            else
-              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";
-          }else
-            sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";//alter table
-          else
-          sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true);
+        String sqlScript = meta.getDDL(tableName,data.db,rowMeta,null,false,null);
+//        if(data.databaseMeta.getDatabaseTypeDesc().equals("MYSQL"))
+//          if(!data.db.checkTableExists(tableName))
+//          {
+//            if(meta.getShardKeyField()!=null && meta.getShardKeyField().length()>0)
+//              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, meta.getShardKeyField(), true).replace(";", "")+" shardkey="+ meta.getShardKeyField()+" DEFAULT CHARSET=utf8;";
+//            else
+//              sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";
+//          }else
+//            sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true).replace(";", "")+"DEFAULT CHARSET=utf8;";//alter table
+//          else
+//          sqlScript = data.db.getDDL(tableName,rowMeta,null, false, null, true);
 
         if(sqlScript!=null && sqlScript.length()>0)
           try{

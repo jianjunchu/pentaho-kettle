@@ -554,10 +554,8 @@ public class RepositoriesHelper {
       e.printStackTrace();
     }
     //xnren end
-    return "";
+    return input.testConnection(url);
   }
-
-
   /**
    * for bug 20697
    * return the connection test result
