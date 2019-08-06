@@ -1639,7 +1639,11 @@ public class JobEntryTrans extends JobEntryBase implements Cloneable, JobEntryIn
     //
     RepositoryDirectoryInterface repositoryDirectoryInterface =
       RepositoryImportLocation.getRepositoryImportLocation().findDirectory( directory );
-    transObjectId = repository.getTransformationID( transname, repositoryDirectoryInterface );
+
+    if(repositoryDirectoryInterface==null)//reference directory not found in repository.
+      transObjectId = null;
+    else
+      transObjectId = repository.getTransformationID( transname, repositoryDirectoryInterface );
   }
 
   /**

@@ -265,7 +265,7 @@ public class KettleDatabaseRepositoryJobDelegate extends KettleDatabaseRepositor
   /**
    * Save the parameters of this job to the repository.
    *
-   * @param rep
+   * @param jobMeta
    *          The repository to save to.
    *
    * @throws KettleException
@@ -306,9 +306,7 @@ public class KettleDatabaseRepositoryJobDelegate extends KettleDatabaseRepositor
   /**
    * Load a job in a directory
    *
-   * @param log
-   *          the logging channel
-   * @param rep
+   * @param monitor
    *          The Repository
    * @param jobname
    *          The name of the job

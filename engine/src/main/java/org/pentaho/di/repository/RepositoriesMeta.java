@@ -51,9 +51,9 @@ import org.pentaho.di.repository.kdr.KettleDatabaseRepositoryMeta;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.auphi.ktrl.system.repository.bean.RepositoryBean;
-import com.auphi.ktrl.system.user.bean.LoginResponse;
-import com.auphi.ktrl.system.user.util.UMStatus;
+import org.pentaho.di.repository.login.RepositoryBean;
+import org.pentaho.di.repository.login.LoginResponse;
+import org.pentaho.di.repository.login.UMStatus;
 
 /*
  * Created on 31-mrt-2004
