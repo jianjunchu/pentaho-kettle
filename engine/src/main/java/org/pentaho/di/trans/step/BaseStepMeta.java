@@ -904,7 +904,10 @@ public class BaseStepMeta implements Cloneable, StepAttributesInterface {
    * @throws KettleException the kettle exception
    */
   protected void loadStepAttributes() throws KettleException {
-    try ( InputStream inputStream = getClass().getResourceAsStream( STEP_ATTRIBUTES_FILE ) ) {
+     InputStream inputStream = getClass().getResourceAsStream( STEP_ATTRIBUTES_FILE );
+     if (inputStream==null)
+       inputStream = getClass().getResourceAsStream( "/"+STEP_ATTRIBUTES_FILE );
+    try {
       if ( inputStream != null ) {
         Document document = XMLHandler.loadXMLFile( inputStream );
         Node attrsNode = XMLHandler.getSubNode( document, "attributes" );

@@ -469,7 +469,7 @@ public class WordInputDialog extends BaseStepDialog implements StepDialogInterfa
 
 		getData();
 		inputMeta.setChanged(changed);
-		checkPriviledges();	
+		//checkPriviledges();
 		shell.open();
 		while (!shell.isDisposed())
 		{
@@ -615,11 +615,16 @@ public class WordInputDialog extends BaseStepDialog implements StepDialogInterfa
 
             // Update the GUI
             //
+			meta.allocate(fieldNames.length);
             for (int i=0;i<fieldNames.length;i++) {
             	TableItem item = new TableItem(wFields.table, SWT.NONE);
             	item.setText(1, fieldNames[i]);
             	item.setText(2, ValueMeta.getTypeDesc(ValueMetaInterface.TYPE_STRING));
-            }
+				TextFileInputField textField =  new TextFileInputField();
+				textField.setName(fieldNames[i]);
+				textField.setType(ValueMetaInterface.TYPE_STRING);
+				meta.getInputFields()[i] = textField;
+			}
             wFields.removeEmptyRows();
             wFields.setRowNums();
             wFields.optWidth(true);
@@ -640,7 +645,7 @@ public class WordInputDialog extends BaseStepDialog implements StepDialogInterfa
 					continue;
 				if (rowIndex==0) {
 					List<StringEvaluator> evaluators = new ArrayList<StringEvaluator>();
-					int nrfields = meta.getInputFields().length;
+					int nrfields = fieldNames.length;
 
 					for (int i = 0; i < nrfields && i < r.length; i++) {
 						TextFileInputField field = meta.getInputFields()[i];

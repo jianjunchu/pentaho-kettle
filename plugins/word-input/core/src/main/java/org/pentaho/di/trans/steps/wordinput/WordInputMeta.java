@@ -59,18 +59,21 @@ import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInjectionInterface;
 import org.pentaho.di.trans.step.StepMetaInterface;
-import org.pentaho.di.trans.steps.textfileinput.InputFileMetaInterface;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
 import org.w3c.dom.Node;
-
+import org.pentaho.di.core.injection.InjectionSupported;
+import org.pentaho.di.core.annotations.Step;
 
 /**
  * @since 2007-07-05
  * @author matt
  * @version 3.0
  */
-
+@Step( id = "WORDINPUT", image = "WDI.png", i18nPackageName = "org.pentaho.di.trans.steps.wordinput",
+		name = "WordInput.Step.Name", description = "WordInput.Step.Desc", categoryDescription = "Input",
+		documentationUrl = "Products/Data_Integration/Transformation_Step_Reference/Word_Input" )
+@InjectionSupported( localizationPrefix = "WordInput.Injection.", groups = { "INPUT_FIELDS" } )
 public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, StepMetaInjectionInterface
 {
 	private static Class<?> PKG = org.pentaho.di.trans.steps.csvinput.CsvInput.class; // for i18n purposes, needed by Translator2!!   $NON-NLS-1$
@@ -664,4 +667,8 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
       return getStepInjectionMetadataEntries(PKG);
     }
 
+	@Override
+	public String getDialogClassName() {
+		return WordInputDialog.class.getName();
+	}
 }
