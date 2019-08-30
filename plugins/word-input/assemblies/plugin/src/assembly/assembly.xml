@@ -27,6 +27,12 @@
     <useProjectArtifact>false</useProjectArtifact>
     <includes>
       <include>com.aspose.words:aspose-words-jdk16</include>
+      <include>org.apache.poi:poi</include>
+      <include>org.apache.poi:poi-ooxml-schemas</include>
+      <include>org.apache.poi:poi-ooxml</include>
+      <include>org.apache.poi:poi-scratchpad</include>
+      <include>org.json:json</include>
+      <include>org.apache.xmlbeans:xmlbeans</include>
     </includes>
     <outputDirectory>lib</outputDirectory>
   </dependencySet>

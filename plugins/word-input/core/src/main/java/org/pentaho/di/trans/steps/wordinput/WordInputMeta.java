@@ -64,6 +64,10 @@ import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
 import org.w3c.dom.Node;
 import org.pentaho.di.core.injection.InjectionSupported;
 import org.pentaho.di.core.annotations.Step;
+import org.pentaho.metastore.api.IMetaStore;
+import org.pentaho.di.core.row.value.ValueMetaFactory;
+import org.pentaho.di.core.exception.KettlePluginException;
+import org.pentaho.di.core.row.value.ValueMetaString;
 
 /**
  * @since 2007-07-05
@@ -76,6 +80,7 @@ import org.pentaho.di.core.annotations.Step;
 @InjectionSupported( localizationPrefix = "WordInput.Injection.", groups = { "INPUT_FIELDS" } )
 public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, StepMetaInjectionInterface
 {
+	private static final String JSON_FIELD_NAME = "content";
 	private static Class<?> PKG = org.pentaho.di.trans.steps.csvinput.CsvInput.class; // for i18n purposes, needed by Translator2!!   $NON-NLS-1$
 	
 	private String filename;
@@ -97,6 +102,15 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
 	private boolean isaddresult;
 	private int nrHeaderLines =1; //head rows, default 1 row
 
+	public boolean isExtractSpecifiedTable() {
+		return extractSpecifiedTable;
+	}
+
+	public void setExtractSpecifiedTable(boolean extractSpecifiedTable) {
+		this.extractSpecifiedTable = extractSpecifiedTable;
+	}
+
+	private boolean extractSpecifiedTable = false;
 	public WordInputMeta()
 	{
 		super(); // allocate BaseStepMeta
@@ -275,7 +289,7 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
 		}
 	}
 	
-	public void getFields(RowMetaInterface rowMeta, String origin, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) throws KettleStepException
+	public void getTableFields(RowMetaInterface rowMeta, String origin, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) throws KettleStepException
 	{
 		rowMeta.clear(); // Start with a clean slate, eats the input
 		
@@ -321,7 +335,28 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
 		}
 		
 	}
-	
+	public void getFixedFields(RowMetaInterface rowMeta, String origin, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) throws KettleStepException
+	{
+		rowMeta.clear(); // Start with a clean slate, eats the input
+//
+//		if (!Const.isEmpty(filenameField) && includingFilename) {
+//			ValueMetaInterface filenameMeta = new ValueMeta(filenameField, ValueMetaInterface.TYPE_STRING);
+//			filenameMeta.setOrigin(origin);
+//			rowMeta.addValueMeta(filenameMeta);
+//		}
+//
+//		if (!Const.isEmpty(rowNumField)) {
+//			ValueMetaInterface rowNumMeta = new ValueMeta(rowNumField, ValueMetaInterface.TYPE_INTEGER);
+//			rowNumMeta.setLength(10);
+//			rowNumMeta.setOrigin(origin);
+//			rowMeta.addValueMeta(rowNumMeta);
+//		}
+
+		ValueMetaInterface jsonContentMeta = new ValueMeta(JSON_FIELD_NAME, ValueMetaInterface.TYPE_STRING);
+		jsonContentMeta.setOrigin(origin);
+		rowMeta.addValueMeta(jsonContentMeta);
+
+	}
 	public void check(List<CheckResultInterface> remarks, TransMeta transMeta, StepMeta stepinfo, RowMetaInterface prev, String input[], String output[], RowMetaInterface info)
 	{
 		CheckResult cr;
@@ -348,7 +383,43 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
 			remarks.add(cr);
 		}
 	}
-	
+
+	@Override
+	public void getFields( RowMetaInterface r, String origin, RowMetaInterface[] info, StepMeta nextStep,
+						   VariableSpace space, Repository repository, IMetaStore metaStore ) {
+
+		// clear the output
+		r.clear();
+		// append the outputFields to the output
+		if(this.isExtractSpecifiedTable()) {
+			for (int i = 0; i < inputFields.length; i++) {
+				ValueMetaInterface v;
+				try {
+					v = ValueMetaFactory.createValueMeta(inputFields[i].getName(), inputFields[i].getType());
+				} catch (KettlePluginException e) {
+					v = new ValueMetaString(inputFields[i].getName());
+				}
+				// that would influence the output
+				// v.setConversionMask(conversionMask[i]);
+				v.setOrigin(origin);
+				r.addValueMeta(v);
+			}
+		}else
+		{
+			ValueMetaInterface v;
+			try {
+				v = ValueMetaFactory.createValueMeta(JSON_FIELD_NAME, ValueMetaInterface.TYPE_STRING);
+			} catch (KettlePluginException e) {
+				v = new ValueMetaString(JSON_FIELD_NAME);
+			}
+			// that would influence the output
+			// v.setConversionMask(conversionMask[i]);
+			v.setOrigin(origin);
+			r.addValueMeta(v);
+		}
+
+	}
+
 	public StepInterface getStep(StepMeta stepMeta, StepDataInterface stepDataInterface, int cnr, TransMeta tr, Trans trans)
 	{
 		return new WordInput(stepMeta, stepDataInterface, cnr, tr, trans);
@@ -671,4 +742,9 @@ public class WordInputMeta extends BaseStepMeta implements StepMetaInterface, St
 	public String getDialogClassName() {
 		return WordInputDialog.class.getName();
 	}
+
+	public boolean extractTable() {
+		return extractSpecifiedTable;
+	}
+
 }

@@ -271,15 +271,26 @@ public class MSSQLServerDatabaseMeta extends BaseDatabaseMeta implements Databas
         }
         break;
       case ValueMetaInterface.TYPE_STRING:
-        if ( length < getMaxVARCHARLength() ) {
-          // Maybe use some default DB String length in case length<=0
-          if ( length > 0 ) {
-            retval += "VARCHAR(" + length + ")";
-          } else {
-            retval += "VARCHAR(100)";
+        if (length<getMaxVARCHARLength())
+        {
+          //	Maybe use some default DB String length in case length<=0
+          if (length>0)
+          {
+            if(v.getOriginalColumnTypeName()!=null && v.getOriginalColumnTypeName().equalsIgnoreCase("nvarchar"))
+              retval+="NVARCHAR("+length+")";
+            else if(v.getOriginalColumnTypeName()!=null && v.getOriginalColumnTypeName().equalsIgnoreCase("nchar"))
+              retval+="NCHAR("+length+")";
+            else
+              retval+="VARCHAR("+length+")";
           }
-        } else {
-          retval += "TEXT"; // Up to 2bilion characters.
+          else
+          {
+            retval+="VARCHAR(100)";
+          }
+        }
+        else
+        {
+          retval+="TEXT"; // Up to 2bilion characters.
         }
         break;
       case ValueMetaInterface.TYPE_BINARY:
@@ -298,7 +309,7 @@ public class MSSQLServerDatabaseMeta extends BaseDatabaseMeta implements Databas
   }
 
   /**
-   * @param the
+   * @param schemaName
    *          schema name to search in or null if you want to search the whole DB
    * @return The SQL on this database to get a list of stored procedures.
    */
@@ -380,7 +391,7 @@ public class MSSQLServerDatabaseMeta extends BaseDatabaseMeta implements Databas
    *          a connected database
    * @param schemaName
    * @param tableName
-   * @param idxFields
+   * @param idx_fields
    * @return true if the index exists, false if it doesn't.
    * @throws KettleDatabaseException
    */

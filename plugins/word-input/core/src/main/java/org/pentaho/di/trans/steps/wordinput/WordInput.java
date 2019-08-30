@@ -29,6 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.ResultFile;
 import org.pentaho.di.core.exception.KettleConversionException;
@@ -63,6 +67,27 @@ import com.aspose.words.Row;
 import com.aspose.words.SaveFormat;
 import com.aspose.words.Table;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.converter.AbstractWordUtils;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.hwpf.model.ListTables;
+import org.apache.poi.hwpf.model.StyleDescription;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.hwpf.usermodel.Section;
+import org.apache.poi.hwpf.usermodel.TableCell;
+import org.apache.poi.hwpf.usermodel.TableIterator;
+import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.hwpf.usermodel.TableRow;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+
 /**
  * Read a Word file
  * Just output table data found in the file...
@@ -91,8 +116,10 @@ public class WordInput extends BaseStep implements StepInterface
 			first=false;
 			
 			data.outputRowMeta = new RowMeta();
-			meta.getFields(data.outputRowMeta, getStepname(), null, null, this);
-
+			if(meta.extractTable())
+				meta.getTableFields(data.outputRowMeta, getStepname(), null, null, this);
+			else
+				meta.getFixedFields(data.outputRowMeta, getStepname(), null, null, this);
 			if (data.filenames==null) {
 				// We're expecting the list of filenames from the previous step(s)...
 				//
@@ -141,7 +168,11 @@ public class WordInput extends BaseStep implements StepInterface
 		}
 
 		try {
-			Object[] outputRowData=readOneRow(true);    // get row, set busy!
+			Object[] outputRowData= null;
+			if(meta.extractTable())
+				outputRowData =readOneRow(true);    // get row, set busy!
+			else
+				outputRowData= readOneJsonRow();
 			if (outputRowData==null)  // no more input to be expected...
 			{
 				if (openNextFile()) {
@@ -180,7 +211,9 @@ public class WordInput extends BaseStep implements StepInterface
 			  throw new KettleException(e.getMessage(), e.getCauses().get(0));
 			}
 		}
-			
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 
@@ -286,8 +319,8 @@ public class WordInput extends BaseStep implements StepInterface
 //				if ( (!data.parallel) || // Standard flat file : skip header
 //					(data.parallel && data.bytesToSkipInFirstFile<=0)
 //					) {
-					readOneRow(false); // skip this row.
-					logBasic(BaseMessages.getString(PKG, "WordInput.Log.HeaderRowSkipped", data.filenames[data.filenr-1])); //$NON-NLS-1$
+//					readOneRow(false); // skip this row.
+//					logBasic(BaseMessages.getString(PKG, "WordInput.Log.HeaderRowSkipped", data.filenames[data.filenr-1])); //$NON-NLS-1$
 //				}
 //			}
 
@@ -364,6 +397,76 @@ String s = data.doc.getLists().get(0).toString();
 
 	}
 
+	/** Read all in one file as one json row
+	 *
+	 * @return a row of data...
+	 * @throws KettleException
+	 */
+	private Object[] readOneJsonRow() throws KettleException,Exception
+	{
+		if (data.rowIndex < 1) {
+			final Object[] outputRowData = RowDataUtil.allocateRowData(data.outputRowMeta.size());
+			String fileName = meta.getFilename();
+			JSONArray result = new JSONArray();
+			if(fileName!= null && fileName.endsWith(".docx")){
+				// Load the template document.
+				File fdoc = new File(fileName);
+				FileInputStream fio = new FileInputStream(fdoc);
+				@SuppressWarnings("resource")
+				XWPFDocument doc = new XWPFDocument(fio);
+				List<XWPFTable> tables = doc.getTables();
+				for (XWPFTable xwpfTable : tables) {
+					JSONArray table_obj = new JSONArray();
+					List<XWPFTableRow> rows = xwpfTable.getRows();
+					int i = 0;
+					for (XWPFTableRow xwpfTableRow : rows) {
+						JSONArray row_array = new JSONArray();
+						List<XWPFTableCell> cells = xwpfTableRow.getTableCells();
+						int j = 0;
+						for (XWPFTableCell xwpfTableCell : cells) {
+							JSONObject cell_obj = new JSONObject();
+							String color = xwpfTableCell.getColor();
+							String o = xwpfTableCell.getText().replaceAll("\\n|\\r|\\t", "").trim();
+
+							cell_obj.put("x", i);
+							cell_obj.put("y", j);
+							cell_obj.put("color", color);
+							cell_obj.put("content", o);
+							row_array.put(cell_obj);
+							j++;
+						}
+						i++;
+						table_obj.put(row_array);
+					}
+					result.put(table_obj);
+				}
+				outputRowData[0] = result;
+			}else if(fileName!= null && fileName.endsWith(".doc")){
+
+				File fdoc = new File("C:/Users/Administrator/Desktop/wordImport/POITest/src/resources/" + fileName);
+				FileInputStream fio = new FileInputStream(fdoc);
+				HWPFDocument doc = new HWPFDocument(fio);
+				Range  range  = doc.getRange();
+				TableIterator it = new TableIterator(range);
+				int tt = 0;
+				while(it.hasNext()){
+					org.apache.poi.hwpf.usermodel.Table table = it.next();
+					for (int i = 0; i < table.numRows(); i++) {
+						TableRow row = table.getRow(i);
+						for (int j = 0; j < row.numCells(); j++) {
+							TableCell cell = row.getCell(j);
+							String o = cell.text().replaceAll("\\n|\\r|\\t", "").trim();
+						}
+					}
+
+				}
+			}
+			data.rowIndex+=1;
+			incrementLinesInput();
+			return outputRowData;
+		}else
+			return null;
+	}
 
   public boolean init(StepMetaInterface smi, StepDataInterface sdi)
 	{
