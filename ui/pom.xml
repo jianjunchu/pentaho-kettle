@@ -38,20 +38,20 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-      <classifier>auphi</classifier>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle-engine</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho-kettle</groupId>
-      <artifactId>kettle-dbdialog</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<classifier>auphi</classifier>-->
+  </dependency>
+  <dependency>
+    <groupId>pentaho-kettle</groupId>
+    <artifactId>kettle-engine</artifactId>
+    <version>${project.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>pentaho-kettle</groupId>
+    <artifactId>kettle-dbdialog</artifactId>
+    <version>${project.version}</version>
+  </dependency>
 
-    <!-- Pentaho dependencies -->
+  <!-- Pentaho dependencies -->
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-vfs-browser</artifactId>

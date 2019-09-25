@@ -74,13 +74,15 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-      <classifier>auphi</classifier>
+      <!--<classifier>auphi</classifier>-->
     </dependency>
+
     <dependency>
       <groupId>org.pentaho</groupId>
       <artifactId>pentaho-hadoop-shims-api</artifactId>
       <version>${pentaho-hadoop-shims-api.version}</version>
     </dependency>
+
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
@@ -92,6 +94,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-dbdialog</artifactId>
@@ -103,6 +106,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
@@ -683,6 +687,7 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
     <plugins>
       <plugin>
       <artifactId>maven-dependency-plugin</artifactId>
@@ -701,5 +706,6 @@
       </executions>
       </plugin>
     </plugins>
+    </pluginManagement>
   </build>
 </project>

@@ -12,4 +12,11 @@
       <outputDirectory>.</outputDirectory>
     </fileSet>
   </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>true</useProjectArtifact>
+      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
 </assembly>

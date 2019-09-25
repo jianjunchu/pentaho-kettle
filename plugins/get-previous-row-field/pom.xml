@@ -49,7 +49,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-      <classifier>auphi</classifier>
+      <!-- <classifier>auphi</classifier>  -->
       <scope>provided</scope>
     </dependency>
     <dependency>

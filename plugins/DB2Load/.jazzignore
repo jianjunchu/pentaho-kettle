@@ -1,0 +1,37 @@
+### Jazz Ignore 0
+# 将不会落实已忽略的文件和文件夹，
+# 但是在接受或更新期间可以修改这些文件和文件夹。
+# - 忽略属性应该包含以空格分隔的文件名模式列表。
+# - 每个模式都区分大小写并且用花括号“{”和“}”括起来。
+# - “*”与零个或多个字符匹配。
+# - “?”与单个字符匹配。
+# - 模式列表可能分割为多行，每行以反斜杠结尾，
+#     下一行以制表符开头。
+# - core.ignore 中的模式将阻止
+#     落实同一目录中相匹配的资源。
+# - core.ignore.recursive 中的模式
+#     将阻止落实当前目录和所有子目录中相匹配的资源。
+# - core.ignore.recursive 的缺省值为 *.class 
+# - core.ignore 的缺省值为 bin 
+# 
+# 要忽略 shell 脚本并隐藏此子树中的文件：
+#     例如：core.ignore.recursive = {*.sh} {\.*} 
+# 
+# 要忽略当前目录中名为“bin”的资源（但是允许
+#     它们在子目录的下面）：
+#     例如：core.ignore = {bin} 
+# 
+# 注意：修改忽略文件将不会更改
+#     Eclipse 派生资源的忽略状态。
+
+core.ignore.recursive= 
+
+core.ignore= \
+	{.jazzignore} \
+	{DB2Load.iml} \
+	{bin} \
+	{classes} \
+	{db2load.rar} \
+	{distrib} \
+	{lib} \
+	{libext} 

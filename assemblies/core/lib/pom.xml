@@ -71,11 +71,11 @@
 
     <dependencies>
         <!-- kettle -->
+
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-core</artifactId>
             <version>${project.version}</version>
-            <classifier>auphi</classifier>
         </dependency>
         <dependency>
             <groupId>org.pentaho</groupId>
@@ -254,6 +254,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>pentaho-platform-core</artifactId>
@@ -265,7 +267,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+-->
         <!--  Pentaho reporting dependencies -->
         <dependency>
             <groupId>org.pentaho.reporting.engine</groupId>
@@ -674,13 +676,14 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>copy-libs</id>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
@@ -692,5 +695,6 @@
                 </executions>
             </plugin>
         </plugins>
+        </pluginManagement>
     </build>
 </project>
