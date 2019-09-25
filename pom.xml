@@ -102,13 +102,6 @@
         <version>1.0.7</version>
       </dependency>
 -->
-      <dependency>
-        <groupId>com.auphi</groupId>
-        <artifactId>etl_platform</artifactId>
-        <version>1.0.7</version>
-        <scope>system</scope>
-        <systemPath>${project.basedir}/lib/etl-platform.jar</systemPath>
-      </dependency>
 
       <dependency>
         <groupId>org.pentaho</groupId>
@@ -317,7 +310,16 @@
         <version>${powermock-api-mockito.version}</version>
         <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc5</artifactId>
+        <version>11.2.0.3</version>
+      </dependency>
+
     </dependencies>
+
+
   </dependencyManagement>
 
   <build>
@@ -328,7 +330,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <classifier>auphi</classifier>
+          <!-- <classifier>auphi</classifier>  -->
           <archive>
             <manifestEntries>
               <Compile-Timestamp>${maven.build.timestamp}</Compile-Timestamp>
@@ -357,6 +359,7 @@
         <module>ui</module>
       </modules>
     </profile>
+    <!--
     <profile>
       <id>plugins</id>
       <activation>
@@ -368,6 +371,7 @@
         <module>plugins</module>
       </modules>
     </profile>
+    -->
     <profile>
       <id>assemblies</id>
       <activation>
@@ -383,6 +387,12 @@
 
 
   <repositories>
+
+    <repository>
+      <id>auphi</id>
+      <url>http://101.37.17.102:8081/nexus/content/groups/public/</url>
+    </repository>
+
     <repository>
       <id>pentaho-public</id>
       <name>Pentaho Public</name>
@@ -397,10 +407,6 @@
       </snapshots>
     </repository>
 
-    <repository>
-      <id>auphi</id>
-      <url>http://101.37.17.102:8081/nexus/content/groups/public/</url>
-    </repository>
 
   </repositories>
 

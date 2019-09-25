@@ -1831,7 +1831,7 @@ public class ValueMetaBase implements ValueMetaInterface {
         case TYPE_INTEGER:
           switch ( storageType ) {
             case STORAGE_TYPE_NORMAL:
-              string = convertIntegerToString( (Long) object );
+              string = convertIntegerToString( new Long(object.toString()).longValue() );
               break;
             case STORAGE_TYPE_BINARY_STRING:
               string = convertIntegerToString( (Long) convertBinaryStringToNativeType( (byte[]) object ) );
@@ -2456,7 +2456,7 @@ public class ValueMetaBase implements ValueMetaInterface {
         case TYPE_INTEGER:
           switch ( storageType ) {
             case STORAGE_TYPE_NORMAL:
-              return convertStringToBinaryString( convertIntegerToString( (Long) object ) );
+              return convertStringToBinaryString( convertIntegerToString( new Long(object.toString()) ) );
             case STORAGE_TYPE_BINARY_STRING:
               String string = convertIntegerToString( (Long) convertBinaryStringToNativeType( (byte[]) object ) );
               return convertStringToBinaryString( string );

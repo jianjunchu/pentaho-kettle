@@ -294,7 +294,12 @@ public class MSSQLServerDatabaseMeta extends BaseDatabaseMeta implements Databas
         }
         break;
       case ValueMetaInterface.TYPE_BINARY:
-        retval += "VARBINARY(MAX)";
+        if(v.getOriginalColumnTypeName()!=null && v.getOriginalColumnTypeName().equalsIgnoreCase("image"))
+          retval+="IMAGE";
+        else if (length>0) {
+          retval += "VARBINARY("+length+")";
+        }else
+          retval += "VARBINARY(MAX)";
         break;
       default:
         retval += " UNKNOWN";

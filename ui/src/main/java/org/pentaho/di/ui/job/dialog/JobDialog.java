@@ -1466,9 +1466,9 @@ public class JobDialog extends Dialog {
   }
 
   public void setFlags() {
-    wbDirectory.setEnabled( false );
+    //wbDirectory.setEnabled( false );
     // wDirectory.setEnabled(rep!=null);
-    wlDirectory.setEnabled( false );
+    //wlDirectory.setEnabled( false );
 
     // DatabaseMeta dbMeta = jobMeta.findDatabase(wLogconnection.getText());
     // wbLogconnection.setEnabled(dbMeta!=null);
