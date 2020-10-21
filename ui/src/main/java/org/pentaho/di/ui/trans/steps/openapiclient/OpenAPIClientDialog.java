@@ -144,7 +144,7 @@ public class OpenAPIClientDialog extends BaseStepDialog implements StepDialogInt
     fdlSlaveServer.right = new FormAttachment( middle, -margin );
     wlMethodName.setLayoutData( fdlSlaveServer );
     wMethodName = new ComboVar( transMeta, shell, SWT.LEFT | SWT.SINGLE | SWT.BORDER );
-    wMethodName.setItems( transMeta.getSlaveServerNames() );
+    wMethodName.setItems( new String[]{"bo.creates","bo.datas.create"} );
     FormData fdSlaveServer = new FormData();
     fdSlaveServer.left = new FormAttachment( middle, 0 );
     fdSlaveServer.top = new FormAttachment( wAPIServer, margin );
