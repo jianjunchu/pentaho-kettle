@@ -84,12 +84,12 @@
   <distributionManagement>
     <repository>
       <id>my-deploy-release</id>
-      <url>http://101.37.17.102:8081/nexus/content/repositories/releases/</url>
+      <url>http://123.206.52.213:8081/repository/maven-releases/</url>
     </repository>
 
     <snapshotRepository>
       <id>my-deploy-snapshot</id>
-      <url>http://101.37.17.102:8081/nexus/content/repositories/snapshots/</url>
+      <url>http://123.206.52.213:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -148,7 +148,7 @@
         <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
         <version>${org.eclipse.swt.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.owasp.encoder</groupId>
         <artifactId>encoder</artifactId>
@@ -390,7 +390,7 @@
 
     <repository>
       <id>auphi</id>
-      <url>http://101.37.17.102:8081/nexus/content/groups/public/</url>
+      <url>http://123.206.52.213:8081/repository/maven-public/</url>
     </repository>
 
     <repository>

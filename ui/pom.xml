@@ -38,12 +38,13 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-    <!--<classifier>auphi</classifier>-->
+      <classifier>auphi</classifier>
   </dependency>
   <dependency>
     <groupId>pentaho-kettle</groupId>
     <artifactId>kettle-engine</artifactId>
     <version>${project.version}</version>
+    <classifier>auphi</classifier>
   </dependency>
   <dependency>
     <groupId>pentaho-kettle</groupId>
@@ -175,4 +176,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <classifier>auphi</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -567,6 +567,19 @@ public class KettleDatabaseRepository extends KettleDatabaseRepositoryBase {
     commit();
   }
 
+  /**
+   * Remove a database connection from the repository
+   *
+   * @param id_database
+   *          The name of the connection to remove
+   * @throws KettleException
+   *           In case something went wrong: database error, insufficient permissions, depending objects, etc.
+   */
+  public void deleteDatabaseMeta( ObjectId id_database ) throws KettleException {
+    securityProvider.validateAction( RepositoryOperation.DELETE_DATABASE );
+    databaseDelegate.delDatabase( id_database );
+    commit();
+  }
   // ClusterSchema
   public ClusterSchema loadClusterSchema( ObjectId idClusterSchema, List<SlaveServer> slaveServers,
     String versionLabel ) throws KettleException {
