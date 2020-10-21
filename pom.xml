@@ -72,6 +72,8 @@
     <encoder.version>1.2</encoder.version>
     <h2.version>1.2.131</h2.version>
     <wstx-asl.version>3.2.4</wstx-asl.version>
+    <jaxen.version>1.1.1</jaxen.version>
+
 
     <!-- Test dependencies -->
     <mockito-all.version>1.10.19</mockito-all.version>
@@ -82,15 +84,17 @@
   </properties>
 
   <distributionManagement>
+
     <repository>
       <id>my-deploy-release</id>
-      <url>http://101.37.17.102:8081/nexus/content/repositories/releases/</url>
+      <url>http://123.206.52.213:8081/repository/maven-releases/</url>
     </repository>
 
     <snapshotRepository>
       <id>my-deploy-snapshot</id>
-      <url>http://101.37.17.102:8081/nexus/content/repositories/snapshots/</url>
+      <url>http://123.206.52.213:8081/repository/maven-snapshots/</url>
     </snapshotRepository>
+
   </distributionManagement>
 
   <dependencyManagement>
@@ -258,7 +262,7 @@
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-      <version>${jaxen.version}</version>
+      <version>1.1.1</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -318,9 +322,8 @@
       </dependency>
 
     </dependencies>
-
-
   </dependencyManagement>
+
 
   <build>
     <plugins>
@@ -330,7 +333,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <!-- <classifier>auphi</classifier>  -->
+            <classifier>auphi</classifier>
           <archive>
             <manifestEntries>
               <Compile-Timestamp>${maven.build.timestamp}</Compile-Timestamp>
@@ -390,7 +393,7 @@
 
     <repository>
       <id>auphi</id>
-      <url>http://101.37.17.102:8081/nexus/content/groups/public/</url>
+      <url>http://123.206.52.213:8081/repository/maven-public/</url>
     </repository>
 
     <repository>
@@ -407,7 +410,5 @@
       </snapshots>
     </repository>
 
-
   </repositories>
-
 </project>
