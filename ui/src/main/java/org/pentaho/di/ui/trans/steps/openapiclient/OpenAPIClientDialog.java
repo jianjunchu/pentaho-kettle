@@ -63,6 +63,9 @@ public class OpenAPIClientDialog extends BaseStepDialog implements StepDialogInt
   private Label wlBoName;
   private TextVar wBoName;
 
+  private Label wlBatchNumber;
+  private TextVar wBatchNumber;
+
   private OpenAPIClientMeta input;
 
   public OpenAPIClientDialog(Shell parent, Object in, TransMeta transMeta, String sname ) {
@@ -253,13 +256,34 @@ public class OpenAPIClientDialog extends BaseStepDialog implements StepDialogInt
     wBoName.setLayoutData( fdBoName );
 
 
+
+    // batchNumbeer
+    wlBatchNumber = new Label( shell, SWT.RIGHT );
+    wlBatchNumber.setText( BaseMessages.getString( PKG, "OpenAPIClientDialog.batchNumber.Label" ) );
+    props.setLook( wlBatchNumber );
+    FormData fdlBatchNumber = new FormData();
+    fdlBatchNumber.left = new FormAttachment( 0, 0 );
+    fdlBatchNumber.right = new FormAttachment( middle, -margin );
+    fdlBatchNumber.top = new FormAttachment( wBoName, margin );
+    wlBatchNumber.setLayoutData( fdlBatchNumber );
+
+    wBatchNumber = new TextVar( transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+    wBoName.setText( "" );
+    props.setLook( wBatchNumber );
+    wBatchNumber.addModifyListener( lsMod );
+    FormData fdBatchNumber = new FormData();
+    fdBatchNumber.left = new FormAttachment( middle, 0 );
+    fdBatchNumber.top = new FormAttachment( wBoName, margin );
+    fdBatchNumber.right = new FormAttachment( 100, 0 );
+    wBatchNumber.setLayoutData( fdBatchNumber );
     // THE BUTTONS
+
     wOK = new Button( shell, SWT.PUSH );
     wOK.setText( BaseMessages.getString( PKG, "System.Button.OK" ) );
     wCancel = new Button( shell, SWT.PUSH );
     wCancel.setText( BaseMessages.getString( PKG, "System.Button.Cancel" ) );
 
-    setButtonPositions( new Button[] { wOK, wCancel }, margin, wBoName );
+    setButtonPositions( new Button[] { wOK, wCancel }, margin, wBatchNumber );
 
     // Add listeners
     lsOK = new Listener() {
@@ -322,6 +346,8 @@ public class OpenAPIClientDialog extends BaseStepDialog implements StepDialogInt
     wuid.setText( Const.NVL( input.getuid(), "" ) );
     wBindId.setText( Const.NVL( input.getbindId(), "" ) );
     wBoName.setText( Const.NVL( input.getBoName(), "" ) );
+    wBatchNumber.setText(Const.NVL( input.getBatchNumber(), "" ));
+
     wStepname.selectAll();
     wStepname.setFocus();
   }
@@ -346,6 +372,7 @@ public class OpenAPIClientDialog extends BaseStepDialog implements StepDialogInt
     input.setuid( wuid.getText() );
     input.setbindId( wBindId.getText() );
     input.setBoName(wBoName.getText());
+    input.setBatchNumber(wBatchNumber.getText());
     dispose();
   }
 

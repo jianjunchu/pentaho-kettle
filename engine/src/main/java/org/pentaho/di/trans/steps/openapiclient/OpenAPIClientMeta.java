@@ -60,7 +60,7 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
   private String uid;
   private String bindId;
   private String boName;
-
+  private String batchNumber;
 
   @Override
   public void loadXML( Node stepnode, List<DatabaseMeta> databases, IMetaStore metaStore ) throws KettleXMLException {
@@ -82,6 +82,8 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
       uid = XMLHandler.getTagValue( stepnode, "uid" );
       bindId = XMLHandler.getTagValue( stepnode, "bindId" );
       boName = XMLHandler.getTagValue( stepnode, "boName" );
+      batchNumber = XMLHandler.getTagValue( stepnode, "batchNumber" );
+
     } catch ( Exception e ) {
       throw new KettleXMLException(
         BaseMessages.getString( PKG, "GetSequenceMeta.Exception.ErrorLoadingStepInfo" ), e );
@@ -117,6 +119,7 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
     retval.append( "      " ).append( XMLHandler.addTagValue( "uid", uid ) );
     retval.append( "      " ).append( XMLHandler.addTagValue( "bindId", bindId ) );
     retval.append( "      " ).append( XMLHandler.addTagValue( "boName", boName ) );
+    retval.append( "      " ).append( XMLHandler.addTagValue( "batchNumber", batchNumber ) );
 
     return retval.toString();
   }
@@ -131,6 +134,8 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
       uid = rep.getStepAttributeString( id_step, "uid" );
       bindId = rep.getStepAttributeString( id_step, "bindId" );
       boName = rep.getStepAttributeString( id_step, "boName" );
+      batchNumber = rep.getStepAttributeString( id_step, "batchNumber" );
+
 
     } catch ( Exception e ) {
       throw new KettleException( BaseMessages.getString( PKG, "GetSequenceMeta.Exception.UnableToReadStepInfo" )
@@ -148,6 +153,8 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
       rep.saveStepAttribute( id_transformation, id_step, "uid", uid );
       rep.saveStepAttribute( id_transformation, id_step, "bindId", bindId );
       rep.saveStepAttribute( id_transformation, id_step, "boName", boName );
+      rep.saveStepAttribute( id_transformation, id_step, "batchNumber", batchNumber );
+
 
     } catch ( Exception e ) {
       throw new KettleException( BaseMessages.getString( PKG, "GetSequenceMeta.Exception.UnableToSaveStepInfo" )
@@ -245,7 +252,7 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
   }
 
   /**
-   * @return the secret
+   * @return the uid
    */
   public String getuid() {
     return uid;
@@ -253,13 +260,14 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
 
   /**
    * @param uid
-   *          the secret to set
+   *          the uid to set
    */
   public void setuid( String uid ) {
     this.uid = uid;
   }
+
   /**
-   * @return the secret
+   * @return the bindid
    */
   public String getbindId() {
     return bindId;
@@ -267,14 +275,14 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
 
   /**
    * @param bindId
-   *          the secret to set
+   *          the bindid to set
    */
   public void setbindId( String bindId ) {
     this.bindId = bindId;
   }
 
   /**
-   * @return the secret
+   * @return the boname
    */
   public String getBoName() {
     return boName;
@@ -282,9 +290,27 @@ public class OpenAPIClientMeta extends BaseStepMeta implements StepMetaInterface
 
   /**
    * @param boName
-   *          the secret to set
+   *          the Boname to set
    */
   public void setBoName( String boName ) {
     this.boName = boName;
   }
+
+
+  /**
+   * @return the batch number
+   */
+  public String getBatchNumber() {
+    return batchNumber;
+  }
+
+  /**
+   * @param b
+   *          the batch number to set
+   */
+  public void setBatchNumber( String b ) {
+    this.batchNumber = b;
+  }
+
+
 }
