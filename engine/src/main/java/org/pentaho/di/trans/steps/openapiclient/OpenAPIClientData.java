@@ -41,6 +41,8 @@ public class OpenAPIClientData extends BaseStepData implements StepDataInterface
   public long startValue;
   public long secret;
   public String accessKey;
+  public int batchCount;
+  public int totalBatchCount;
   public ArrayList<Map> arrayList;
   public  Map<String, Object> result;
 
