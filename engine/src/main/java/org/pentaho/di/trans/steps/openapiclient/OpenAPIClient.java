@@ -67,9 +67,8 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
     if ( r == null ) { // no more input to be expected...
       if(data.arrayList.size()>0) {
         data.result.put("recordDatas", data.arrayList);
-        //StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        //result = res.getResult();
-        result="r";
+        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+        result = res.getResult();
         data.totalBatchCount += data.batchCount;
         if ( log.isBasic() ) {
           logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
@@ -122,9 +121,8 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
       }
       if(batchNumberInt>0 && data.batchCount>=batchNumberInt) {
         data.result.put("recordDatas", data.arrayList);
-        //StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        //result = res.getResult();
-        result="r";
+        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+        result = res.getResult();
         data.totalBatchCount += data.batchCount;
         if ( log.isBasic() ) {
           logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
@@ -149,7 +147,7 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
           logBasic( BaseMessages.getString( PKG, "OpenAPIClientDialog.Log.LineNumber" ) + getLinesRead() );
         }
       }
-    } catch ( KettleException e ) {
+    } catch ( Exception e ) {
       logError( BaseMessages.getString( PKG, "OpenAPIClientDialog.Log.ErrorInStep" ) + e.getMessage() );
       setErrors( 1 );
       stopAll();
