@@ -124,10 +124,8 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
         StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
         result = res.getResult();
         data.totalBatchCount += data.batchCount;
-        if ( log.isBasic() ) {
-          logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
-          logBasic("Total Finished: " + data.totalBatchCount);
-        }
+        logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
+        logBasic("Total Finished: " + data.totalBatchCount);
 
         data.batchCount=0;
         data.arrayList = new ArrayList<Map>();
