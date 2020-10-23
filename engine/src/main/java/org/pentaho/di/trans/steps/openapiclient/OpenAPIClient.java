@@ -60,15 +60,21 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
   public boolean processRow( StepMetaInterface smi, StepDataInterface sdi ) throws KettleException {
     meta = (OpenAPIClientMeta) smi;
     data = (OpenAPIClientData) sdi;
-    int batchCount=0;
+
     String result=null;
 
     Object[] r = getRow(); // Get row from input rowset & set row busy!
     if ( r == null ) { // no more input to be expected...
       if(data.arrayList.size()>0) {
         data.result.put("recordDatas", data.arrayList);
-        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        result = res.getResult();
+        //StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+        //result = res.getResult();
+        result="r";
+        data.totalBatchCount += data.batchCount;
+        if ( log.isBasic() ) {
+          logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
+          logBasic("Total Finished: " + data.totalBatchCount);
+        }
         Object[] outputRowData = r;
         outputRowData = RowDataUtil.resizeArray(r, getInputRowMeta().size() + 1);
         outputRowData[getInputRowMeta().size()] = result;
@@ -103,7 +109,7 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
         map.put(fields[i], r[i]);
       }
       data.arrayList.add(map);
-      batchCount++;
+      data.batchCount++;
       int batchNumberInt;
       try {
         if(Const.isEmpty(meta.getBatchNumber()))
@@ -114,10 +120,18 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
       {
         batchNumberInt = 0;
       }
-      if(batchNumberInt>0 && batchCount>=batchNumberInt) {
+      if(batchNumberInt>0 && data.batchCount>=batchNumberInt) {
         data.result.put("recordDatas", data.arrayList);
-        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        result = res.getResult();
+        //StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+        //result = res.getResult();
+        result="r";
+        data.totalBatchCount += data.batchCount;
+        if ( log.isBasic() ) {
+          logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
+          logBasic("Total Finished: " + data.totalBatchCount);
+        }
+
+        data.batchCount=0;
         data.arrayList = new ArrayList<Map>();
       }
 
