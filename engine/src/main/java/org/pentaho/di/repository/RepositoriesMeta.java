@@ -511,6 +511,8 @@ public class RepositoriesMeta {
           String propFile = Const.getKettleDirectory()+"/"+Const.KETTLE_PROPERTIES;
           p.load(new FileInputStream(propFile));
           String repUrl = p.getProperty("SERVER_URL");
+          if(repUrl==null)
+            repUrl="http://localhost:8080/etl_platform";
           repUrl = repUrl + "/login?action=login&user_name=admin&password=admin";
           testConnection(repUrl);
           //xnren end
