@@ -67,8 +67,9 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
     if ( r == null ) { // no more input to be expected...
       if(data.arrayList.size()>0) {
         data.result.put("recordDatas", data.arrayList);
-        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        result = res.getResult();
+//        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+//        result = res.getResult();
+        result ="";
         data.totalBatchCount += data.batchCount;
         if ( log.isBasic() ) {
           logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
@@ -121,10 +122,11 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
       }
       if(batchNumberInt>0 && data.batchCount>=batchNumberInt) {
         data.result.put("recordDatas", data.arrayList);
-        StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
-        result = res.getResult();
+        //StringArrayResponse res = client.exec(meta.getMethodName(), data.result, StringArrayResponse.class);
+        //result = res.getResult();
+        result ="";
         data.totalBatchCount += data.batchCount;
-        logBasic(BaseMessages.getString(PKG, "OpenAPIClientDialog.Log.execResult") + result);
+        logBasic(BaseMessages.getString(PKG, "OpenAPIClient.Log.execResult") + result);
         logBasic("Total Finished: " + data.totalBatchCount);
 
         data.batchCount=0;
@@ -137,16 +139,16 @@ public class OpenAPIClient extends BaseStep implements StepInterface {
       putRow( data.outputRowMeta, outputRowData );
 
       if ( log.isRowLevel() ) {
-        logRowlevel( BaseMessages.getString( PKG, "OpenAPIClientDialog.Log.WriteRow" )
+        logRowlevel( BaseMessages.getString( PKG, "OpenAPIClient.Log.WriteRow" )
           + getLinesWritten() + " : " + getInputRowMeta().getString( r ) );
       }
       if ( checkFeedback( getLinesRead() ) ) {
         if ( log.isBasic() ) {
-          logBasic( BaseMessages.getString( PKG, "OpenAPIClientDialog.Log.LineNumber" ) + getLinesRead() );
+          logBasic( BaseMessages.getString( PKG, "OpenAPIClient.Log.LineNumber" ) + getLinesRead() );
         }
       }
     } catch ( Exception e ) {
-      logError( BaseMessages.getString( PKG, "OpenAPIClientDialog.Log.ErrorInStep" ) + e.getMessage() );
+      logError( BaseMessages.getString( PKG, "OpenAPIClient.Log.ErrorInStep" ) + e.getMessage() );
       setErrors( 1 );
       stopAll();
       setOutputDone(); // signal end to receiver(s)
