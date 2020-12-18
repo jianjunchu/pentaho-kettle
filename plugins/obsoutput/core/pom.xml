@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>obsoutput</artifactId>
+        <groupId>org.pentaho.di.plugins</groupId>
+        <version>8.3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>kettle-obsoutput-plugin-core</artifactId>
+    <name>PDI obsoutput Plugin Core</name>
+
+    <properties>
+        <project.version>8.3.0.0-SNAPSHOT</project.version>
+        <maven.build.timestamp.format>yyyy-MM-dd hh:mm:ss</maven.build.timestamp.format>
+        <obs.version>3.19.5</obs.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-core</artifactId>
+            <version>${pdi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-engine</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-ui-swt</artifactId>
+            <version>${pdi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.huawei.storage</groupId>
+            <artifactId>esdk-obs-java</artifactId>
+            <version>${obs.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../lib/esdk-obs-java-3.19.5.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.iharder</groupId>
+                    <artifactId>base64</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.10.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-obs-vfs</artifactId>
+            <version>0.0.3-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+</project>
