@@ -1,0 +1,6 @@
+<providers>
+  <provider class-name="org.pentaho.obs.vfs.OBSFileProvider">
+    <scheme name="obs" />
+    <if-available class-name="com.obs.services.ObsClient" />
+  </provider>
+</providers>
