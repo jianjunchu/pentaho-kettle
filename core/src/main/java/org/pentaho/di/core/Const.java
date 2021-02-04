@@ -3664,4 +3664,14 @@ public class Const {
   public static String getDeprecatedPrefix() {
     return " " + BaseMessages.getString( PKG, "Const.Deprecated" );
   }
+
+  private static Long organizer_id ;
+
+  public static Long getOrganizer_id() {
+    return organizer_id;
+  }
+
+  public static void setOrganizer_id(Long organizer_id) {
+    Const.organizer_id = organizer_id;
+  }
 }

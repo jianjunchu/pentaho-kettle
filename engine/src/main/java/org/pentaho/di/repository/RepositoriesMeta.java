@@ -482,6 +482,7 @@ public class RepositoriesMeta {
     try {
       if (loginResponse != null) {
         String userID = loginResponse.getUser_id();
+        Const.setOrganizer_id(loginResponse.getOrganizer_id());
         List<RepositoryBean> repBeans = loginResponse.getRep_list();
         for (RepositoryBean repBean : repBeans) {
           DatabaseMeta dbMeta = new DatabaseMeta(

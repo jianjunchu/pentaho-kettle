@@ -341,7 +341,9 @@ public class KettleDatabaseRepositoryDatabaseDelegate extends KettleDatabaseRepo
             KettleDatabaseRepository.FIELD_DATABASE_DATA_TBS ), data_tablespace );
     table.addValue( new ValueMetaString(
             KettleDatabaseRepository.FIELD_DATABASE_INDEX_TBS ), index_tablespace );
-
+    if(organizerId==null || organizerId <0){
+      organizerId = Const.getOrganizer_id();
+    }
     table.addValue( new ValueMetaInteger(
             KettleDatabaseRepository.FIELD_DATABASE_ORGANIZER_ID ), organizerId);
     table.addValue( new ValueMetaDate(
