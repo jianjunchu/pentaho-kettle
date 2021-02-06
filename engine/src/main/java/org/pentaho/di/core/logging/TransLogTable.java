@@ -167,7 +167,7 @@ public class TransLogTable extends BaseLogTable implements Cloneable, LogTableIn
       //
       if ( id != null ) {
         LogTableField field = findField( id );
-        if ( field.isSubjectAllowed() ) {
+        if ( field!=null && field.isSubjectAllowed() ) {
 
           // BaseLogTable.loadFromRepository sets subject as a String
           //

@@ -78,6 +78,7 @@ public class TableOutputData extends BaseStepData implements StepDataInterface {
 
   public int commitSize;
   public boolean DDLSynced;
+  public boolean tablesqlfirst;
 
     public TableOutputData() {
     super();
@@ -96,5 +97,6 @@ public class TableOutputData extends BaseStepData implements StepDataInterface {
 
     releaseSavepoint = true;
     DDLSynced = false;
+    tablesqlfirst = true;
     }
 }

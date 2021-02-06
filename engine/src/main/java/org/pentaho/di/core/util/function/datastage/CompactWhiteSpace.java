@@ -4,11 +4,12 @@ package org.pentaho.di.core.util.function.datastage;
 import com.ql.util.express.Operator;
 
 import java.util.regex.Pattern;
+/**
+ * comapct WhiteSpace in  a String
+ */
 
 public class CompactWhiteSpace extends Operator {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -28,6 +29,11 @@ public class CompactWhiteSpace extends Operator {
         } else {
             return evaluate(o.toString());
         }
+    }
+
+    public static void main (String[] s)
+    {
+        System.out.println(CompactWhiteSpace.evaluate("a bccde   e a "));
     }
 }
 
