@@ -152,7 +152,7 @@
         <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
         <version>${org.eclipse.swt.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.owasp.encoder</groupId>
         <artifactId>encoder</artifactId>

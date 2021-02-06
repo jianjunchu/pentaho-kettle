@@ -13,6 +13,7 @@ public class LoginResponse {
     private UMStatus status ;
     private String user_name ;
     private String user_id ;
+    private Long organizer_id ;
     private long priviledges ;
     private List<RepositoryBean> rep_list ;
 
@@ -23,6 +24,7 @@ public class LoginResponse {
         jsonObj.put("status", lRps.status.getStatusCode()) ;
         jsonObj.put("user_name", lRps.user_name) ;
         jsonObj.put("user_id", lRps.user_id) ;
+        jsonObj.put("organizer_id",lRps.organizer_id);
         jsonObj.put("priviledges", Long.valueOf(lRps.priviledges)) ;
         jsonObj.put("rep_list", lRps.rep_list) ;
 
@@ -46,6 +48,7 @@ public class LoginResponse {
                 repObj.put("rep_name", rep.getRepositoryName()) ;
                 repObj.put("rep_ID", rep.getRepositoryID()) ;
 
+
                 repListObj.add(repObj) ;
             }
 
@@ -67,6 +70,7 @@ public class LoginResponse {
         lRps.setPriviledges((Long)(obj.get("priviledges"))) ;
         lRps.setUser_id((String)obj.get("user_id")) ;
         lRps.setUser_name((String)obj.get("user_name")) ;
+        lRps.setOrganizer_id(obj.get("organizer_id")!=null? Long.parseLong(obj.get("organizer_id").toString()) : 0) ;
         JSONArray repListObj = (JSONArray)obj.get("rep_list") ;
 
         if (repListObj != null)
@@ -150,5 +154,13 @@ public class LoginResponse {
     public void setStatus(UMStatus status)
     {
         this.status = status;
+    }
+
+    public Long getOrganizer_id() {
+        return organizer_id;
+    }
+
+    public void setOrganizer_id(Long organizer_id) {
+        this.organizer_id = organizer_id;
     }
 }
