@@ -10,7 +10,7 @@ public class Left extends Operator{
     private static final long serialVersionUID = 1L;
 
     /**
-     * 从左边取n位字符串
+     * get n chars from the left of a string
      * @param str
      * @param integer
      * @return

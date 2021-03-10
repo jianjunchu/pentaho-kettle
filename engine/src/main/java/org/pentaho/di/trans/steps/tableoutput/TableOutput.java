@@ -576,6 +576,51 @@ public class TableOutput extends BaseStep implements StepInterface {
           data.tableName = environmentSubstitute( meta.getTableName() );
         }
 
+        if(data.tablesqlfirst&&meta.createTable())
+            //        if(data.tablesqlfirst) // for both create table and alter table. so don't check whether table is exist.
+        {
+          data.tablesqlfirst=false;
+          String schemaTable= meta.getDatabaseMeta().getQuotedSchemaTableCombination(environmentSubstitute(meta.getSchemaName()), environmentSubstitute(data.tableName));
+          RowMetaInterface rmi = this.getTransMeta().getStepFields(this.getStepname());
+          if(!data.db.checkTableExists(schemaTable))
+          {
+            String sqlScript="";
+            if(data.databaseMeta.getDatabaseTypeDesc().equals("MYSQL")) {
+              //SearchFieldsProgressDialog op = new SearchFieldsProgressDialog(this.getTransMeta(), this.getTransMeta().getStep(), true);
+              sqlScript = data.db.getDDL(schemaTable, rmi, null, false, null, true).replace(";", "") + "DEFAULT CHARSET=utf8;";
+            }
+            else
+              sqlScript = data.db.getDDL(schemaTable,rmi,null, false, null, true);
+
+            if(sqlScript!=null && sqlScript.length()>0)
+              try{
+                if(log.isBasic()) logBasic("CREATE TABLE DDL ["+sqlScript+"]");
+                execsqlscript(sqlScript);
+              }catch (Exception ex)
+              {
+                ex.printStackTrace();
+              }
+          }else
+          {
+            String sqlScript="";
+            if(data.databaseMeta.getDatabaseTypeDesc().equals("MYSQL")) {
+
+              sqlScript = data.db.getDDL(schemaTable, rmi, null, false, null, true);
+            }
+            else
+              sqlScript = data.db.getDDL(schemaTable,rmi,null, false, null, true);
+
+            if(sqlScript!=null && sqlScript.length()>0)
+              try{
+                if(log.isBasic()) logBasic("ALTER TABLE DDL ["+sqlScript+"]");
+                execsqlscript(sqlScript);
+              }catch (Exception ex)
+              {
+                ex.printStackTrace();
+              }
+          }
+        }
+
         return true;
       } catch ( KettleException e ) {
         logError( "An error occurred intialising this step: " + e.getMessage() );

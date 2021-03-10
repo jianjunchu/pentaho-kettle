@@ -268,7 +268,16 @@ public class TextFileOutput extends BaseStep implements StepInterface {
         throw new KettleStepException( BaseMessages.getString( PKG, "TextFileOutput.Exception.FileNameFieldNotFound", meta.getFileNameField() ) );
       }
       data.fileNameMeta = getInputRowMeta().getValueMeta( data.fileNameFieldIndex );
-      data.fileName = data.fileNameMeta.getString( row[data.fileNameFieldIndex] );
+
+//      data.fileName = data.fileNameMeta.getString( row[data.fileNameFieldIndex] );
+      //Jason 202101 for obsoutput plugin
+      if(meta.getFileName().startsWith("obs"))
+        if(meta.getFileName().charAt(meta.getFileName().length()-1)=='/')
+          data.fileName = meta.getFileName() + data.fileNameMeta.getString( row[data.fileNameFieldIndex] );
+        else
+          data.fileName = meta.getFileName() +"/"+ data.fileNameMeta.getString( row[data.fileNameFieldIndex] );
+      else
+        data.fileName = data.fileNameMeta.getString( row[data.fileNameFieldIndex] );
 
       if ( data.fileName == null ) {
         throw new KettleFileException( BaseMessages.getString( PKG, "TextFileOutput.Exception.FileNameNotSet" ) );
@@ -1013,7 +1022,11 @@ public class TextFileOutput extends BaseStep implements StepInterface {
               KettleVFS.getFriendlyURI( parentfolder ), KettleVFS.getFriendlyURI( filename ) ) );
         }
       }
-    } finally {
+    }catch (Exception e)
+    {
+      e.printStackTrace();
+    }
+    finally {
       if ( parentfolder != null ) {
         try {
           parentfolder.close();

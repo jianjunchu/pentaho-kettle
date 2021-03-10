@@ -333,7 +333,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-            <classifier>auphi</classifier>
+            <!--<classifier>auphi</classifier>-->
           <archive>
             <manifestEntries>
               <Compile-Timestamp>${maven.build.timestamp}</Compile-Timestamp>
