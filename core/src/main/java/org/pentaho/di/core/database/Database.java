@@ -4378,10 +4378,10 @@ public class Database implements VariableSpace, LoggingObjectInterface {
 
     // Get the SQL to lock the (quoted) tables
     //
-    String sql = databaseMeta.getSQLLockTables( tableNames );
+    /*String sql = databaseMeta.getSQLLockTables( tableNames );
     if ( sql != null ) {
       execStatements( sql );
-    }
+    }*/
   }
 
   /**
