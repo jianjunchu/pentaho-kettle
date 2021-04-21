@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" name="pentaho-requirejs-osgi-manager-8.3.0.0-371">
+    <feature name="pentaho-requirejs-osgi-manager" version="8.3.0.0-371" description="pentaho-requirejs-osgi-manager">
+        <details>Manages the RequireJS configuration.</details>
+        <bundle>mvn:org.pentaho/requirejs-manager-impl/8.3.0.0-371</bundle>
+        <bundle>mvn:org.pentaho/requirejs-manager-api/8.3.0.0-371</bundle>
+        <bundle>mvn:com.googlecode.json-simple/json-simple/1.1.1</bundle>
+        <bundle>wrap:mvn:com.github.zafarkhaja/java-semver/0.9.0</bundle>
+    </feature>
+</features>

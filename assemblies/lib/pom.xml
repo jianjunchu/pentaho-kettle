@@ -74,19 +74,26 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-      <!--<classifier>auphi</classifier>-->
+      <classifier>auphi</classifier>
     </dependency>
 
     <dependency>
       <groupId>org.pentaho</groupId>
       <artifactId>pentaho-hadoop-shims-api</artifactId>
       <version>${pentaho-hadoop-shims-api.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>kettle-engine</artifactId>
+          <groupId>pentaho-kettle</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
       <version>${project.version}</version>
+      <classifier>auphi</classifier>
       <exclusions>
         <exclusion>
           <groupId>javax.servlet</groupId>
@@ -99,6 +106,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-dbdialog</artifactId>
       <version>${project.version}</version>
+      <classifier>auphi</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.swt</groupId>
@@ -111,6 +119,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
       <version>${project.version}</version>
+      <classifier>auphi</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.eclipse.swt</groupId>
@@ -339,6 +348,12 @@
       <groupId>org.pentaho.reporting.engine</groupId>
       <artifactId>wizard-core</artifactId>
       <version>${pentaho-reporting.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>pentaho-kettle</groupId>
+          <artifactId>kettle-engine</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Karaf Dependencies -->

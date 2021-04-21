@@ -20,6 +20,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-ui-swt</artifactId>
       <version>${project.version}</version>
+      <classifier>auphi</classifier>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>

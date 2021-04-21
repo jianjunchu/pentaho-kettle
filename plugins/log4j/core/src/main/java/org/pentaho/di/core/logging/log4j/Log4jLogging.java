@@ -39,7 +39,7 @@ import java.io.File;
   id = "Log4jLogging", isSeparateClassLoaderNeeded = true )
 public class Log4jLogging implements LoggingPluginInterface {
 
-  public static final String PLUGIN_PROPERTIES_FILE = "plugins" + File.separator + "kettle5-log4j-plugin" + File.separator + "log4j.xml";
+  public static final String PLUGIN_PROPERTIES_FILE = System.getProperty("KETTLE_PLUGIN_BASE_FOLDERS","plugins") + File.separator + "kettle5-log4j-plugin" + File.separator + "log4j.xml";
 
   public static final String STRING_PENTAHO_DI_LOGGER_NAME = "org.pentaho.di";
 
@@ -103,7 +103,7 @@ public class Log4jLogging implements LoggingPluginInterface {
 
   /**
    * package-local visibility for testing purposes
-   * 
+   *
    */
   Logger createLogger( String loggerName ) {
     applyLog4jConfiguration();

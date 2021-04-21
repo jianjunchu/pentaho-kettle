@@ -12,6 +12,8 @@ public class RepositoryBean {
     private String dbType;
     private String dbAccess;
     private String dbPort;
+    private String rep_username ;
+    private String rep_password ;
     private int orgId;
 
     public int getRepositoryID() {
@@ -79,5 +81,21 @@ public class RepositoryBean {
     }
     public void setOrgId(int orgId) {
         this.orgId = orgId;
+    }
+
+    public String getRep_username() {
+        return rep_username;
+    }
+
+    public void setRep_username(String rep_username) {
+        this.rep_username = rep_username;
+    }
+
+    public String getRep_password() {
+        return rep_password;
+    }
+
+    public void setRep_password(String rep_password) {
+        this.rep_password = rep_password;
     }
 }

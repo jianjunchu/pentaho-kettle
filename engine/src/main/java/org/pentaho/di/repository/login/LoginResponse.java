@@ -15,6 +15,7 @@ public class LoginResponse {
     private String user_id ;
     private Long organizer_id ;
     private long priviledges ;
+
     private List<RepositoryBean> rep_list ;
 
 
@@ -91,7 +92,8 @@ public class LoginResponse {
                 repBean.setVersion((String)repObj.get("version")) ;
                 repBean.setRepositoryName((String)repObj.get("rep_name")) ;
                 repBean.setRepositoryID(Integer.parseInt(((Long)repObj.get("rep_ID")).toString())) ;
-
+                repBean.setRep_password((String) repObj.getOrDefault("rep_password","admin"));
+                repBean.setRep_username((String) repObj.getOrDefault("rep_username","admin"));
                 repList.add(repBean) ;
             }
             lRps.setRep_list(repList) ;
@@ -163,4 +165,6 @@ public class LoginResponse {
     public void setOrganizer_id(Long organizer_id) {
         this.organizer_id = organizer_id;
     }
+
+
 }

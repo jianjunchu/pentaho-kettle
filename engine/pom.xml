@@ -139,7 +139,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-       <!--<classifier>auphi</classifier>-->
+       <classifier>auphi</classifier>
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
@@ -998,6 +998,7 @@
       <artifactId>esdk-obs-java</artifactId>
       <version>3.20.6.1</version>
     </dependency>
+
     <dependency>
       <groupId>com.actionsoft</groupId>
       <artifactId>openapi</artifactId>

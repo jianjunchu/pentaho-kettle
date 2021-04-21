@@ -1,0 +1,85 @@
+<features name="pentaho-big-data-features" xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" >
+  <feature name="pentaho-big-data-plugin-osgi" version="1.0">
+  	<feature>pentaho-big-data-plugin-testless-osgi</feature>
+  	<feature>pentaho-big-data-plugin-tests</feature>
+  </feature>
+  <feature name="pentaho-big-data-plugin-testless-osgi" version="1.0">
+    <feature>pentaho-big-data-kettle-plugins</feature>
+    <feature>pentaho-big-data-plugin-shim-impl</feature>
+  </feature>
+
+  <feature name="pentaho-big-data-plugin-tests" version="1.0">
+    <bundle>mvn:pentaho/pentaho-big-data-impl-clusterTests/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-shimTests/8.3.0.0-371</bundle>
+  </feature>
+  <feature name="pentaho-big-data-plugin-base" version="1.0">
+    <feature>pentaho-client-minimal</feature>
+    <bundle>mvn:pentaho/pentaho-osgi-utils-impl/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pdi-osgi-bridge-activator/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-blueprint-collection-utils/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-kettle-repository-locator-api/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-metastore-locator-api/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-metastore-locator-impl-local/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-metastore-locator-impl-repository/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-cluster/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-impl-cluster/8.3.0.0-371</bundle>
+	<configfile finalname="/etc/pentaho.big.data.impl.cluster.cfg">
+      mvn:pentaho/pentaho-osgi-config/8.3.0.0-371/cfg/pentaho-big-data-impl-cluster
+    </configfile>
+    <bundle>mvn:commons-beanutils/commons-beanutils/1.9.3</bundle>
+  </feature>
+  <feature name="pentaho-big-data-plugin-api" version="1.0">
+    <feature>pentaho-big-data-plugin-base</feature>
+     <bundle>mvn:pentaho/pentaho-big-data-api-cluster-service-locator/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-initializer/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-hdfs/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-format/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-hbase/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-mapreduce/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-pig/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-oozie/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-sqoop/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-jaas/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-runtimeTest/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-api-jdbc/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-common/8.3.0.0-371</bundle>
+  </feature>
+
+  <feature name="pentaho-big-data-plugin-shim-impl" version="1.0">
+    <feature>pentaho-big-data-plugin-api</feature>
+    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-format/8.3.0.0-371</bundle>
+    <conditional>
+        <condition>community-edition</condition>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-initializer/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-hdfs/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-hbase/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-mapreduce/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-pig/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-oozie/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-sqoop/8.3.0.0-371</bundle>
+            <bundle>mvn:pentaho/pentaho-big-data-impl-shim-jaas/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-shim-hive/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-big-data-impl-vfs-hdfs/8.3.0.0-371</bundle>
+	    <bundle>mvn:pentaho/pentaho-hadoop-shims-osgi-jaas/8.3.0.0-371</bundle>
+    </conditional>
+  </feature>
+  <feature name="pentaho-big-data-kettle-plugins" version="1.0">
+    <feature>pentaho-big-data-plugin-api</feature>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-common-ui/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-common-job/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-common-named-cluster-bridge/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-guiTestActionHandlers/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-hdfs/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-hbase/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-hbase-meta/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-mapreduce/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-pig/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-oozie/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-sqoop/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-hive/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-spark/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-kafka/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-formats-meta/8.3.0.0-371</bundle>
+    <bundle>mvn:pentaho/pentaho-big-data-kettle-plugins-formats/8.3.0.0-371</bundle>
+  </feature>
+</features>
