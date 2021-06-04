@@ -83,6 +83,7 @@
     <java-hamcrest.version>2.0.0.0</java-hamcrest.version>
   </properties>
 
+
   <distributionManagement>
 
     <repository>
@@ -392,23 +393,22 @@
   <repositories>
 
     <repository>
+      <id>pentaho-public</id>
+      <name>Pentaho Public</name>
+      <url>https://nexus.pentaho.org/repository/omni/</url>
+
+    </repository>
+
+    <repository>
       <id>auphi</id>
       <url>http://123.206.52.213:8081/repository/maven-public/</url>
     </repository>
 
     <repository>
-      <id>pentaho-public</id>
-      <name>Pentaho Public</name>
-      <url>http://nexus.pentaho.org/content/groups/omni/</url>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>interval:15</updatePolicy>
-      </snapshots>
+      <id>3rd-party</id>
+      <url>http://123.206.52.213:8081/repository/3rd-party/</url>
     </repository>
+
 
   </repositories>
 </project>

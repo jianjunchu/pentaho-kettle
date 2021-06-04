@@ -422,9 +422,9 @@ public class JobDialog extends Dialog {
     fdlJobname.right = new FormAttachment( middle, -margin );
     fdlJobname.top = new FormAttachment( 0, margin );
     wlJobname.setLayoutData( fdlJobname );
-    wJobname = new Text( wJobComp, rep == null ? SWT.SINGLE | SWT.LEFT | SWT.BORDER
+    wJobname = new Text( wJobComp, true ? SWT.SINGLE | SWT.LEFT | SWT.BORDER
       : SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.READ_ONLY );
-    wJobname.setEnabled( rep == null );
+    wJobname.setEnabled( true );
     props.setLook( wJobname );
     wJobname.addModifyListener( lsMod );
     fdJobname = new FormData();

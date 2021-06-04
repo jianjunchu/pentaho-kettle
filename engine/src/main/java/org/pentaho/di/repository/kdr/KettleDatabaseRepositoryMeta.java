@@ -49,6 +49,8 @@ public class KettleDatabaseRepositoryMeta extends BaseRepositoryMeta implements 
   private DatabaseMeta databaseMeta;
 
   private String userID;
+  private String rep_username ;
+  private String rep_password ;
   public static long priviledge=-2;
 
   public KettleDatabaseRepositoryMeta() {
@@ -186,5 +188,22 @@ public class KettleDatabaseRepositoryMeta extends BaseRepositoryMeta implements 
 
   public String getUserID(){
     return this.userID;
+  }
+
+
+  public String getRep_username() {
+    return rep_username;
+  }
+
+  public void setRep_username(String rep_username) {
+    this.rep_username = rep_username;
+  }
+
+  public String getRep_password() {
+    return rep_password;
+  }
+
+  public void setRep_password(String rep_password) {
+    this.rep_password = rep_password;
   }
 }

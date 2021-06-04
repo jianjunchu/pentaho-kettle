@@ -99,4 +99,12 @@ public interface RepositoryMeta {
 
   public abstract JSONObject toJSONObject();
 
+  public abstract String getRep_username();
+
+  public abstract void setRep_username(String rep_username) ;
+
+  public abstract String getRep_password() ;
+
+  public abstract void setRep_password(String rep_password) ;
+
 }

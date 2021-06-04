@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" name="pentaho-dataservice-repo">
+    <repository>mvn:pentaho/pentaho-dataservice-client/8.3.0.0-371/xml/features</repository>
+    <feature name="pentaho-dataservice" version="8.3.0.0-371" description="Pentaho Community Edition Project: pentaho-dataservice">
+        <details>Pentaho Data Services Server and Client bundled</details>
+        <feature>pentaho-metaverse-core</feature>
+        <feature version="8.3.0.0-371">pentaho-dataservice-client</feature>
+        <bundle>mvn:pentaho/pdi-dataservice-server-plugin/8.3.0.0-371</bundle>
+        <bundle>mvn:commons-io/commons-io/2.4</bundle>
+        <bundle>mvn:pentaho/pentaho-blueprint-collection-utils/8.3.0.0-371</bundle>
+        <bundle>mvn:pentaho/pentaho-kettle-repository-locator-api/8.3.0.0-371</bundle>
+        <bundle>mvn:pentaho/pentaho-metastore-locator-api/8.3.0.0-371</bundle>
+        <bundle>wrap:mvn:pentaho/pentaho-modeler/8.3.0.0-371</bundle>
+    </feature>
+    <feature name="pentaho-metaverse-core" version="8.3.0.0-371">
+        <configfile finalname="/etc/pentaho.metaverse.cfg">
+      mvn:pentaho/pentaho-osgi-config/8.3.0.0-371/cfg/pentaho-metaverse
+    </configfile>
+        <feature>pentaho-fasterxml</feature>
+        <feature>pentaho-tinkerpop-gremlin</feature>
+        <bundle>mvn:pentaho/pentaho-metaverse-core/8.3.0.0-371</bundle>
+    </feature>
+</features>

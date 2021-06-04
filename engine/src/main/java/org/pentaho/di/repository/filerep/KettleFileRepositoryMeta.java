@@ -46,6 +46,10 @@ public class KettleFileRepositoryMeta extends BaseRepositoryMeta implements Repo
   private boolean readOnly;
   private boolean hidingHiddenFiles;
 
+  private String userID;
+  private String rep_username ;
+  private String rep_password ;
+
   public KettleFileRepositoryMeta() {
     super( REPOSITORY_TYPE_ID );
   }
@@ -173,6 +177,8 @@ public class KettleFileRepositoryMeta extends BaseRepositoryMeta implements Repo
     return object;
   }
 
+
+
   /**
    * @return the hidingHiddenFiles
    */
@@ -186,5 +192,30 @@ public class KettleFileRepositoryMeta extends BaseRepositoryMeta implements Repo
    */
   public void setHidingHiddenFiles( boolean hidingHiddenFiles ) {
     this.hidingHiddenFiles = hidingHiddenFiles;
+  }
+
+  public void setUserID(String userID){
+    this.userID = userID;
+  }
+
+  public String getUserID(){
+    return this.userID;
+  }
+
+
+  public String getRep_username() {
+    return rep_username;
+  }
+
+  public void setRep_username(String rep_username) {
+    this.rep_username = rep_username;
+  }
+
+  public String getRep_password() {
+    return rep_password;
+  }
+
+  public void setRep_password(String rep_password) {
+    this.rep_password = rep_password;
   }
 }

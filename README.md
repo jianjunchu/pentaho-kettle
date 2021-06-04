@@ -37,7 +37,7 @@ Pentaho Data Integration uses the maven framework.
 This is a maven project, and to build it use the following command
 
 ```
-$ mvn clean install
+$ mvn clean install -DskipTests
 ```
 Optionally you can specify -Drelease to trigger obfuscation and/or uglification (as needed)
 
@@ -85,8 +85,7 @@ $ mvn verify -DrunITs -Dit.test=<<YourIT>> -Dmaven.failsafe.debug
 
 To skip test
 
-```
-$ mvn clean install -DskipTests
+$ mvn clean install deploy -DskipTests
 ```
 
 To get log as text file

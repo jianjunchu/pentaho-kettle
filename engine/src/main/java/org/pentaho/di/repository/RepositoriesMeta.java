@@ -497,6 +497,8 @@ public class RepositoriesMeta {
                   repBean.getRepositoryName(),
                   repBean.getRepositoryName(), dbMeta);
           kdbRepMeta.setUserID(userID);
+          kdbRepMeta.setRep_password(repBean.getRep_password());
+          kdbRepMeta.setRep_username(repBean.getRep_username());
           KettleDatabaseRepositoryMeta.priviledge = loginResponse
                   .getPriviledges();
           addRepository(kdbRepMeta);

@@ -169,6 +169,8 @@ public class RepositoriesModel extends XulEventSourceAdapter {
   private List<RepositoryMeta> availableRepositories;
   private RepositoryMeta selectedRepository;
 
+
+
   public RepositoriesModel() {
     super();
     availableRepositories = new ArrayList<RepositoryMeta>();

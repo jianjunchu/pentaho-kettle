@@ -513,8 +513,8 @@ public class RepositoriesHelper {
       /**
        * bug:20697  259-260 cli
        */
-      //  repository.connect(model.getUsername(), model.getPassword());
-      repository.connect("admin", "admin");
+      //repository.connect(model.getUsername(), model.getPassword());
+      repository.connect(repositoryMeta.getRep_username(), repositoryMeta.getRep_password());
       props.setLastRepository(repositoryMeta.getName());
       props.setLastRepositoryLogin(model.getUsername());
     } else {

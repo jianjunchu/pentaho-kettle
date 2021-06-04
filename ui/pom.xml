@@ -38,19 +38,20 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-    <!--<classifier>auphi</classifier>-->
-</dependency>
-<dependency>
-  <groupId>pentaho-kettle</groupId>
-  <artifactId>kettle-engine</artifactId>
-  <version>${project.version}</version>
-    <!--<classifier>auphi</classifier>-->
-</dependency>
-<dependency>
-  <groupId>pentaho-kettle</groupId>
-  <artifactId>kettle-dbdialog</artifactId>
-  <version>${project.version}</version>
-</dependency>
+      <classifier>auphi</classifier>
+  </dependency>
+  <dependency>
+    <groupId>pentaho-kettle</groupId>
+    <artifactId>kettle-engine</artifactId>
+    <version>${project.version}</version>
+    <classifier>auphi</classifier>
+  </dependency>
+  <dependency>
+    <groupId>pentaho-kettle</groupId>
+    <artifactId>kettle-dbdialog</artifactId>
+    <version>${project.version}</version>
+    <classifier>auphi</classifier>
+  </dependency>
 
 <!-- Pentaho dependencies -->
     <dependency>
@@ -232,13 +233,11 @@
       </exclusions>
     </dependency>
 -->
-      <dependency>
-          <groupId>org.osgi</groupId>
-          <artifactId>org.osgi.core</artifactId>
-          <version>6.0.0</version>
-          <scope>system</scope>
-          <systemPath>/Users/jianjunchu/workspace/etl/pentaho-kettle/lib/org.osgi.core-6.0.0.jar</systemPath>
-      </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>6.0.0</version>
+    </dependency>
   </dependencies>
 
 
@@ -247,7 +246,7 @@
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <!--<classifier>auphi</classifier>-->
+                    <classifier>auphi</classifier>
                 </configuration>
                 <executions>
                     <execution>
