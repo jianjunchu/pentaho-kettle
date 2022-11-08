@@ -412,6 +412,43 @@ public class TableOutput extends BaseStep implements StepInterface {
             + tableName + "] with values: " + rowMeta.getString( r ), dbe );
         }
       }
+    }catch ( Exception e ){
+      if ( getStepMeta().isDoingErrorHandling()){
+        if ( isRowLevel()){
+          logRowlevel( "Written row to error handling : " + getInputRowMeta().getString( r ) );
+        }
+
+        if ( data.useSafePoints ) {
+          data.db.rollback( data.savepoint );
+          if ( data.releaseSavepoint ) {
+            data.db.releaseSavepoint( data.savepoint );
+          }
+          // data.db.commit(true); // force a commit on the connection too.
+        }
+
+        sendToErrorRow = true;
+        errorMessage = e.toString();
+      } else {
+        if ( meta.ignoreErrors() ) {
+          if ( data.warnings < 20 ) {
+            if ( log.isBasic() ) {
+              logBasic( "WARNING: Couldn't insert row into table: "
+                      + rowMeta.getString( r ) + Const.CR + e.getMessage() );
+            }
+          } else if ( data.warnings == 20 ) {
+            if ( log.isBasic() ) {
+              logBasic( "FINAL WARNING (no more then 20 displayed): Couldn't insert row into table: "
+                      + rowMeta.getString( r ) + Const.CR + e.getMessage() );
+            }
+          }
+          data.warnings++;
+        } else {
+          setErrors( getErrors() + 1 );
+          data.db.rollback();
+          throw new KettleException( "Error inserting row into table ["
+                  + tableName + "] with values: " + rowMeta.getString( r ), e );
+        }
+      }
     }
 
     // We need to add a key

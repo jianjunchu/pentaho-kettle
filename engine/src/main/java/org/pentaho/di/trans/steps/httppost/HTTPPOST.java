@@ -42,6 +42,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
@@ -110,7 +112,7 @@ public class HTTPPOST extends BaseStep implements StepInterface {
     }
 
     CloseableHttpClient httpClient = clientBuilder.build();
-
+    //CloseableHttpClient httpClient = HttpClients.createDefault();
     // get dynamic url ?
     if ( meta.isUrlInField() ) {
       data.realUrl = data.inputRowMeta.getString( rowData, data.indexOfUrlField );
@@ -123,24 +125,25 @@ public class HTTPPOST extends BaseStep implements StepInterface {
       }
       URIBuilder uriBuilder = new URIBuilder( data.realUrl );
       HttpPost post = new HttpPost( uriBuilder.build() );
+//      HttpPost post = new HttpPost(data.realUrl);
 
       // Specify content type and encoding
       // If content encoding is not explicitly specified
       // ISO-8859-1 is assumed by the POSTMethod
-      if ( !data.contentTypeHeaderOverwrite ) { // can be overwritten now
-        if ( Utils.isEmpty( data.realEncoding ) ) {
-          post.setHeader( CONTENT_TYPE, CONTENT_TYPE_TEXT_XML );
-          if ( isDebug() ) {
-            logDebug( BaseMessages.getString( PKG, "HTTPPOST.Log.HeaderValue", CONTENT_TYPE, CONTENT_TYPE_TEXT_XML ) );
-          }
-        } else {
-          post.setHeader( CONTENT_TYPE, CONTENT_TYPE_TEXT_XML + "; " + data.realEncoding );
-          if ( isDebug() ) {
-            logDebug( BaseMessages.getString( PKG, "HTTPPOST.Log.HeaderValue", CONTENT_TYPE, CONTENT_TYPE_TEXT_XML
-              + "; " + data.realEncoding ) );
-          }
-        }
-      }
+//      if ( !data.contentTypeHeaderOverwrite ) { // can be overwritten now
+//        if ( Utils.isEmpty( data.realEncoding ) ) {
+//          post.setHeader( CONTENT_TYPE, CONTENT_TYPE_TEXT_XML );
+//          if ( isDebug() ) {
+//            logDebug( BaseMessages.getString( PKG, "HTTPPOST.Log.HeaderValue", CONTENT_TYPE, CONTENT_TYPE_TEXT_XML ) );
+//          }
+//        } else {
+//          post.setHeader( CONTENT_TYPE, CONTENT_TYPE_TEXT_XML + "; " + data.realEncoding );
+//          if ( isDebug() ) {
+//            logDebug( BaseMessages.getString( PKG, "HTTPPOST.Log.HeaderValue", CONTENT_TYPE, CONTENT_TYPE_TEXT_XML
+//              + "; " + data.realEncoding ) );
+//          }
+//        }
+//      }
 
       // HEADER PARAMETERS
       if ( data.useHeaderParameters ) {
@@ -172,17 +175,21 @@ public class HTTPPOST extends BaseStep implements StepInterface {
       }
 
       // QUERY PARAMETERS
+      List<NameValuePair> params = new ArrayList<NameValuePair>();
       if ( data.useQueryParameters ) {
         for ( int i = 0; i < data.query_parameters_nrs.length; i++ ) {
           String queryParameterName = data.queryParameters[ i ].getName();
           String queryParameterValue = data.inputRowMeta.getString( rowData, data.query_parameters_nrs[ i ] );
-          data.queryParameters[ i ] = new BasicNameValuePair( queryParameterName, queryParameterValue );
+          //data.queryParameters[ i ] = new BasicNameValuePair( queryParameterName, queryParameterValue );
+          params.add( new BasicNameValuePair( queryParameterName, queryParameterValue ));
           if ( isDebug() ) {
             logDebug( BaseMessages.getString( PKG, "HTTPPOST.Log.QueryValue", queryParameterName,
               queryParameterValue ) );
           }
         }
-        post.setEntity( new UrlEncodedFormEntity( Arrays.asList( data.queryParameters ) ) );
+        //String bodyParams = getRequestBodyParamsAsStr( data.queryParameters, data.realEncoding );
+        //post.setEntity( ( new StringEntity( bodyParams, ContentType.TEXT_XML.withCharset( "US-ASCII" ) ) ) );
+        post.setEntity( new UrlEncodedFormEntity(params ));
       }
 
       // Set request entity?

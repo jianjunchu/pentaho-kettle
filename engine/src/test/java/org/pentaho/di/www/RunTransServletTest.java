@@ -154,7 +154,7 @@ public class RunTransServletTest {
     Mockito.when( transMeta.getVariable( Mockito.anyString() ) ).thenReturn( "default value" );
 
     Mockito.when( transMeta.listParameters() ).thenReturn( new String[] { testParameter } );
-    Mockito.when( request.getParameterNames() ).thenReturn( new StringTokenizer( testParameter ) );
+    //Mockito.when( request.getParameterNames() ).thenReturn( new StringTokenizer( testParameter ) );
 
     String testValue = "testValue";
     Mockito.when( request.getParameterValues( testParameter ) ).thenReturn( new String[] { testValue } );

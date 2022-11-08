@@ -23,7 +23,6 @@ distrib/
 classes*/
 testClasses/
 out/
-plugins/
 test/
 testfiles/
 libswt/
