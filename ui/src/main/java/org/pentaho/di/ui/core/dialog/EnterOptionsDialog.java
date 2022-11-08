@@ -71,7 +71,7 @@ import org.pentaho.di.ui.core.database.dialog.DatabaseDialog;
 import org.pentaho.di.ui.core.gui.GUIResource;
 import org.pentaho.di.ui.core.gui.WindowProperty;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
-
+import org.pentaho.di.core.util.PlatformUtil;
 /**
  * Allows you to set the configurable options for the Kettle environment
  *
@@ -200,6 +200,10 @@ public class EnterOptionsDialog extends Dialog {
   private Button tooltipBtn;
 
   private Button helptipBtn;
+
+  private Text wOldPassword;
+
+  private Text wPassword;
 
   private Button closeAllFilesBtn;
 
@@ -1409,6 +1413,43 @@ public class EnterOptionsDialog extends Dialog {
     helpTipBtnData.right = new FormAttachment( 100, 0 );
     helptipBtn.setLayoutData( helpTipBtnData );
 
+    // new password
+    Label wlOldPassword = new Label( wGeneralComp, SWT.RIGHT );
+    wlOldPassword.setText( BaseMessages.getString( PKG, "EnterOptionsDialog.OldPassword.Label" ) );
+    props.setLook( wlOldPassword );
+    FormData fdlOldPassword = new FormData();
+    fdlOldPassword.left = new FormAttachment( 0, 0 );
+    fdlOldPassword.right = new FormAttachment( middle, -margin );
+    fdlOldPassword.top = new FormAttachment( helptipBtn, margin );
+    wlOldPassword.setLayoutData( fdlOldPassword );
+    wOldPassword = new Text( wGeneralComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+    wOldPassword.setText( "" );
+    props.setLook( wOldPassword );
+    FormData fdOldPassword = new FormData();
+    fdOldPassword.left = new FormAttachment( middle, 0 );
+    fdOldPassword.right = new FormAttachment( 100, -margin );
+    fdOldPassword.top = new FormAttachment( helptipBtn, margin );
+    wOldPassword.setLayoutData( fdOldPassword );
+
+
+    // new password
+    Label wlPassword = new Label( wGeneralComp, SWT.RIGHT );
+    wlPassword.setText( BaseMessages.getString( PKG, "EnterOptionsDialog.Password.Label" ) );
+    props.setLook( wlPassword );
+    FormData fdlPassword = new FormData();
+    fdlPassword.left = new FormAttachment( 0, 0 );
+    fdlPassword.right = new FormAttachment( middle, -margin );
+    fdlPassword.top = new FormAttachment( wOldPassword, margin );
+    wlPassword.setLayoutData( fdlPassword );
+    wPassword = new Text( wGeneralComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+    wPassword.setText( "" );
+    props.setLook( wPassword );
+    FormData fdPassword = new FormData();
+    fdPassword.left = new FormAttachment( middle, 0 );
+    fdPassword.right = new FormAttachment( 100, -margin );
+    fdPassword.top = new FormAttachment( wOldPassword, margin );
+    wPassword.setLayoutData( fdPassword );
+
     fdGeneralComp = new FormData();
     fdGeneralComp.left = new FormAttachment( 0, 0 );
     fdGeneralComp.right = new FormAttachment( 100, 0 );
@@ -1632,7 +1673,17 @@ public class EnterOptionsDialog extends Dialog {
     LanguageChoice.getInstance().saveSettings();
 
     props.saveProps();
+    if(wPassword.getText().trim().length()>0)
+    {
+      String oldPassword  =wOldPassword.getText().trim();
+      String newPassword  =wPassword.getText().trim();
+      try {
+        PlatformUtil.resetLoginPassword(oldPassword,newPassword);
+      } catch (Exception e) {
+        new ErrorDialog( shell, "Error reset login password", "Unable to reset login passwrd", e );
 
+      }
+    }
     dispose();
   }
 }
