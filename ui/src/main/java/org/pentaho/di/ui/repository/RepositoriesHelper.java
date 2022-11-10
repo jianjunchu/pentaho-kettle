@@ -55,6 +55,7 @@ import org.pentaho.ui.xul.XulComponent;
 import org.pentaho.ui.xul.components.XulConfirmBox;
 import org.pentaho.ui.xul.dom.Document;
 import org.pentaho.ui.xul.util.XulDialogCallback;
+import org.pentaho.di.core.util.*;
 
 public class RepositoriesHelper {
 //  private static Class<?> PKG = RepositoriesHelper.class; // for i18n purposes, needed by Translator2!!
@@ -550,6 +551,7 @@ public class RepositoriesHelper {
       Writer w=new FileWriter(propFile);
       p.setProperty("SERVER_URL", model.getRepositoryUrl());
       p.store(w, "SERVER_URL");
+      PlatformUtil.properties.setProperty("SERVER_URL", model.getRepositoryUrl());
     }catch (Exception e){
       e.printStackTrace();
     }

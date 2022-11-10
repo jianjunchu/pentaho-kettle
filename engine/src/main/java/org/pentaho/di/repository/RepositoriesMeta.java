@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.util.PlatformUtil;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
@@ -502,6 +503,8 @@ public class RepositoriesMeta {
           KettleDatabaseRepositoryMeta.priviledge = loginResponse
                   .getPriviledges();
           addRepository(kdbRepMeta);
+          PlatformUtil.properties.setProperty("USER_ID", userID);
+
         }
         success = true;
       }

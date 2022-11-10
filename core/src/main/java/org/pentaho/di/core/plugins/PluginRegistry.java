@@ -542,6 +542,7 @@ public class PluginRegistry {
       registry.registerType( PluginRegistryPluginType.getInstance() );
       List<PluginInterface> plugins = registry.getPlugins( PluginRegistryPluginType.class );
       for ( PluginInterface extensionPlugin : plugins ) {
+        System.out.println("extensionPlugin.getName="+extensionPlugin.getName());
         log.snap( Metrics.METRIC_PLUGIN_REGISTRY_REGISTER_EXTENSION_START, extensionPlugin.getName() );
         PluginRegistryExtension extension = (PluginRegistryExtension) registry.loadClass( extensionPlugin );
         extension.init( registry );
