@@ -3,6 +3,7 @@
 .settings
 build
 target
+distrib
 release.properties
 pom.xml.releaseBackup
 *.iml
@@ -17,3 +18,4 @@ routes.yml
 
 rebel.xml
 rebel-remote.xml
+/.metadata/
