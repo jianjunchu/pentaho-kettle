@@ -167,7 +167,7 @@ public class JobResource {
     //
     JobConfiguration jobConfiguration;
     try {
-      jobConfiguration = JobConfiguration.fromXML( xml.toString() );
+      jobConfiguration = JobConfiguration.fromXML(xml);
       JobMeta jobMeta = jobConfiguration.getJobMeta();
       JobExecutionConfiguration jobExecutionConfiguration = jobConfiguration.getJobExecutionConfiguration();
       jobMeta.setLogLevel( jobExecutionConfiguration.getLogLevel() );

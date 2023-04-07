@@ -36,6 +36,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.xml.XMLHandler;
@@ -183,6 +187,56 @@ public class GetStatusServlet extends BaseHttpServlet implements CartePluginInte
   public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
       IOException {
     if ( isJettyMode() && !request.getContextPath().startsWith( CONTEXT_PATH ) ) {
+      return;
+    }
+
+    //lilongyun start 2023-03-15
+    //get server status for platform
+    String action = request.getParameter("action");
+    if ("getServerStatus".equals(action)) {
+      double cpu_usage = 0.0;
+      double memory_usage = 0.0;
+
+      try{
+        Sigar sigar = new Sigar();
+
+        CpuPerc cpu = sigar.getCpuPerc();
+
+        double idle = cpu.getIdle();
+        cpu_usage = (1 - idle) * 100;
+
+        Mem mem = sigar.getMem();
+
+        double total = mem.getTotal();
+        double used = mem.getUsed();
+        memory_usage = (used / total) * 100;
+      }catch(SigarException e){
+        e.printStackTrace();
+      }
+
+      int running_jobs_num = 0;
+      List<CarteObjectEntry> jobEntries = getJobMap().getJobObjects();
+      for(CarteObjectEntry entry : jobEntries){
+        Job job = getJobMap().getJob(entry);
+        if(Trans.STRING_RUNNING.equals(job.getStatus())){
+          running_jobs_num ++;
+        }
+      }
+
+      List<CarteObjectEntry> transEntries = getTransformationMap().getTransformationObjects();
+      for(CarteObjectEntry entry : transEntries){
+        Trans trans = getTransformationMap().getTransformation(entry);
+        if(Trans.STRING_RUNNING.equals(trans.getStatus())){
+          running_jobs_num ++;
+        }
+      }
+
+      response.setHeader("Pragma", "No-cache");
+      response.setHeader("Cache-Control", "no-cache");
+      response.setDateHeader("Expires", 0L);
+      response.setContentType("text/html; charset=UTF-8");
+      response.getWriter().write(memory_usage + "," + cpu_usage + "," + running_jobs_num);
+      response.getWriter().close();
       return;
     }
 
@@ -369,7 +423,7 @@ public class GetStatusServlet extends BaseHttpServlet implements CartePluginInte
           out.print( "<td onMouseEnter=\"mouseEnterFunction( this, '" + tdClass + "' )\" "
               + "onMouseLeave=\"mouseLeaveFunction( this, '" + tdClass + "' )\" "
               + "onClick=\"clickFunction( this, '" + tdClass + "' )\" "
-              + "id=\"cellTableLastCell" + i + "\" class=\"cellTableCell cellTableLastColumn " + tdClass + "\">" + dateStr.substring( dateStr.indexOf( ' ' ), dateStr.length() ) + "</td>" );
+              + "id=\"cellTableLastCell" + i + "\" class=\"cellTableCell cellTableLastColumn " + tdClass + "\">" + dateStr.substring( dateStr.indexOf( ' ' )) + "</td>" );
           out.print( "</tr>" );
         }
         out.print( "</table></table>" );
@@ -448,7 +502,7 @@ public class GetStatusServlet extends BaseHttpServlet implements CartePluginInte
           out.print( "<td onMouseEnter=\"mouseEnterFunction( this, '" + tdClass + "' )\" "
               + "onMouseLeave=\"mouseLeaveFunction( this, '" + tdClass + "' )\" "
               + "onClick=\"clickFunction( this, '" + tdClass + "' )\" "
-              + "id=\"j-cellTableLastCell" + i + "\" class=\"cellTableCell cellTableLastColumn " + tdClass + "\">" + dateStr.substring( dateStr.indexOf( ' ' ), dateStr.length() ) + "</td>" );
+              + "id=\"j-cellTableLastCell" + i + "\" class=\"cellTableCell cellTableLastColumn " + tdClass + "\">" + dateStr.substring( dateStr.indexOf( ' ' )) + "</td>" );
           out.print( "</tr>" );
         }
         out.print( "</table></table>" );

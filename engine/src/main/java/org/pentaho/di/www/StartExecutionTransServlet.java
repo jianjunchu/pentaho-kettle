@@ -201,7 +201,7 @@ public class StartExecutionTransServlet extends BaseHttpServlet implements Carte
           } else {
             out
               .println( "<H1>Transformation "
-                + Encode.forHtml( "\'" + transName + "\'" ) + " has been executed.</H1>" );
+                + Encode.forHtml("'" + transName + "'") + " has been executed.</H1>" );
             out.println( "<a href=\""
               + convertContextPath( GetTransStatusServlet.CONTEXT_PATH ) + "?name="
               + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" )

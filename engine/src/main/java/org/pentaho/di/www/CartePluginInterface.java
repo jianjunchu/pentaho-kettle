@@ -29,14 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface CartePluginInterface extends CarteServletInterface {
 
-  public void setup( TransformationMap transformationMap, JobMap jobMap, SocketRepository socketRepository,
-    List<SlaveServerDetection> detections );
+  void setup(TransformationMap transformationMap, JobMap jobMap, SocketRepository socketRepository,
+             List<SlaveServerDetection> detections);
 
-  public void doGet( HttpServletRequest request, HttpServletResponse response ) throws Exception;
+  void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
-  public String getContextPath();
+  String getContextPath();
 
-  public void setJettyMode( boolean jettyMode );
+  void setJettyMode(boolean jettyMode);
 
-  public boolean isJettyMode();
+  boolean isJettyMode();
 }
