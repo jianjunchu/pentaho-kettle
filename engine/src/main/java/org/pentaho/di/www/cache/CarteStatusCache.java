@@ -163,7 +163,7 @@ public class CarteStatusCache implements Cache {
 
   @Override
   public void update( Object key, Object value ) throws CacheException {
-    put( (String) key, (CachedItem) value );
+    put(key, value);
   }
 
   @Override

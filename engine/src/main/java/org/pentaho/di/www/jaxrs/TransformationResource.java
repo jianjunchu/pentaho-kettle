@@ -212,7 +212,7 @@ public class TransformationResource {
   public TransformationStatus addTransformation( String xml ) {
     TransConfiguration transConfiguration;
     try {
-      transConfiguration = TransConfiguration.fromXML( xml.toString() );
+      transConfiguration = TransConfiguration.fromXML(xml);
       TransMeta transMeta = transConfiguration.getTransMeta();
       TransExecutionConfiguration transExecutionConfiguration =
         transConfiguration.getTransExecutionConfiguration();

@@ -49,7 +49,7 @@ public class SlaveServerDetection {
 
     private String code, description;
 
-    private SlaveRelationShip( String code, String description ) {
+    SlaveRelationShip(String code, String description) {
       this.code = code;
       this.description = description;
     }

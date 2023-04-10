@@ -177,18 +177,18 @@ public class ListServerSocketServlet extends BaseHttpServlet implements CartePlu
 
     out.println( "<HTML>" );
     out.println( "<HEAD><TITLE>List of server sockets on server "
-      + Encode.forHtml( "\'" + hostname + "\'" ) + "</TITLE></HEAD>" );
+      + Encode.forHtml("'" + hostname + "'") + "</TITLE></HEAD>" );
     out.println( "<BODY>" );
-    out.println( "<H1>Ports for host " + Encode.forHtml( "\'" + hostname + "\'" ) + "</H1>" );
+    out.println( "<H1>Ports for host " + Encode.forHtml("'" + hostname + "'") + "</H1>" );
 
     List<SocketPortAllocation> allocations = getTransformationMap().getHostServerSocketPorts( hostname );
 
     if ( allocations == null ) {
-      out.println( "No port allocations found for host " + Encode.forHtml( "\'" + hostname + "\'" ) );
+      out.println( "No port allocations found for host " + Encode.forHtml("'" + hostname + "'") );
       return;
     }
 
-    out.println( "Found " + allocations.size() + " ports for host " + Encode.forHtml( "\'" + hostname + "\'" ) + "<p>" );
+    out.println( "Found " + allocations.size() + " ports for host " + Encode.forHtml("'" + hostname + "'") + "<p>" );
 
     Iterator<SocketPortAllocation> iterator = allocations.iterator();
     while ( iterator.hasNext() ) {

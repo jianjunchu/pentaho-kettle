@@ -14,7 +14,7 @@ bin
 *.ear
 .DS_Store
 routes.yml
-distrib
+
 rebel.xml
 rebel-remote.xml
 target/
