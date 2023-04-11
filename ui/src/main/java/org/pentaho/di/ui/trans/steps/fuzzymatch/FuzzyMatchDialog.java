@@ -961,6 +961,13 @@ public class FuzzyMatchDialog extends BaseStepDialog implements StepDialogInterf
     wlcaseSensitive.setEnabled( enableCaseSensitive );
     wcaseSensitive.setEnabled( enableCaseSensitive );
     activegetCloserValue();
+
+    if(FuzzyMatchMeta.getAlgorithmTypeByDesc( wAlgorithm.getText() )
+            == FuzzyMatchMeta.OPERATION_TYPE_CONTAINS)
+    {
+      wgetCloserValue.setSelection(false);
+      wcaseSensitive.setSelection(false);
+    }
   }
 
   private void getlookup() {

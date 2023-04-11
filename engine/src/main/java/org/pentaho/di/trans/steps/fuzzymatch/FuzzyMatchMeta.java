@@ -79,14 +79,18 @@ public class FuzzyMatchMeta extends BaseStepMeta implements StepMetaInterface {
     BaseMessages.getString( PKG, "FuzzyMatchMeta.algorithm.Metaphone" ),
     BaseMessages.getString( PKG, "FuzzyMatchMeta.algorithm.DoubleMetaphone" ),
     BaseMessages.getString( PKG, "FuzzyMatchMeta.algorithm.SoundEx" ),
-    BaseMessages.getString( PKG, "FuzzyMatchMeta.algorithm.RefinedSoundEx" ) };
+    BaseMessages.getString( PKG, "FuzzyMatchMeta.algorithm.RefinedSoundEx" ),
+    BaseMessages.getString(PKG, "FuzzyMatchMeta.algorithm.Contains")
+
+  };
+
 
   /**
    * The algorithms type codes
    */
   public static final String[] algorithmCode = {
     "levenshtein", "dameraulevenshtein", "needlemanwunsch", "jaro", "jarowinkler", "pairsimilarity",
-    "metaphone", "doublemataphone", "soundex", "refinedsoundex" };
+    "metaphone", "doublemataphone", "soundex", "refinedsoundex", "contains" };
 
   public static final int OPERATION_TYPE_LEVENSHTEIN = 0;
 
@@ -107,6 +111,7 @@ public class FuzzyMatchMeta extends BaseStepMeta implements StepMetaInterface {
   public static final int OPERATION_TYPE_SOUNDEX = 8;
 
   public static final int OPERATION_TYPE_REFINED_SOUNDEX = 9;
+  public static final int OPERATION_TYPE_CONTAINS= 10;
 
   /** field in lookup stream with which we look up values */
   private String lookupfield;

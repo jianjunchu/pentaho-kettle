@@ -231,6 +231,9 @@ public class FuzzyMatch extends BaseStep implements StepInterface {
       case FuzzyMatchMeta.OPERATION_TYPE_PAIR_SIMILARITY:
         retval = doSimilarity( keyRow );
         break;
+      case FuzzyMatchMeta.OPERATION_TYPE_CONTAINS:
+        retval=doContains(keyRow);
+        break;
       default:
 
         break;
@@ -444,6 +447,63 @@ public class FuzzyMatch extends BaseStep implements StepInterface {
     return rowData;
   }
 
+  private Object[] doContains(Object[] row) {
+
+    // Reserve room
+    Object[] rowData = buildEmptyRow();
+    // prepare to read from cache ...
+    Iterator<Object[]> it = data.look.iterator();
+    double similarity=0;
+
+    // get current value from main stream
+    Object o = row[data.indexOfMainField];
+
+    String lookupvalue= o==null?"":(String) o;
+
+    while (it.hasNext()){
+      // Get cached row data
+      Object[] cachedData = (Object[]) it.next();
+      // Key value is the first value
+      String cacheValue= (String) cachedData[0];
+
+      double csimilarity = new Double(0);
+
+      switch (meta.getAlgorithmType()) {
+        case FuzzyMatchMeta.OPERATION_TYPE_CONTAINS:
+          if(lookupvalue.indexOf(cacheValue)>-1 )
+            csimilarity=1;
+          else
+            csimilarity=0;
+          break;
+      }
+
+      if ( csimilarity  ==1) {
+        if(meta.isGetCloserValue()) {
+          int index=0;
+          rowData[index++]=cacheValue;
+          // Add metric value?
+          if(data.addValueFieldName) 	{
+            rowData[index++]= new Double(similarity);
+          }
+          // Add additional return values?
+          if(data.addAdditionalFields) {
+            for(int i=0; i<meta.getValue().length; i++) {
+              int nf=i+index;
+              int nr=i+1;
+              rowData[nf] = cachedData[nr];
+            }
+          }
+        } else {
+          // get all values separated by values separator
+          if(rowData[0]==null) rowData[0]=cacheValue;
+          else rowData[0]=(String)rowData[0]+data.valueSeparator + cacheValue;
+        }
+      }
+    }
+
+
+    return rowData;
+  }
   /**
    * Build an empty row based on the meta-data...
    *
