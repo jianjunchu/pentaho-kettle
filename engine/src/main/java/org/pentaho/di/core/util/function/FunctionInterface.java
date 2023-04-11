@@ -31,25 +31,25 @@ public interface FunctionInterface extends Cloneable {
   /**
    * @return The import function plugin ID
    */
-  public String getId();
+  String getId();
 
   /**
    * @param string Sets the plugin ID of this import function
    */
-  public void setId(String string);
+  void setId(String string);
   
   /**
    * @return True if this function is enabled.  When not enabled this function will not be looked at.  Neither an approval nor an error will be given during validation.
    */
   //public boolean isEnabled();
-  
 
-  public void loadXML(Node functionNode) throws KettleException;
-  public String getXML();
+
+  void loadXML(Node functionNode) throws KettleException;
+  String getXML();
   
  // public String getCompositeClassName();
   
-  public FunctionInterface clone();
+  FunctionInterface clone();
 
 }
 

@@ -24,29 +24,29 @@ package org.pentaho.di.core.auth;
 
 public interface KerberosAuthenticationProviderProxyInterface {
 
-  public String getPrincipal();
+  String getPrincipal();
 
-  public void setPrincipal( String principal );
+  void setPrincipal(String principal);
 
-  public boolean isUseExternalCredentials();
+  boolean isUseExternalCredentials();
 
-  public void setUseExternalCredentials( boolean useExternalCredentials );
+  void setUseExternalCredentials(boolean useExternalCredentials);
 
-  public String getPassword();
+  String getPassword();
 
-  public void setPassword( String password );
+  void setPassword(String password);
 
-  public boolean isUseKeytab();
+  boolean isUseKeytab();
 
-  public void setUseKeytab( boolean useKeytab );
+  void setUseKeytab(boolean useKeytab);
 
-  public String getKeytabLocation();
+  String getKeytabLocation();
 
-  public void setKeytabLocation( String keytabLocation );
+  void setKeytabLocation(String keytabLocation);
 
-  public String getDisplayName();
+  String getDisplayName();
 
-  public String getId();
+  String getId();
 
-  public void setId( String id );
+  void setId(String id);
 }

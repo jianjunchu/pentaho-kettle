@@ -82,11 +82,8 @@ public class RowsToResult extends BaseStep implements StepInterface {
     meta = (RowsToResultMeta) smi;
     data = (RowsToResultData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

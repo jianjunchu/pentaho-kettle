@@ -50,7 +50,7 @@ public class KettleFileRepositorySecurityProvider implements RepositorySecurityP
     return repositoryMeta;
   }
 
-  public void validateAction( RepositoryOperation... operations ) throws KettleException, KettleSecurityException {
+  public void validateAction( RepositoryOperation... operations ) throws KettleException {
 
     for ( RepositoryOperation operation : operations ) {
       switch ( operation ) {

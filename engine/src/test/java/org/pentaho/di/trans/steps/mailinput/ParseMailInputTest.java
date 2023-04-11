@@ -189,7 +189,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Header is correct", HDR_EX1V, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Header is correct", HDR_EX1V, (String) r[0]);
   }
 
   /**
@@ -215,7 +215,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Header is correct", "", String.class.cast( r[0] ) );
+    Assert.assertEquals( "Header is correct", "", (String) r[0]);
   }
 
   /**
@@ -236,7 +236,7 @@ public class ParseMailInputTest {
     MessageParser underTest = mailInput.new MessageParser();
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
-    Assert.assertEquals( "Message number is correct", new Long( MSG_NUMB ), Long.class.cast( r[0] ) );
+    Assert.assertEquals( "Message number is correct", new Long( MSG_NUMB ), (Long) r[0]);
   }
 
   /**
@@ -257,7 +257,7 @@ public class ParseMailInputTest {
     MessageParser underTest = mailInput.new MessageParser();
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
-    Assert.assertEquals( "Message subject is correct", SUBJ, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message subject is correct", SUBJ, (String) r[0]);
   }
 
   /**
@@ -281,7 +281,7 @@ public class ParseMailInputTest {
 
     // expect, that from is concatenated with ';'
     String expected = StringUtils.join( new String[] { FROM1, FROM2 }, ";" );
-    Assert.assertEquals( "Message From is correct", expected, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message From is correct", expected, (String) r[0]);
   }
 
   /**
@@ -305,7 +305,7 @@ public class ParseMailInputTest {
 
     // is concatenated with ';'
     String expected = StringUtils.join( new String[] { REP1, REP2 }, ";" );
-    Assert.assertEquals( "Message ReplayTo is correct", expected, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message ReplayTo is correct", expected, (String) r[0]);
   }
 
   /**
@@ -329,7 +329,7 @@ public class ParseMailInputTest {
 
     // is concatenated with ';'
     String expected = StringUtils.join( new String[] { REC1, REC2 }, ";" );
-    Assert.assertEquals( "Message Recipients is correct", expected, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Recipients is correct", expected, (String) r[0]);
   }
 
   /**
@@ -351,7 +351,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Description is correct", DESC, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Description is correct", DESC, (String) r[0]);
   }
 
   /**
@@ -373,7 +373,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Recived date is correct", DATE1, Date.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Recived date is correct", DATE1, (Date) r[0]);
   }
 
   /**
@@ -395,7 +395,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Sent date is correct", DATE2, Date.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Sent date is correct", DATE2, (Date) r[0]);
   }
 
   /**
@@ -417,7 +417,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Content type is correct", CNTNT_TYPE_EMAIL, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Content type is correct", CNTNT_TYPE_EMAIL, (String) r[0]);
   }
 
   /**
@@ -439,7 +439,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Size is correct", new Long( CNTNT_SIZE ), Long.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Size is correct", new Long( CNTNT_SIZE ), (Long) r[0]);
   }
 
   /**
@@ -461,7 +461,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Body is correct", MSG_BODY, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Body is correct", MSG_BODY, (String) r[0]);
   }
 
   /**
@@ -483,7 +483,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Folder Name is correct", FLD_NAME, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message Folder Name is correct", FLD_NAME, (String) r[0]);
   }
 
   /**
@@ -505,8 +505,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message Attached files count is correct", new Long( ATTCH_COUNT ), Long.class
-      .cast( r[0] ) );
+    Assert.assertEquals( "Message Attached files count is correct", new Long( ATTCH_COUNT ), (Long) r[0]);
   }
 
   /**
@@ -528,7 +527,7 @@ public class ParseMailInputTest {
     Object[] r = RowDataUtil.allocateRowData( data.nrFields );
     underTest.parseToArray( r, message );
 
-    Assert.assertEquals( "Message body content type is correct", CNTNT_TYPE, String.class.cast( r[0] ) );
+    Assert.assertEquals( "Message body content type is correct", CNTNT_TYPE, (String) r[0]);
   }
 
   private void mockMailInputMeta( MailInputField[] arr ) {

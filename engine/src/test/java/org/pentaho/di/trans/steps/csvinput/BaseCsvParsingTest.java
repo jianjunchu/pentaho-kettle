@@ -31,6 +31,8 @@ import org.pentaho.di.trans.steps.file.BaseFileField;
 import org.pentaho.di.trans.steps.fileinput.BaseParsingTest;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Base class for all CSV input step tests.
  */
@@ -83,7 +85,7 @@ public abstract class BaseCsvParsingTest extends BaseParsingTest<CsvInputMeta, C
   protected void check( Object[][] expected ) throws Exception {
     for ( int r = 0; r < expected.length; r++ ) {
       for ( int c = 0; c < expected[r].length; c++ ) {
-        expected[r][c] = expected[r][c].toString().getBytes( "UTF-8" );
+        expected[r][c] = expected[r][c].toString().getBytes(StandardCharsets.UTF_8);
       }
     }
     super.check( expected );

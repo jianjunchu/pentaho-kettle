@@ -86,7 +86,7 @@ public class MappingInputTest {
     when( stepMockHelper.stepMeta.getStepErrorMeta() ).thenReturn( stepErrorMeta );
 
     StepInterface[] si = new StepInterface[] { previousStep };
-    mappingInput.setConnectorSteps( si, Collections.<MappingValueRename>emptyList(), stepName );
+    mappingInput.setConnectorSteps( si, Collections.emptyList(), stepName );
     assertEquals( previousStep.getOutputRowSets().size(), 0 );
 
   }
@@ -117,14 +117,14 @@ public class MappingInputTest {
       processRow.start();
       boolean exception = false;
       try {
-        mappingInput.setConnectorSteps( null, Collections.<MappingValueRename>emptyList(), "" );
+        mappingInput.setConnectorSteps( null, Collections.emptyList(), "" );
       } catch ( IllegalArgumentException ex1 ) {
         try {
           mappingInput.setConnectorSteps( new StepInterface[ 0 ], null, "" );
         } catch ( IllegalArgumentException ex3 ) {
           try {
             mappingInput.setConnectorSteps( new StepInterface[] { mock( StepInterface.class ) },
-              Collections.<MappingValueRename>emptyList(), null );
+              Collections.emptyList(), null );
           } catch ( IllegalArgumentException ignored ) {
             exception = true;
           }

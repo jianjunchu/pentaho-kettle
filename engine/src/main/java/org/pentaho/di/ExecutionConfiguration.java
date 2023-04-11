@@ -36,78 +36,78 @@ import java.util.Map;
 
 public interface ExecutionConfiguration extends Cloneable {
 
-  public Object clone();
+  Object clone();
 
-  public Repository connectRepository( RepositoriesMeta repositoriesMeta, String repositoryName, String username,
-      String password ) throws KettleException;
+  Repository connectRepository(RepositoriesMeta repositoriesMeta, String repositoryName, String username,
+                               String password) throws KettleException;
 
-  public Map<String, String> getArguments();
+  Map<String, String> getArguments();
 
-  public void setArguments( Map<String, String> arguments );
+  void setArguments(Map<String, String> arguments);
 
-  public String[] getArgumentStrings();
+  String[] getArgumentStrings();
 
-  public void setArgumentStrings( String[] arguments );
+  void setArgumentStrings(String[] arguments);
 
-  public LogLevel getLogLevel();
+  LogLevel getLogLevel();
 
-  public void setLogLevel( LogLevel logLevel );
+  void setLogLevel(LogLevel logLevel);
 
-  public Map<String, String> getParams();
+  Map<String, String> getParams();
 
-  public void setParams( Map<String, String> params );
+  void setParams(Map<String, String> params);
 
-  public Long getPassedBatchId();
+  Long getPassedBatchId();
 
-  public void setPassedBatchId( Long passedBatchId );
+  void setPassedBatchId(Long passedBatchId);
 
-  public Result getPreviousResult();
+  Result getPreviousResult();
 
-  public void setPreviousResult( Result previousResult );
+  void setPreviousResult(Result previousResult);
 
-  public SlaveServer getRemoteServer();
+  SlaveServer getRemoteServer();
 
-  public void setRemoteServer( SlaveServer remoteServer );
+  void setRemoteServer(SlaveServer remoteServer);
 
-  public Date getReplayDate();
+  Date getReplayDate();
 
-  public void setReplayDate( Date replayDate );
+  void setReplayDate(Date replayDate);
 
-  public Repository getRepository();
+  Repository getRepository();
 
-  public void setRepository( Repository repository );
+  void setRepository(Repository repository);
 
-  public Map<String, String> getVariables();
+  Map<String, String> getVariables();
 
-  public void setVariables( Map<String, String> variables );
+  void setVariables(Map<String, String> variables);
 
-  public void setVariables( VariableSpace space );
+  void setVariables(VariableSpace space);
 
-  public String getXML() throws IOException;
+  String getXML() throws IOException;
 
-  public boolean isClearingLog();
+  boolean isClearingLog();
 
-  public void setClearingLog( boolean clearingLog );
+  void setClearingLog(boolean clearingLog);
 
-  public boolean isExecutingLocally();
+  boolean isExecutingLocally();
 
-  public void setExecutingLocally( boolean localExecution );
+  void setExecutingLocally(boolean localExecution);
 
-  public boolean isExecutingRemotely();
+  boolean isExecutingRemotely();
 
-  public void setExecutingRemotely( boolean remoteExecution );
+  void setExecutingRemotely(boolean remoteExecution);
 
-  public boolean isGatheringMetrics();
+  boolean isGatheringMetrics();
 
-  public void setGatheringMetrics( boolean gatheringMetrics );
+  void setGatheringMetrics(boolean gatheringMetrics);
 
-  public boolean isPassingExport();
+  boolean isPassingExport();
 
-  public void setPassingExport( boolean passingExport );
+  void setPassingExport(boolean passingExport);
 
-  public boolean isSafeModeEnabled();
+  boolean isSafeModeEnabled();
 
-  public void setSafeModeEnabled( boolean usingSafeMode );
+  void setSafeModeEnabled(boolean usingSafeMode);
 
   String getRunConfiguration();
 

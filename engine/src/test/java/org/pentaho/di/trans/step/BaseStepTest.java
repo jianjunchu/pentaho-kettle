@@ -301,8 +301,8 @@ public class BaseStepTest {
   public void testBuildLog() throws KettleValueException {
     BaseStep testObject = new BaseStep( mockHelper.stepMeta, mockHelper.stepDataInterface, 0, mockHelper.transMeta,
       mockHelper.trans );
-    Date startDate = new Date( (long) 123 );
-    Date endDate = new Date( (long) 125 );
+    Date startDate = new Date(123);
+    Date endDate = new Date(125);
     RowMetaAndData result = testObject.buildLog( "myStepName", 13, 123, 234, 345, 456, 567, startDate, endDate );
 
     assertNotNull( result );

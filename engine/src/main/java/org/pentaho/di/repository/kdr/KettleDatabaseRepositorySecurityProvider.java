@@ -123,7 +123,7 @@ public class KettleDatabaseRepositorySecurityProvider extends BaseRepositorySecu
     userDelegate.saveUserInfo( userInfo );
   }
 
-  public void validateAction( RepositoryOperation... operations ) throws KettleException, KettleSecurityException {
+  public void validateAction( RepositoryOperation... operations ) throws KettleException {
 
   }
 

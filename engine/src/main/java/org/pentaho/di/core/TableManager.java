@@ -38,7 +38,7 @@ public interface TableManager {
    *
    * @param tableName
    */
-  public void setTableName( String tableName );
+  void setTableName(String tableName);
 
   /**
    * Flushes the current in-memory buffer to the storage system. This is called during cancel operations when the
@@ -46,14 +46,14 @@ public interface TableManager {
    *
    * @return true if the operation succeeded
    */
-  public boolean flush();
+  boolean flush();
 
   /**
    * Drops the current table. This is used during management operations.
    *
    * @return true if the operation succeeded
    */
-  public boolean dropTable();
+  boolean dropTable();
 
   /**
    * Sets the row limit. This is used to limit the data loaded during a specific execution. This value might change
@@ -61,21 +61,21 @@ public interface TableManager {
    *
    * @param rowLimit
    */
-  public void setRowLimit( long rowLimit );
+  void setRowLimit(long rowLimit);
 
   /**
    * Truncates the current table. This is used during management operations.
    *
    * @return true if the operation succeeded
    */
-  public boolean truncateTable();
+  boolean truncateTable();
 
   /**
    * Adjust schema. This is used to change the schema when the input fields change.
    *
    * @return true if the operation succeeded
    */
-  public boolean adjustSchema();
+  boolean adjustSchema();
 
   /**
    * Returns a human-readable message about any errors that have occurred. If any of the operations (dropTable, flush,
@@ -84,6 +84,6 @@ public interface TableManager {
    *
    * @return
    */
-  public String getMessage();
+  String getMessage();
 
 }

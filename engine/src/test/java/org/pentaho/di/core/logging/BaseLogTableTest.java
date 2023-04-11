@@ -49,7 +49,7 @@ public class BaseLogTableTest {
 
   @Test
   public void testRemoveChannelFromBufferCallInGetLogBufferInFirstJobExecution() {
-    StringBuffer sb = new StringBuffer( "" );
+    StringBuffer sb = new StringBuffer();
     LoggingBuffer lb = mock( LoggingBuffer.class );
     doReturn( sb ).when( lb ).getBuffer( anyString(), anyBoolean() );
 

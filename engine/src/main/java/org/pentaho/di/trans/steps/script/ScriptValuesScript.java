@@ -67,27 +67,15 @@ public class ScriptValuesScript {
   }
 
   public boolean isTransformScript() {
-    if ( this.bScriptActive && this.iScriptType == TRANSFORM_SCRIPT ) {
-      return true;
-    } else {
-      return false;
-    }
+      return this.bScriptActive && this.iScriptType == TRANSFORM_SCRIPT;
   }
 
   public boolean isStartScript() {
-    if ( this.bScriptActive && this.iScriptType == START_SCRIPT ) {
-      return true;
-    } else {
-      return false;
-    }
+      return this.bScriptActive && this.iScriptType == START_SCRIPT;
   }
 
   public boolean isEndScript() {
-    if ( this.bScriptActive && this.iScriptType == END_SCRIPT ) {
-      return true;
-    } else {
-      return false;
-    }
+      return this.bScriptActive && this.iScriptType == END_SCRIPT;
   }
 
   public boolean isActive() {

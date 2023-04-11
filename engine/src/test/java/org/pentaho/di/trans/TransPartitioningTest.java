@@ -130,7 +130,7 @@ public class TransPartitioningTest {
       @Override
       public List<StepMeta> answer( InvocationOnMock invocation ) throws Throwable {
         Object obj = invocation.getArguments()[0];
-        StepMeta findFor = StepMeta.class.cast( obj );
+        StepMeta findFor = (StepMeta) obj;
         List<StepMeta> ret = new ArrayList<StepMeta>();
         StepMeta nextStep = chain.higher( findFor );
         if ( nextStep != null ) {
@@ -144,7 +144,7 @@ public class TransPartitioningTest {
           @Override
           public List<StepMeta> answer( InvocationOnMock invocation ) throws Throwable {
             Object obj = invocation.getArguments()[0];
-            StepMeta findFor = StepMeta.class.cast( obj );
+            StepMeta findFor = (StepMeta) obj;
             List<StepMeta> ret = new ArrayList<StepMeta>();
             StepMeta prevStep = chain.lower( findFor );
             if ( prevStep != null ) {
@@ -157,7 +157,7 @@ public class TransPartitioningTest {
       @Override
       public StepMeta answer( InvocationOnMock invocation ) throws Throwable {
         Object obj = invocation.getArguments()[0];
-        String findFor = String.class.cast( obj );
+        String findFor = (String) obj;
         for ( StepMeta item : chain ) {
           if ( item.getName().equals( findFor ) ) {
             return item;
@@ -462,7 +462,7 @@ public class TransPartitioningTest {
     StepMeta dummy1 = new StepMeta( ONE, null );
     StepMeta dummy2 = new StepMeta( TWO, null );
 
-    PartitionSchema schema = new PartitionSchema( "p1", Arrays.asList( new String[] { PID1, PID2 } ) );
+    PartitionSchema schema = new PartitionSchema( "p1", Arrays.asList(PID1, PID2) );
     StepPartitioningMeta partMeta = new StepPartitioningMeta( "Mirror to all partitions", schema );
     dummy2.setStepPartitioningMeta( partMeta );
 
@@ -483,7 +483,7 @@ public class TransPartitioningTest {
     StepMeta dummy1 = new StepMeta( ONE, null );
     StepMeta dummy2 = new StepMeta( TWO, null );
 
-    PartitionSchema schema = new PartitionSchema( "p1", Arrays.asList( new String[] { PID1, PID2 } ) );
+    PartitionSchema schema = new PartitionSchema( "p1", Arrays.asList(PID1, PID2) );
     // for delayed binding StepPartitioning meta does not achieve
     // schema name when using in constructor so we have to set it
     // explicitly. See equals implementation for StepPartitioningMeta.
@@ -510,8 +510,8 @@ public class TransPartitioningTest {
     StepMeta dummy1 = new StepMeta( ONE, null );
     StepMeta dummy2 = new StepMeta( TWO, null );
 
-    PartitionSchema schema1 = new PartitionSchema( "p1", Arrays.asList( new String[] { PID1, PID2 } ) );
-    PartitionSchema schema2 = new PartitionSchema( "p2", Arrays.asList( new String[] { PID1, PID2 } ) );
+    PartitionSchema schema1 = new PartitionSchema( "p1", Arrays.asList(PID1, PID2) );
+    PartitionSchema schema2 = new PartitionSchema( "p2", Arrays.asList(PID1, PID2) );
 
     StepPartitioningMeta partMeta1 = new StepPartitioningMeta( "Mirror to all partitions", schema1 );
     StepPartitioningMeta partMeta2 = new StepPartitioningMeta( "Mirror to all partitions", schema2 );
@@ -537,7 +537,7 @@ public class TransPartitioningTest {
     StepMeta dummy1 = new StepMeta( ONE, null );
     StepMeta dummy2 = new StepMeta( TWO, null );
 
-    PartitionSchema schema1 = new PartitionSchema( "p1", Arrays.asList( new String[] { PID1, PID2 } ) );
+    PartitionSchema schema1 = new PartitionSchema( "p1", Arrays.asList(PID1, PID2) );
     StepPartitioningMeta partMeta1 = new StepPartitioningMeta( "Mirror to all partitions", schema1 );
 
     dummy2.setStepPartitioningMeta( partMeta1 );

@@ -207,7 +207,7 @@ public class LoadSaveTester<T extends StepMetaInterface> extends LoadSaveBase<T>
     T metaLoaded = createMeta();
     Repository rep = new MemoryRepository();
     metaToSave.saveRep( rep, null, null, null );
-    metaLoaded.readRep( rep, (IMetaStore) null, null, databases );
+    metaLoaded.readRep( rep, null, null, databases );
     validateLoadedMeta( repoAttributes, validatorMap, metaToSave, metaLoaded );
   }
 
@@ -222,7 +222,7 @@ public class LoadSaveTester<T extends StepMetaInterface> extends LoadSaveBase<T>
     T metaRepoLoaded = createMeta();
     Repository rep = new MemoryRepository();
     metaToSave.saveRep( rep, null, null, null );
-    metaRepoLoaded.readRep( rep, (IMetaStore) null, null, databases );
+    metaRepoLoaded.readRep( rep, null, null, databases );
 
     String xml = "<step>" + metaRepoLoaded.getXML() + "</step>";
     InputStream is = new ByteArrayInputStream( xml.getBytes() );

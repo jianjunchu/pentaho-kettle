@@ -613,7 +613,7 @@ public abstract class TransformClassBase {
   private final Map<String, FieldHelper> outFieldHelpers = new HashMap<String, FieldHelper>();
 
   public enum Fields {
-    In, Out, Info;
+    In, Out, Info
   }
 
   public FieldHelper get( Fields type, String name ) throws KettleStepException {

@@ -45,9 +45,9 @@ import org.pentaho.di.core.injection.InjectionTypeConverter;
 class BeanLevelInfo {
   enum DIMENSION {
     NONE, ARRAY, LIST
-  };
+  }
 
-  /** Parent step or null for root. */
+    /** Parent step or null for root. */
   public BeanLevelInfo parent;
   /** Class for step from field or methods. */
   public Class<?> leafClass;

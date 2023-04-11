@@ -24,7 +24,7 @@ package org.pentaho.di.trans.steps.csvinput;
 
 public interface FieldsMapping {
 
-  final int FIELD_DOES_NOT_EXIST = -1;
+  int FIELD_DOES_NOT_EXIST = -1;
 
   int fieldMetaIndex( int index );
 

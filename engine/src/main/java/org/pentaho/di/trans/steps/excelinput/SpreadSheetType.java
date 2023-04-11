@@ -32,7 +32,7 @@ public enum SpreadSheetType {
   /**
    * @param description
    */
-  private SpreadSheetType( String description ) {
+  SpreadSheetType(String description) {
     this.description = description;
   }
 

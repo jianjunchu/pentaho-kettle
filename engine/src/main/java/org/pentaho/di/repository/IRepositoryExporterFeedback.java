@@ -44,8 +44,8 @@ public interface IRepositoryExporterFeedback extends IRepositoryExporter {
    * may not create output export file in case of not success exports.
    * @throws KettleException
    */
-  public List<ExportFeedback> exportAllObjectsWithFeedback( ProgressMonitorListener monitor, String xmlFilename,
-      RepositoryDirectoryInterface root, String exportType ) throws KettleException;
+  List<ExportFeedback> exportAllObjectsWithFeedback(ProgressMonitorListener monitor, String xmlFilename,
+                                                    RepositoryDirectoryInterface root, String exportType) throws KettleException;
 
   /**
    * Call to this fast-access way to determine that export had rules violations. This avoid full scan of export results
@@ -53,5 +53,5 @@ public interface IRepositoryExporterFeedback extends IRepositoryExporter {
    * violated.
    * @return
    */
-  public boolean isRulesViolation();
+  boolean isRulesViolation();
 }

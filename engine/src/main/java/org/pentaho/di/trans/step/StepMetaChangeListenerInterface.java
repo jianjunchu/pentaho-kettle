@@ -36,6 +36,6 @@ public interface StepMetaChangeListenerInterface {
    * @param newMeta
    *          the updated meta with new variables values
    */
-  public void onStepChange( TransMeta transMeta, StepMeta oldMeta, StepMeta newMeta );
+  void onStepChange(TransMeta transMeta, StepMeta oldMeta, StepMeta newMeta);
 
 }

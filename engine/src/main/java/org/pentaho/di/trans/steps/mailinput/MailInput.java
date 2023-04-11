@@ -607,7 +607,7 @@ public class MailInput extends BaseStep implements StepInterface {
               }
               List<String> headers = new ArrayList<String>();
               while ( en.hasMoreElements() ) {
-                Header next = Header.class.cast( en.nextElement() );
+                Header next = (Header) en.nextElement();
                 headers.add( next.getValue() );
               }
               // [PDI-6532] if there is no matching headers return empty String

@@ -771,8 +771,8 @@ public class Job extends Thread implements VariableSpace, NamedParams, HasLogCha
       // If the start point was an evaluation and the link color is correct:
       // green or red, execute the next job entry...
       //
-      if ( hi.isUnconditional() || ( jobEntryCopy.evaluates() && ( !( hi.getEvaluation() ^ newResult
-          .getResult() ) ) ) ) {
+      if ( hi.isUnconditional() || ( jobEntryCopy.evaluates() && (hi.getEvaluation() == newResult
+              .getResult()) ) ) {
         // Start this next step!
         if ( log.isBasic() ) {
           log.logBasic( BaseMessages.getString( PKG, "Job.Log.StartingEntry", nextEntry.getName() ) );

@@ -40,7 +40,7 @@ public class KeyValue<T> implements Serializable {
   /**
    * The default true values.
    */
-  public static final List<String> DEFAULT_TRUE_VALUES = Arrays.asList( new String[] { "j", "y", "on", "true" } );
+  public static final List<String> DEFAULT_TRUE_VALUES = Arrays.asList("j", "y", "on", "true");
 
   /**
    * Valid key characters.

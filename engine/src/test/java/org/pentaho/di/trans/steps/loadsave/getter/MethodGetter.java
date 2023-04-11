@@ -74,15 +74,10 @@ public class MethodGetter<T> implements Getter<T> {
     }
     MethodGetter<?> other = (MethodGetter<?>) obj;
     if ( method == null ) {
-      if ( other.method != null ) {
-        return false;
-      }
+        return other.method == null;
     } else {
-      if ( !method.equals( other.method ) ) {
-        return false;
-      }
+        return method.equals(other.method);
     }
-    return true;
   }
 
 }

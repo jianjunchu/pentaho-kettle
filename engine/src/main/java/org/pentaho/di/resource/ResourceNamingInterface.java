@@ -30,7 +30,7 @@ import org.pentaho.di.core.variables.VariableSpace;
 
 public interface ResourceNamingInterface {
 
-  public static enum FileNamingType {
+  enum FileNamingType {
     TRANSFORMATION, JOB, DATA_FILE, SHELL_SCRIPT,
   }
 
@@ -51,7 +51,7 @@ public interface ResourceNamingInterface {
    * @return The filename, typically including a GUID, but always the same when given the same prefix and extension as
    *         input.
    */
-  public String nameResource( String prefix, String originalFilePath, String extension, FileNamingType namingType );
+  String nameResource(String prefix, String originalFilePath, String extension, FileNamingType namingType);
 
   /**
    * Create a (file) name based on the passed FileObject
@@ -65,10 +65,10 @@ public interface ResourceNamingInterface {
    * @return String The file name with the path set as a variable. If pathOnly is set to true then the file name will be
    *         left out.
    */
-  public String nameResource( FileObject fileObject, VariableSpace space, boolean pathOnly ) throws FileSystemException;
+  String nameResource(FileObject fileObject, VariableSpace space, boolean pathOnly) throws FileSystemException;
 
   /**
    * @return the map of folders mapped to created parameters during the resource naming.
    */
-  public Map<String, String> getDirectoryMap();
+  Map<String, String> getDirectoryMap();
 }

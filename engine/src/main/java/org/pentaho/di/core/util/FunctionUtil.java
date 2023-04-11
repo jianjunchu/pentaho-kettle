@@ -254,28 +254,19 @@ public class FunctionUtil {
 			{
 				Object leftResult = execFunction(left,rowMeta,rowData);
 				Object rightResult = execFunction(right,rowMeta,rowData);
-				if(leftResult.toString().equals(rightResult.toString()))
-					return true;
-				else
-					return false;
+                return leftResult.toString().equals(rightResult.toString());
 			}
 			else if (sign.equals(">"))
 			{
 				Object leftResult = execFunction(left,rowMeta,rowData);
 				Object rightResult = execFunction(right,rowMeta,rowData);
-				if(new Double(leftResult.toString()).doubleValue() > new Double(rightResult.toString()).doubleValue())
-					return true;
-				else
-					return false;
+                return new Double(leftResult.toString()).doubleValue() > new Double(rightResult.toString()).doubleValue();
 			}
 			else if (sign.equals("<"))
 			{
 				Object leftResult = execFunction(left,rowMeta,rowData);
 				Object rightResult = execFunction(right,rowMeta,rowData);
-				if(new Double(leftResult.toString()).doubleValue() < new Double(rightResult.toString()).doubleValue())
-					return true;
-				else
-					return false;
+                return new Double(leftResult.toString()).doubleValue() < new Double(rightResult.toString()).doubleValue();
 			}else
 			{
 				throw new KettleException("error condition["+condition+"] ,unsupport sign ＄1�7" + sign);
@@ -307,28 +298,19 @@ public class FunctionUtil {
 			{
 				Object leftResult = execFunction(left);
 				Object rightResult = execFunction(right);
-				if(leftResult.toString().equals(rightResult.toString()))
-					return true;
-				else
-					return false;
+                return leftResult.toString().equals(rightResult.toString());
 			}
 			else if (sign.equals(">"))
 			{
 				Object leftResult = execFunction(left);
 				Object rightResult = execFunction(right);
-				if(new Double(leftResult.toString()).doubleValue() > new Double(rightResult.toString()).doubleValue())
-					return true;
-				else
-					return false;
+                return new Double(leftResult.toString()).doubleValue() > new Double(rightResult.toString()).doubleValue();
 			}
 			else if (sign.equals("<"))
 			{
 				Object leftResult = execFunction(left);
 				Object rightResult = execFunction(right);
-				if(new Double(leftResult.toString()).doubleValue() < new Double(rightResult.toString()).doubleValue())
-					return true;
-				else
-					return false;
+                return new Double(leftResult.toString()).doubleValue() < new Double(rightResult.toString()).doubleValue();
 			}else
 			{
 				throw new KettleException("error condition["+condition+"] ,unsupport sign ＄1�7" + sign);
@@ -350,7 +332,7 @@ public class FunctionUtil {
 		int elseIdx  = statementExpress.toUpperCase().indexOf("ELSE");
 		String condition = statementExpress.substring(ifIdx+2,thenIdx);
 		String trueFunction = statementExpress.substring(thenIdx+4,elseIdx);
-		String falseFunction = statementExpress.substring(elseIdx+4,statementExpress.length());
+		String falseFunction = statementExpress.substring(elseIdx+4);
 		StatementComponents sc = new StatementComponents();
 		sc.setCondition(condition.trim());
 		sc.setTrueFunction(trueFunction.trim());
@@ -377,7 +359,7 @@ public class FunctionUtil {
 
 		public static Object execFunction(String functionExpress, ValueMetaInterface rowMeta, Object rowData) throws KettleException, NoSuchMethodException, SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		if(functionExpress.trim().equals("''") || functionExpress.trim().equals("\"\""))
-			return new String().trim();
+			return "".trim();
 		if(functionExpress.indexOf("(")>-1)
 		{
 			String methodName  = getMethodName(functionExpress);
@@ -402,7 +384,7 @@ public class FunctionUtil {
 		
 		public static Object execFunction(String functionExpress) throws KettleException, NoSuchMethodException, SecurityException, ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 			if(functionExpress.trim().equals("''") || functionExpress.trim().equals("\"\""))
-				return new String().trim();
+				return "".trim();
 			if(functionExpress.indexOf("(")>-1)
 			{
 				String methodName  = getMethodName(functionExpress);
@@ -491,7 +473,7 @@ public class FunctionUtil {
 			}
 			i++;
 		}
-		list.add(getParameterValue(parametersString.substring(start,parametersString.length())));
+		list.add(getParameterValue(parametersString.substring(start)));
 		return list.toArray();
 	}
 

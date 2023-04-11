@@ -252,7 +252,7 @@ public class IngresVectorwiseLoaderMeta extends BaseStepMeta implements StepMeta
       useDynamicVNode = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "use_dynamic_vnode" ) );
       useSSV = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "use_SSV_delimiter" ) );
       String escape = XMLHandler.getTagValue( stepnode, "escape_special_characters" );
-      escapingSpecialCharacters = Utils.isEmpty( escape ) ? true : "Y".equalsIgnoreCase( escape );
+      escapingSpecialCharacters = Utils.isEmpty(escape) || "Y".equalsIgnoreCase(escape);
       usingVwload = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "use_vwload" ) );
       maxNrErrors = XMLHandler.getTagValue( stepnode, "max_errors" );
       truncatingTable = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "truncate_table" ) );

@@ -198,7 +198,7 @@ public class TextFileInputMetaInjectionTest {
   }
 
 
-  private static interface Generator<T> {
+  private interface Generator<T> {
     T generateValue();
   }
 

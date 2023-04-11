@@ -80,7 +80,7 @@ public class LoginContextInvocationHandler<T> implements InvocationHandler {
       } );
     } catch ( PrivilegedActionException e ) {
       if ( e.getCause() instanceof InvocationTargetException ) {
-        throw ( (InvocationTargetException) e.getCause() ).getCause();
+        throw e.getCause().getCause();
       }
       throw e;
     }

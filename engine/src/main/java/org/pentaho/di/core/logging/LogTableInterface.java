@@ -33,7 +33,7 @@ public interface LogTableInterface extends LogTableCoreInterface {
   /**
    * @return The log table meta-data in XML format.
    */
-  public String getXML();
+  String getXML();
 
   /**
    * Load the information for this logging table from the job XML node
@@ -45,6 +45,6 @@ public interface LogTableInterface extends LogTableCoreInterface {
    * @param steps
    *          the steps to reference (or null)
    */
-  public void loadXML( Node jobnode, List<DatabaseMeta> databases, List<StepMeta> steps );
+  void loadXML(Node jobnode, List<DatabaseMeta> databases, List<StepMeta> steps);
 
 }

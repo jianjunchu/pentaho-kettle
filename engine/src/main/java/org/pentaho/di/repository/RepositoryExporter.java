@@ -819,6 +819,6 @@ public class RepositoryExporter implements IRepositoryExporterFeedback {
   }
 
   public enum ExportType {
-    ALL, TRANS, JOBS;
+    ALL, TRANS, JOBS
   }
 }

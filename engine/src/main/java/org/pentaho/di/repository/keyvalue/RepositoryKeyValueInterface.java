@@ -28,8 +28,8 @@ import org.pentaho.di.core.exception.KettleException;
 
 public interface RepositoryKeyValueInterface {
 
-  public static final String NAMESPACE_VARIABLES = "Variables";
-  public static final String NAMESPACE_DIMENSIONS = "Dimensions";
+  String NAMESPACE_VARIABLES = "Variables";
+  String NAMESPACE_DIMENSIONS = "Dimensions";
 
   /**
    * Store a value in the repository using the key/value interface
@@ -43,7 +43,7 @@ public interface RepositoryKeyValueInterface {
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public void putValue( String namespace, String key, String value ) throws KettleException;
+  void putValue(String namespace, String key, String value) throws KettleException;
 
   /**
    * Remove a value from the repository key/value store
@@ -55,7 +55,7 @@ public interface RepositoryKeyValueInterface {
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public void removeValue( String namespace, String key ) throws KettleException;
+  void removeValue(String namespace, String key) throws KettleException;
 
   /**
    * Load a value from the repository
@@ -70,14 +70,14 @@ public interface RepositoryKeyValueInterface {
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public String getValue( String namespace, String key, String revision ) throws KettleException;
+  String getValue(String namespace, String key, String revision) throws KettleException;
 
   /**
    * @return The list of name-spaces in the repository
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public List<String> listNamespaces() throws KettleException;
+  List<String> listNamespaces() throws KettleException;
 
   /**
    * List the keys for a given name-space in the repository
@@ -88,7 +88,7 @@ public interface RepositoryKeyValueInterface {
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public List<String> listKeys( String namespace ) throws KettleException;
+  List<String> listKeys(String namespace) throws KettleException;
 
   /**
    * This method lists the key/value entries for a given name-space. Even though this method returns a
@@ -101,5 +101,5 @@ public interface RepositoryKeyValueInterface {
    * @throws KettleException
    *           in case there is an unexpected repository error
    */
-  public List<RepositoryValueInterface> listValues( String namespace ) throws KettleException;
+  List<RepositoryValueInterface> listValues(String namespace) throws KettleException;
 }

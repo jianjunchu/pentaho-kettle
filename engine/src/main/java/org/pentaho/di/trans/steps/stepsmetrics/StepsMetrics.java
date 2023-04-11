@@ -209,11 +209,8 @@ public class StepsMetrics extends BaseStep implements StepInterface {
     meta = (StepsMetricsMeta) smi;
     data = (StepsMetricsData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

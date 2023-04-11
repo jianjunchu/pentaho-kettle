@@ -71,7 +71,7 @@ public class TransLogTable extends BaseLogTable implements Cloneable, LogTableIn
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 

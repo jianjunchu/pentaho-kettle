@@ -57,6 +57,6 @@ public interface ResourceExportInterface {
    * @throws KettleException
    *           in case something goes wrong during the export
    */
-  public String exportResources( VariableSpace space, Map<String, ResourceDefinition> definitions,
-    ResourceNamingInterface namingInterface, Repository repository, IMetaStore metaStore ) throws KettleException;
+  String exportResources(VariableSpace space, Map<String, ResourceDefinition> definitions,
+                         ResourceNamingInterface namingInterface, Repository repository, IMetaStore metaStore) throws KettleException;
 }

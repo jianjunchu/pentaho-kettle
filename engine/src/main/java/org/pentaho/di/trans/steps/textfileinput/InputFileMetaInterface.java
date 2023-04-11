@@ -31,35 +31,35 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 @Deprecated
 public interface InputFileMetaInterface extends StepMetaInterface {
 
-  public TextFileInputField[] getInputFields();
+  TextFileInputField[] getInputFields();
 
-  public int getFileFormatTypeNr();
+  int getFileFormatTypeNr();
 
-  public boolean hasHeader();
+  boolean hasHeader();
 
-  public int getNrHeaderLines();
+  int getNrHeaderLines();
 
-  public String[] getFilePaths( VariableSpace space );
+  String[] getFilePaths(VariableSpace space);
 
-  public boolean isErrorIgnored();
+  boolean isErrorIgnored();
 
-  public String getErrorCountField();
+  String getErrorCountField();
 
-  public String getErrorFieldsField();
+  String getErrorFieldsField();
 
-  public String getErrorTextField();
+  String getErrorTextField();
 
-  public String getFileType();
+  String getFileType();
 
-  public String getEnclosure();
+  String getEnclosure();
 
-  public String getEscapeCharacter();
+  String getEscapeCharacter();
 
-  public String getSeparator();
+  String getSeparator();
 
-  public boolean isErrorLineSkipped();
+  boolean isErrorLineSkipped();
 
-  public boolean includeFilename();
+  boolean includeFilename();
 
-  public boolean includeRowNumber();
+  boolean includeRowNumber();
 }

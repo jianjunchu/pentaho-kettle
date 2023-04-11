@@ -205,15 +205,10 @@ final class WsdlUtils {
     String messagePartName ) {
 
     if ( outputParam ) {
-      if ( messagePartName.equals( operationName + "Response" ) ) {
-        return false;
-      }
+        return !messagePartName.equals(operationName + "Response");
     } else {
-      if ( messagePartName.equals( operationName ) ) {
-        return false;
-      }
+        return !messagePartName.equals(operationName);
     }
-    return true;
   }
 
   /**

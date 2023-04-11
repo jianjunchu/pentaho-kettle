@@ -50,7 +50,7 @@ public class TextFileOutputLegacy extends TextFileOutput {
 
   @Override
   protected boolean writeRowTo( Object[] row ) throws KettleException {
-    if ( ( (TextFileOutputLegacyMeta) meta).isFileAsCommand() ) {
+    if ( meta.isFileAsCommand() ) {
       return writeRowToCommand( row );
     } else {
       return super.writeRowTo( row );
@@ -141,7 +141,7 @@ public class TextFileOutputLegacy extends TextFileOutput {
 
   @Override
   protected void initOutput() throws KettleException {
-    if ( ( (TextFileOutputLegacyMeta) meta ).isFileAsCommand() ) {
+    if ( meta.isFileAsCommand() ) {
       initCommandStreamWriter( environmentSubstitute( meta.getFileName() ) );
     } else {
       super.initOutput();
@@ -150,7 +150,7 @@ public class TextFileOutputLegacy extends TextFileOutput {
 
   @Override
   protected void close() throws IOException {
-    if ( ( (TextFileOutputLegacyMeta) meta ).isFileAsCommand() ) {
+    if ( meta.isFileAsCommand() ) {
       closeCommand();
     } else {
       super.close();

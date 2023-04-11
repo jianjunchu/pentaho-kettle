@@ -32,79 +32,79 @@ import org.w3c.dom.Node;
 
 public interface RepositoryMeta {
 
-  public static final String XML_TAG = "repository";
+  String XML_TAG = "repository";
 
-  public abstract String getDialogClassName();
+  String getDialogClassName();
 
-  public abstract String getRevisionBrowserDialogClassName();
+  String getRevisionBrowserDialogClassName();
 
-  public abstract void loadXML( Node repnode, List<DatabaseMeta> databases ) throws KettleException;
+  void loadXML(Node repnode, List<DatabaseMeta> databases) throws KettleException;
 
-  public abstract String getXML();
+  String getXML();
 
   /**
    * @return the id
    */
-  public abstract String getId();
+  String getId();
 
   /**
    * @param id
    *          the id to set
    */
-  public abstract void setId( String id );
+  void setId(String id);
 
   /**
    * @return the name
    */
-  public abstract String getName();
+  String getName();
 
   /**
    * @param name
    *          the name to set
    */
-  public abstract void setName( String name );
+  void setName(String name);
 
   /**
    * @return the description
    */
-  public abstract String getDescription();
+  String getDescription();
 
   /**
    * @param description
    *          the description to set
    */
-  public abstract void setDescription( String description );
+  void setDescription(String description);
 
   /**
    * @return the isDefault
    */
-  public abstract Boolean isDefault();
+  Boolean isDefault();
 
   /**
    * @param isDefault
    *          the isDefault to set
    */
-  public abstract void setDefault( Boolean isDefault );
+  void setDefault(Boolean isDefault);
 
   /**
    * Describes the capabilities of the repository
    *
    * @return The repository capabilities object
    */
-  public RepositoryCapabilities getRepositoryCapabilities();
+  RepositoryCapabilities getRepositoryCapabilities();
 
-  public RepositoryMeta clone();
+  RepositoryMeta clone();
 
-  public abstract void populate( Map<String, Object> properties, RepositoriesMeta repositoriesMeta );
+  void populate(Map<String, Object> properties, RepositoriesMeta repositoriesMeta);
 
-  public abstract JSONObject toJSONObject();
+  JSONObject toJSONObject();
 
-  public abstract String getRep_username();
+  String getRep_username();
 
-  public abstract void setRep_username(String rep_username) ;
+  void setRep_username(String rep_username) ;
 
-  public abstract String getRep_password() ;
+  String getRep_password() ;
 
-  public abstract void setRep_password(String rep_password) ;
+  void setRep_password(String rep_password) ;
 
 }

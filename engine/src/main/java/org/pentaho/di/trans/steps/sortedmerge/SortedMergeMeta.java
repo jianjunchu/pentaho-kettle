@@ -111,11 +111,7 @@ public class SortedMergeMeta extends BaseStepMeta implements StepMetaInterface {
 
         fieldName[i] = XMLHandler.getTagValue( fnode, "name" );
         String asc = XMLHandler.getTagValue( fnode, "ascending" );
-        if ( asc.equalsIgnoreCase( "Y" ) ) {
-          ascending[i] = true;
-        } else {
-          ascending[i] = false;
-        }
+          ascending[i] = asc.equalsIgnoreCase("Y");
       }
     } catch ( Exception e ) {
       throw new KettleXMLException( "Unable to load step info from XML", e );

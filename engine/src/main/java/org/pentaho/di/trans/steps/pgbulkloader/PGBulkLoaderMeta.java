@@ -751,7 +751,7 @@ public class PGBulkLoaderMeta extends BaseStepMeta implements StepMetaInjectionI
         }
         if ( !Utils.isEmpty( getFieldStream() ) ) {
           for ( int i = 0; i < getFieldStream().length; i++ ) {
-            logDetailed( "row " + Integer.toString( i ) + ": stream=" + getFieldStream()[i]
+            logDetailed( "row " + i + ": stream=" + getFieldStream()[i]
               + " : table=" + getFieldTable()[i] );
           }
         }

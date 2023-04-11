@@ -103,8 +103,8 @@ public class MergeRowsMetaCheckTest {
     when( transMeta.getPrevStepFields( REFERENCE_STEP_NAME ) ).thenReturn( generateRowMetaEmpty() );
     when( transMeta.getPrevStepFields( COMPARISON_STEP_NAME ) ).thenReturn( generateRowMetaEmpty() );
 
-    meta.check( remarks, transMeta, stepMeta, (RowMeta) null, new String[0], new String[0],
-      (RowMeta) null, new Variables(), (Repository) null, (IMetaStore) null );
+    meta.check( remarks, transMeta, stepMeta, null, new String[0], new String[0],
+            null, new Variables(), null, null);
 
     assertNotNull( remarks );
     assertTrue( remarks.size() >= 2 );
@@ -116,8 +116,8 @@ public class MergeRowsMetaCheckTest {
     when( transMeta.getPrevStepFields( REFERENCE_STEP_NAME ) ).thenReturn( generateRowMeta10Strings() );
     when( transMeta.getPrevStepFields( COMPARISON_STEP_NAME ) ).thenReturn( generateRowMeta10Strings() );
 
-    meta.check( remarks, transMeta, stepMeta, (RowMeta) null, new String[0], new String[0],
-      (RowMeta) null, new Variables(), (Repository) null, (IMetaStore) null );
+    meta.check( remarks, transMeta, stepMeta, null, new String[0], new String[0],
+            null, new Variables(), null, null);
 
     assertNotNull( remarks );
     assertTrue( remarks.size() >= 2 );
@@ -129,8 +129,8 @@ public class MergeRowsMetaCheckTest {
     when( transMeta.getPrevStepFields( REFERENCE_STEP_NAME ) ).thenReturn( generateRowMetaEmpty() );
     when( transMeta.getPrevStepFields( COMPARISON_STEP_NAME ) ).thenReturn( generateRowMeta10Strings() );
 
-    meta.check( remarks, transMeta, stepMeta, (RowMeta) null, new String[0], new String[0],
-      (RowMeta) null, new Variables(), (Repository) null, (IMetaStore) null );
+    meta.check( remarks, transMeta, stepMeta, null, new String[0], new String[0],
+            null, new Variables(), null, null);
 
     assertNotNull( remarks );
     assertTrue( remarks.size() >= 2 );
@@ -142,8 +142,8 @@ public class MergeRowsMetaCheckTest {
     when( transMeta.getPrevStepFields( REFERENCE_STEP_NAME ) ).thenReturn( generateRowMeta10MixedTypes() );
     when( transMeta.getPrevStepFields( COMPARISON_STEP_NAME ) ).thenReturn( generateRowMeta10Strings() );
 
-    meta.check( remarks, transMeta, stepMeta, (RowMeta) null, new String[0], new String[0],
-      (RowMeta) null, new Variables(), (Repository) null, (IMetaStore) null );
+    meta.check( remarks, transMeta, stepMeta, null, new String[0], new String[0],
+            null, new Variables(), null, null);
 
     assertNotNull( remarks );
     assertTrue( remarks.size() >= 2 );

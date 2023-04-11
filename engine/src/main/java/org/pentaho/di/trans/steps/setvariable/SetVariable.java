@@ -233,10 +233,7 @@ public class SetVariable extends BaseStep implements StepInterface {
     meta = (SetVariableMeta) smi;
     data = (SetVariableData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

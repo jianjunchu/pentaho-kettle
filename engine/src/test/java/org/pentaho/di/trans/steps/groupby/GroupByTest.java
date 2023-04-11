@@ -151,8 +151,8 @@ public class GroupByTest  {
       GroupByMeta.TYPE_GROUP_CONCAT_COMMA,
       GroupByMeta.TYPE_GROUP_CONCAT_STRING } );
 
-    meta.getFields( outputFields, "Group By Step", (RowMetaInterface[]) null, (StepMeta) null,
-      (Variables) null, (Repository) null, (IMetaStore) null );
+    meta.getFields( outputFields, "Group By Step", null, null,
+            null, null, null);
 
     assertEquals( outputFields.getValueMetaList().size(), 9 );
     assertTrue( outputFields.getValueMeta( 0 ).getType() == ValueMetaInterface.TYPE_STRING );

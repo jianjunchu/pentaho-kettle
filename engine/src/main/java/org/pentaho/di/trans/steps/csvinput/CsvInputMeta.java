@@ -153,11 +153,7 @@ public class CsvInputMeta extends BaseStepMeta implements StepMetaInterface, Inp
       runningInParallel = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, getXmlCode( "PARALLEL" ) ) );
       String nlp = XMLHandler.getTagValue( stepnode, getXmlCode( "NEWLINE_POSSIBLE" ) );
       if ( Utils.isEmpty( nlp ) ) {
-        if ( runningInParallel ) {
-          newlinePossibleInFields = false;
-        } else {
-          newlinePossibleInFields = true;
-        }
+          newlinePossibleInFields = !runningInParallel;
       } else {
         newlinePossibleInFields = "Y".equalsIgnoreCase( nlp );
       }

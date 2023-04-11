@@ -708,8 +708,7 @@ public class JobEntryMoveFiles extends JobEntryBase implements Cloneable, JobEnt
         logError( BaseMessages.getString( PKG, "JobMoveFiles.Error.SourceFileNotExists", realSourceFilefoldername ) );
       }
     } catch ( Exception e ) {
-      logError( BaseMessages.getString( PKG, "JobMoveFiles.Error.Exception.MoveProcess", realSourceFilefoldername
-        .toString(), destinationfilefolder.toString(), e.getMessage() ) );
+      logError( BaseMessages.getString( PKG, "JobMoveFiles.Error.Exception.MoveProcess", realSourceFilefoldername, destinationfilefolder.toString(), e.getMessage() ) );
     } finally {
       if ( sourcefilefolder != null ) {
         try {
@@ -950,7 +949,7 @@ public class JobEntryMoveFiles extends JobEntryBase implements Cloneable, JobEnt
         if ( !isDoNotKeepFolderStructure() ) {
           short_filename_from_basefolder =
             Currentfile.toString().substring(
-              sourcefilefolder.toString().length(), Currentfile.toString().length() );
+              sourcefilefolder.toString().length());
         }
         short_filename_from_basefolder =
           short_filename_from_basefolder.substring( 0, short_filename_from_basefolder.length() - lenCurrent )

@@ -258,15 +258,10 @@ public class JoinRows extends BaseStep implements StepInterface {
     }
 
     if ( data.caching ) {
-      if ( !cacheInputRow() ) {
-        return false;
-      }
+        return cacheInputRow();
     } else {
-      if ( !outputRow() ) {
-        return false;
-      }
+        return outputRow();
     }
-    return true;
   }
 
   /**

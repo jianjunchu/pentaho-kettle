@@ -27,6 +27,6 @@ import java.util.List;
 import org.pentaho.di.core.row.RowMetaInterface;
 
 public interface BreakPointListener {
-  public void breakPointHit( TransDebugMeta transDebugMeta, StepDebugMeta stepDebugMeta,
-    RowMetaInterface rowBufferMeta, List<Object[]> rowBuffer );
+  void breakPointHit(TransDebugMeta transDebugMeta, StepDebugMeta stepDebugMeta,
+                     RowMetaInterface rowBufferMeta, List<Object[]> rowBuffer);
 }

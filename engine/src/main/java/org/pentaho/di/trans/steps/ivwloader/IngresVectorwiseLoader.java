@@ -356,7 +356,7 @@ public class IngresVectorwiseLoader extends BaseStep implements StepInterface {
       if ( meta.isUsingVwload() ) {
         sb.append( " -u " ).append( username );
         sb.append( " -P " ).append( password );
-        sb.append( " -f " ).append( meta.getDelimiter() ).append( "" );
+        sb.append( " -f " ).append( meta.getDelimiter() );
         sb.append( " -t " ).append( schemaTable );
 
         if ( !Utils.isEmpty( encoding ) ) {
@@ -555,7 +555,7 @@ public class IngresVectorwiseLoader extends BaseStep implements StepInterface {
                 //
                 if ( meta.isEscapingSpecialCharacters() && valueMeta.isString() ) {
                   string = replace( string, new String[] { "\"" }, new String[] { "\\\"" } );
-                  log.logRowlevel( "\' \" \' symbol was added for the future processing" );
+                  log.logRowlevel("' \" ' symbol was added for the future processing");
                 }
                 write( data.doubleQuote );
                 write( data.getBytes( string ) );

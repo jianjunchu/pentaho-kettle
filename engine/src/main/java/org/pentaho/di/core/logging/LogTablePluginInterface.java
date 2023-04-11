@@ -27,15 +27,15 @@ import org.pentaho.di.trans.HasDatabasesInterface;
 
 public interface LogTablePluginInterface extends LogTableInterface {
 
-  public enum TableType {
-    JOB, TRANS;
+  enum TableType {
+    JOB, TRANS
   }
 
-  public TableType getType();
+  TableType getType();
 
-  public String getLogTablePluginUIClassname();
+  String getLogTablePluginUIClassname();
 
-  public void setContext( VariableSpace space, HasDatabasesInterface jobMeta );
+  void setContext(VariableSpace space, HasDatabasesInterface jobMeta);
 
   // Otherwise identical to the log table interface.
 

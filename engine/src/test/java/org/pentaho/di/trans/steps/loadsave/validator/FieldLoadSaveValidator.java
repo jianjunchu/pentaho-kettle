@@ -23,7 +23,7 @@
 package org.pentaho.di.trans.steps.loadsave.validator;
 
 public interface FieldLoadSaveValidator<T> {
-  public T getTestObject();
+  T getTestObject();
 
-  public boolean validateTestObject( T testObject, Object actual );
+  boolean validateTestObject(T testObject, Object actual);
 }

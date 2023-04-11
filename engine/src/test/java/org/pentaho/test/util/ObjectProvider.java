@@ -25,5 +25,5 @@ package org.pentaho.test.util;
 import java.util.Collection;
 
 public interface ObjectProvider<T> {
-  public Collection<T> getTestObjects();
+  Collection<T> getTestObjects();
 }

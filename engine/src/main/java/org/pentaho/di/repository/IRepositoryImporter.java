@@ -53,9 +53,9 @@ public interface IRepositoryImporter extends ProgressMonitorListener, Repository
    * @param versionComment
    *          Comment to use when saving imported objects.
    */
-  public void importAll( RepositoryImportFeedbackInterface feedback, String fileDirectory, String[] filenames,
-    RepositoryDirectoryInterface baseDirectory, boolean overwrite, boolean continueOnError,
-    String versionComment );
+  void importAll(RepositoryImportFeedbackInterface feedback, String fileDirectory, String[] filenames,
+                 RepositoryDirectoryInterface baseDirectory, boolean overwrite, boolean continueOnError,
+                 String versionComment);
 
   /**
    * Set the list of rules that need to be applied to every imported object.
@@ -63,22 +63,22 @@ public interface IRepositoryImporter extends ProgressMonitorListener, Repository
    * @param importRules
    *          The rules to use during import into the repository
    */
-  public void setImportRules( ImportRules importRules );
+  void setImportRules(ImportRules importRules);
 
   /**
    * Overrides repository directory for all imported transformations.
    */
-  public void setTransDirOverride( String transDirOverride );
+  void setTransDirOverride(String transDirOverride);
 
   /**
    * Overrides repository directory for all imported jobs.
    */
-  public void setJobDirOverride( String jobDirOverride );
+  void setJobDirOverride(String jobDirOverride);
 
   /**
    * Returns a list of exceptions that the implementation may maintain.
    *
    * @return
    */
-  public List<Exception> getExceptions();
+  List<Exception> getExceptions();
 }

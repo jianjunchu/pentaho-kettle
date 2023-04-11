@@ -39,5 +39,5 @@ public interface NameChangedListener {
    * @param newName
    *          the new name
    */
-  public void nameChanged( Object object, String oldName, String newName );
+  void nameChanged(Object object, String oldName, String newName);
 }

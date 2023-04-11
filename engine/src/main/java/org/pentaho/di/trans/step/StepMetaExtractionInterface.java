@@ -37,7 +37,7 @@ public interface StepMetaExtractionInterface {
    * @return A list of step injection metadata entries. In case the data type of the entry is NONE (0) you will get at
    *         least one entry in the details section. You can use this list
    */
-  public List<StepInjectionMetaEntry> getStepInjectionMetadataEntries() throws KettleException;
+  List<StepInjectionMetaEntry> getStepInjectionMetadataEntries() throws KettleException;
 
-  public void injectStepMetadataEntries( List<StepInjectionMetaEntry> metadata ) throws KettleException;
+  void injectStepMetadataEntries(List<StepInjectionMetaEntry> metadata) throws KettleException;
 }

@@ -62,8 +62,6 @@ public class ZhCharacterUtil {
         return namebuilder.toString();
     }
 
-    ;
-
     public static String generateMobilePhone() {
         StringBuilder mobilebuilder = new StringBuilder("1");//定义电话号码以1开头
         Random random = new Random();//定义random，产生随机数
@@ -73,8 +71,6 @@ public class ZhCharacterUtil {
         }
         return mobilebuilder.toString();
     }
-
-    ;
 
     public static String generateHouseNumber() {
         Random random = new Random();

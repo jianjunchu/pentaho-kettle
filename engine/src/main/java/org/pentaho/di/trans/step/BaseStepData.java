@@ -80,7 +80,7 @@ public abstract class BaseStepData implements StepDataInterface {
      * @param description
      *          the description
      */
-    private StepExecutionStatus( String description ) {
+    StepExecutionStatus(String description) {
       this.description = description;
     }
 

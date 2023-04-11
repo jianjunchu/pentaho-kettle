@@ -44,11 +44,11 @@ public class JobEntryFTPDeleteLoadSaveTest extends JobEntryLoadSaveTestSupport<J
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "protocol", "serverName", "port", "userName", "password",
-      "ftpDirectory", "wildcard", "timeout", "activeConnection", "useProxy", "proxyHost", "proxyPort",
-      "proxyUsername", "proxyPassword", "usePublicKey", "keyFilename", "keyFilePass", "limitSuccess",
-      "successCondition", "copyPrevious", "fTPSConnectionType", "socksProxyHost", "socksProxyPort",
-      "socksProxyUsername", "socksProxyPassword" } );
+    return Arrays.asList("protocol", "serverName", "port", "userName", "password",
+            "ftpDirectory", "wildcard", "timeout", "activeConnection", "useProxy", "proxyHost", "proxyPort",
+            "proxyUsername", "proxyPassword", "usePublicKey", "keyFilename", "keyFilePass", "limitSuccess",
+            "successCondition", "copyPrevious", "fTPSConnectionType", "socksProxyHost", "socksProxyPort",
+            "socksProxyUsername", "socksProxyPassword");
   }
 
   @Override

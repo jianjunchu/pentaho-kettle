@@ -171,13 +171,8 @@ public final class ExportFeedback {
       return false;
     }
     if ( itemPath == null ) {
-      if ( other.itemPath != null ) {
-        return false;
-      }
-    } else if ( !itemPath.equals( other.itemPath ) ) {
-      return false;
-    }
-    return true;
+        return other.itemPath == null;
+    } else return itemPath.equals(other.itemPath);
   }
 
   @Override

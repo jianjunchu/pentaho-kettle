@@ -183,7 +183,7 @@ public class MemoryRepository extends AbstractRepository {
   }
 
   @Override
-  public void connect( String username, String password ) throws KettleException, KettleSecurityException {
+  public void connect( String username, String password ) throws KettleException {
     // TODO Auto-generated method stub
 
   }

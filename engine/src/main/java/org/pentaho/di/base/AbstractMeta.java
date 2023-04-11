@@ -610,7 +610,7 @@ public abstract class AbstractMeta implements ChangedFlagInterface, UndoInterfac
    * Remove listener
    */
   public void addCurrentDirectoryChangedListener( CurrentDirectoryChangedListener listener ) {
-    if ( listener != null && !currentDirectoryChangedListeners.contains( listener ) ) {
+    if (listener != null) {
       currentDirectoryChangedListeners.add( listener );
     }
   }
@@ -1799,10 +1799,7 @@ public abstract class AbstractMeta implements ChangedFlagInterface, UndoInterfac
     if ( haveConnectionsChanged() ) {
       return true;
     }
-    if ( haveNotesChanged() ) {
-      return true;
-    }
-    return false;
+      return haveNotesChanged();
   }
 
   /**
@@ -1887,8 +1884,8 @@ public abstract class AbstractMeta implements ChangedFlagInterface, UndoInterfac
   }
 
   protected boolean shouldOverwrite( OverwritePrompter prompter, Props props, String message, String rememberMessage ) {
-    boolean askOverwrite = Props.isInitialized() ? props.askAboutReplacingDatabaseConnections() : false;
-    boolean overwrite = Props.isInitialized() ? props.replaceExistingDatabaseConnections() : true;
+    boolean askOverwrite = Props.isInitialized() && props.askAboutReplacingDatabaseConnections();
+    boolean overwrite = !Props.isInitialized() || props.replaceExistingDatabaseConnections();
     if ( askOverwrite ) {
       if ( prompter != null ) {
         overwrite = prompter.overwritePrompt( message, rememberMessage, Props.STRING_ASK_ABOUT_REPLACING_DATABASES );

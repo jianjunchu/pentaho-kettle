@@ -47,13 +47,13 @@ public class JobEntryPGPEncryptFilesLoadSaveTest extends JobEntryLoadSaveTestSup
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "GPGLocation", "arg_from_previous", "include_subfolders",
-      "add_result_filesname", "destination_is_a_file", "create_destination_folder", "add_date",
-      "add_time", "SpecifyFormat", "date_time_format", "nr_errors_less_than", "success_condition",
-      "AddDateBeforeExtension", "DoNotKeepFolderStructure", "ifFileExists", "destinationFolder",
-      "ifMovedFileExists", "moved_date_time_format", "create_move_to_folder", "add_moved_date",
-      "add_moved_time", "SpecifyMoveFormat", "AddMovedDateBeforeExtension", "asciiMode",
-      "action_type", "source_filefolder", "userid", "destination_filefolder", "wildcard" } );
+    return Arrays.asList("GPGLocation", "arg_from_previous", "include_subfolders",
+            "add_result_filesname", "destination_is_a_file", "create_destination_folder", "add_date",
+            "add_time", "SpecifyFormat", "date_time_format", "nr_errors_less_than", "success_condition",
+            "AddDateBeforeExtension", "DoNotKeepFolderStructure", "ifFileExists", "destinationFolder",
+            "ifMovedFileExists", "moved_date_time_format", "create_move_to_folder", "add_moved_date",
+            "add_moved_time", "SpecifyMoveFormat", "AddMovedDateBeforeExtension", "asciiMode",
+            "action_type", "source_filefolder", "userid", "destination_filefolder", "wildcard");
   }
 
   @Override

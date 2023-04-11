@@ -40,16 +40,16 @@ public class StringToDate extends Operator{
             if (segment.indexOf("(")>-1)
             {
                 if(segment.indexOf(",")>-1) {
-                    tagBuffer.append(segment.substring(segment.indexOf("(") + 1, segment.indexOf(",")));
-                    optionBuffer.append(segment.substring(segment.indexOf(",")+1,segment.indexOf(")")));
+                    tagBuffer.append(segment, segment.indexOf("(") + 1, segment.indexOf(","));
+                    optionBuffer.append(segment, segment.indexOf(",")+1, segment.indexOf(")"));
                 }
                 else
-                    tagBuffer.append(segment.substring(segment.indexOf("(")+1,segment.indexOf(")")));
+                    tagBuffer.append(segment, segment.indexOf("(")+1, segment.indexOf(")"));
                 //now only support one option!
                 if(segment.length() > segment.indexOf("(")+1)
                 {
                     literalBuffer = new StringBuffer();
-                    literalBuffer.append(segment.substring(segment.indexOf(")")+1,segment.length()));
+                    literalBuffer.append(segment.substring(segment.indexOf(")")+1));
                 }
             }else
             {
@@ -85,9 +85,9 @@ public class StringToDate extends Operator{
                     if (isTag(tempString))
                         tagBuffer.append(tempString);
                     else
-                        tagBuffer.append(tempString.substring(0, tempString.length() - 1));
+                        tagBuffer.append(tempString, 0, tempString.length() - 1);
                 }
-                literalBuffer.append(segment.substring(tagBuffer.length(), segment.length()));
+                literalBuffer.append(segment.substring(tagBuffer.length()));
 
             }
             dateTags tag = dateTags.valueOf(tagBuffer.toString());
@@ -237,10 +237,7 @@ public class StringToDate extends Operator{
     }
 
     private static boolean isTag(String tempString) {
-        if (findTag(tempString)>-1)
-            return true;
-        else
-            return false;
+        return findTag(tempString) > -1;
     }
 
     private static int skipLeftSpace(String str, Integer beginOffset) {
@@ -299,7 +296,7 @@ public class StringToDate extends Operator{
         eeee,//Weekday_long_name,
         W,//Week_of_year_variable_width,
         WW,//Week_of_year_fixed_width,
-    };
+    }
 
     public enum dateOptions{
         s,
@@ -309,7 +306,8 @@ public class StringToDate extends Operator{
         t,
         minusN,
         plusN,
-    };
+    }
+
     /**
      *
      * find tag

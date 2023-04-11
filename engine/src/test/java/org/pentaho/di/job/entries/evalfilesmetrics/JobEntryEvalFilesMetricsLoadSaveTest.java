@@ -47,9 +47,9 @@ public class JobEntryEvalFilesMetricsLoadSaveTest extends JobEntryLoadSaveTestSu
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "resultFilenamesWildcard", "resultFieldFile", "resultFieldWildcard",
-      "resultFieldIncludeSubfolders", "sourceFileFolder", "sourceWildcard", "sourceIncludeSubfolders",
-      "compareValue", "minValue", "maxValue", "successConditionType", "sourceFiles", "evaluationType", "scale" } );
+    return Arrays.asList("resultFilenamesWildcard", "resultFieldFile", "resultFieldWildcard",
+            "resultFieldIncludeSubfolders", "sourceFileFolder", "sourceWildcard", "sourceIncludeSubfolders",
+            "compareValue", "minValue", "maxValue", "successConditionType", "sourceFiles", "evaluationType", "scale");
   }
 
   @Override

@@ -91,6 +91,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -372,7 +373,7 @@ public class WebService extends BaseStep implements StepInterface {
 
       vHttpMethod = getHttpMethod( cachedURLService );
 
-      HttpEntity requestEntity = new ByteArrayEntity( xml.toString().getBytes( "UTF-8" ) );
+      HttpEntity requestEntity = new ByteArrayEntity( xml.getBytes(StandardCharsets.UTF_8) );
       vHttpMethod.setEntity( requestEntity );
       // long currentRequestTime = Const.nanoTime();
       HttpResponse httpResponse = cachedHttpClient.execute( vHttpMethod );
@@ -399,7 +400,7 @@ public class WebService extends BaseStep implements StepInterface {
       } else {
         throw new KettleStepException( BaseMessages.getString( PKG,
           "WebServices.ERROR0001.ServerError", Integer.toString( responseCode ),
-          Const.NVL( new String( EntityUtils.toString( httpEntity, charSet.toString() ) ), "" ), cachedURLService ) );
+          Const.NVL(EntityUtils.toString(httpEntity, charSet.toString()), "" ), cachedURLService ) );
       }
       // requestTime += Const.nanoTime() - currentRequestTime;
     } catch ( UnknownHostException e ) {
@@ -770,7 +771,7 @@ public class WebService extends BaseStep implements StepInterface {
       }
     } catch ( Exception e ) {
       throw new KettleStepException( BaseMessages.getString(
-        PKG, "WebServices.ERROR0010.OutputParsingError", response.toString() ), e );
+        PKG, "WebServices.ERROR0010.OutputParsingError", response), e );
     }
   }
 
@@ -794,7 +795,7 @@ public class WebService extends BaseStep implements StepInterface {
 
     // Create a new reader to feed into the XML Input Factory below...
     //
-    StringReader stringReader = new StringReader( response.toString() );
+    StringReader stringReader = new StringReader(response);
 
     // TODO Very empirical : see if we can do something better here
     try {

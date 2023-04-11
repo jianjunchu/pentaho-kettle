@@ -628,9 +628,9 @@ public class SelectValuesMeta extends BaseStepMeta implements StepMetaInterface 
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "META_DATE_FORMAT_LENIENT" ), Boolean
             .toString( meta[i].isDateFormatLenient() ) );
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "META_DATE_FORMAT_LOCALE" ), meta[i]
-            .getDateFormatLocale() == null ? null : meta[i].getDateFormatLocale().toString() );
+            .getDateFormatLocale() == null ? null : meta[i].getDateFormatLocale());
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "META_DATE_FORMAT_TIMEZONE" ), meta[i]
-            .getDateFormatTimeZone() == null ? null : meta[i].getDateFormatTimeZone().toString() );
+            .getDateFormatTimeZone() == null ? null : meta[i].getDateFormatTimeZone());
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "META_LENIENT_STRING_TO_NUMBER" ), Boolean
             .toString( meta[i].isLenientStringToNumber() ) );
         rep.saveStepAttribute( id_transformation, id_step, i, getRepCode( "META_DECIMAL" ), meta[i]

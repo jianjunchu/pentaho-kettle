@@ -36,7 +36,7 @@ public interface HasRepositoryDirectories {
    *
    * @return String array of repository directories
    */
-  public String[] getDirectories();
+  String[] getDirectories();
 
   /**
    * If step has reference(s) to another transformation(s)/job(s) sets updated repository directories from
@@ -44,7 +44,7 @@ public interface HasRepositoryDirectories {
    *
    * @param directory Array of updated rep directories to set
    */
-  public void setDirectories( String[] directory );
+  void setDirectories(String[] directory);
 
   /**
    * If step has reference(s) to another transformation(s)/job(s) returns an array of specification method(s)
@@ -53,6 +53,6 @@ public interface HasRepositoryDirectories {
    *
    * @return String array of specification method(s)
    */
-  public ObjectLocationSpecificationMethod[] getSpecificationMethods();
+  ObjectLocationSpecificationMethod[] getSpecificationMethods();
 
 }

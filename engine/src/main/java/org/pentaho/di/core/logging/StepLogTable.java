@@ -61,7 +61,7 @@ public class StepLogTable extends BaseLogTable implements Cloneable, LogTableInt
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 

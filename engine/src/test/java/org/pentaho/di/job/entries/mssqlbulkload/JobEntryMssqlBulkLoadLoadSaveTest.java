@@ -39,10 +39,10 @@ public class JobEntryMssqlBulkLoadLoadSaveTest extends JobEntryLoadSaveTestSuppo
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "schemaname", "tablename", "filename", "dataFileType", "fieldTerminator",
-      "lineterminated", "codePage", "specificCodePage", "formatFilename", "fireTriggers", "checkConstraints",
-      "keepNulls", "keepIdentity", "tablock", "startFile", "endFile", "orderBy", "orderDirection", "maxErrors",
-      "batchSize", "rowsPerBatch", "errorFilename", "addDatetime", "addFileToResult", "truncate", "database" } );
+    return Arrays.asList("schemaname", "tablename", "filename", "dataFileType", "fieldTerminator",
+            "lineterminated", "codePage", "specificCodePage", "formatFilename", "fireTriggers", "checkConstraints",
+            "keepNulls", "keepIdentity", "tablock", "startFile", "endFile", "orderBy", "orderDirection", "maxErrors",
+            "batchSize", "rowsPerBatch", "errorFilename", "addDatetime", "addFileToResult", "truncate", "database");
   }
 
 }

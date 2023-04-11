@@ -68,7 +68,7 @@ public class JobEntryLogTable extends BaseLogTable implements Cloneable, LogTabl
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 
@@ -241,7 +241,7 @@ public class JobEntryLogTable extends BaseLogTable implements Cloneable, LogTabl
                 value = new Long( result != null ? result.getNrErrors() : 0 );
                 break;
               case RESULT:
-                value = new Boolean( result != null ? result.getResult() : false );
+                value = new Boolean(result != null && result.getResult());
                 break;
               case NR_RESULT_FILES:
                 value =

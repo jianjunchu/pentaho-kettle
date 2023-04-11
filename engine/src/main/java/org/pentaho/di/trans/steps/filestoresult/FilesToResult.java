@@ -112,11 +112,8 @@ public class FilesToResult extends BaseStep implements StepInterface {
     meta = (FilesToResultMeta) smi;
     data = (FilesToResultData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

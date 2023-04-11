@@ -142,10 +142,7 @@ public class Flattener extends BaseStep implements StepInterface {
     meta = (FlattenerMeta) smi;
     data = (FlattenerData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

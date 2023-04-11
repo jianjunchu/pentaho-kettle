@@ -28,8 +28,8 @@ import org.pentaho.di.repository.Repository;
 
 public interface StepMetaDataPlugin {
 
-  public void saveToRepository( Repository repository, ObjectId transformationId, ObjectId stepId ) throws KettleException;
+  void saveToRepository(Repository repository, ObjectId transformationId, ObjectId stepId) throws KettleException;
 
-  public void loadFromRepository( Repository repository, ObjectId transformationId, ObjectId stepId ) throws KettleException;
+  void loadFromRepository(Repository repository, ObjectId transformationId, ObjectId stepId) throws KettleException;
 
 }

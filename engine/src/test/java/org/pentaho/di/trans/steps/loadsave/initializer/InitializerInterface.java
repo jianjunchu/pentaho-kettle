@@ -37,5 +37,5 @@ public interface InitializerInterface<T> {
    * @param stepMeta The stepMeta class
    */
   @Deprecated
-  public void modify( T object );
+  void modify(T object);
 }

@@ -60,12 +60,12 @@ public interface JobEntryDialogInterface {
    *
    * @return the job entry interface if the dialog is confirmed, null otherwise
    */
-  public JobEntryInterface open();
+  JobEntryInterface open();
 
   /**
    * The MetaStore to pass
    *
    * @param metaStore
    */
-  public void setMetaStore( IMetaStore metaStore );
+  void setMetaStore(IMetaStore metaStore);
 }

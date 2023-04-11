@@ -487,11 +487,7 @@ public class JobMeta extends AbstractMeta
     if ( haveJobEntriesChanged() ) {
       return true;
     }
-    if ( haveJobHopsChanged() ) {
-      return true;
-    }
-
-    return false;
+      return haveJobHopsChanged();
   }
 
   private Set<DatabaseMeta> getUsedDatabaseMetas() {
@@ -1641,10 +1637,7 @@ public class JobMeta extends AbstractMeta
   public boolean isEntryUsedInHops( JobEntryCopy jge ) {
     JobHopMeta fr = findJobHopFrom( jge );
     JobHopMeta to = findJobHopTo( jge );
-    if ( fr != null || to != null ) {
-      return true;
-    }
-    return false;
+      return fr != null || to != null;
   }
 
   /**
@@ -2817,7 +2810,7 @@ public class JobMeta extends AbstractMeta
   }
 
   public void removeMissingEntry( MissingEntry missingEntry ) {
-    if ( missingEntries != null && missingEntry != null && missingEntries.contains( missingEntry ) ) {
+    if ( missingEntries != null && missingEntry != null) {
       missingEntries.remove( missingEntry );
     }
   }

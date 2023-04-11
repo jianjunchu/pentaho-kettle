@@ -47,12 +47,12 @@ public class SnappyCompressionInputStream extends CompressionInputStream {
 
   @Override
   public void close() throws IOException {
-    ( (SnappyInputStream) delegate ).close();
+    delegate.close();
   }
 
   @Override
   public int read() throws IOException {
-    return ( (SnappyInputStream) delegate ).read();
+    return delegate.read();
   }
 
   @Override

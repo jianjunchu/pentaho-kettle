@@ -1196,7 +1196,7 @@ public class ValueDataUtilTest {
         ( !Utils.isEmpty( string_value ) ? binaryValueMeta.convertData( parameterValueMeta, string_value ) : null );
     } else if ( valueMetaInterfaceType == ValueMetaInterface.TYPE_BOOLEAN ) {
       if ( !Utils.isEmpty( string_value ) ) {
-        return ( string_value.equalsIgnoreCase( "true" ) ? true : false );
+        return (string_value.equalsIgnoreCase("true"));
       } else {
         return null;
       }

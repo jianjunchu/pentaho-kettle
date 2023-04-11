@@ -145,11 +145,8 @@ public class Delay extends BaseStep implements StepInterface {
     meta = (DelayMeta) smi;
     data = (DelayData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

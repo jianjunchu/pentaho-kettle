@@ -208,13 +208,9 @@ public class SortedMerge extends BaseStep implements StepInterface {
     meta = (SortedMergeMeta) smi;
     data = (SortedMergeData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // data.rowComparator = new RowComparator();
-
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

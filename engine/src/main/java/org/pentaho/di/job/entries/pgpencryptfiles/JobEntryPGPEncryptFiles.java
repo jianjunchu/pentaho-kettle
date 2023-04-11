@@ -793,7 +793,7 @@ public class JobEntryPGPEncryptFiles extends JobEntryBase implements Cloneable, 
       }
     } catch ( Exception e ) {
       logError( BaseMessages.getString(
-        PKG, "JobPGPEncryptFiles.Error.Exception.MoveProcess", realSourceFilefoldername.toString(),
+        PKG, "JobPGPEncryptFiles.Error.Exception.MoveProcess", realSourceFilefoldername,
         destinationfilefolder.toString(), e.getMessage() ) );
       // Update Errors
       updateErrors();
@@ -1014,7 +1014,7 @@ public class JobEntryPGPEncryptFiles extends JobEntryBase implements Cloneable, 
         if ( !isDoNotKeepFolderStructure() ) {
           short_filename_from_basefolder =
             Currentfile.toString().substring(
-              sourcefilefolder.toString().length(), Currentfile.toString().length() );
+              sourcefilefolder.toString().length());
         }
         short_filename_from_basefolder =
           short_filename_from_basefolder.substring( 0, short_filename_from_basefolder.length() - lenCurrent )

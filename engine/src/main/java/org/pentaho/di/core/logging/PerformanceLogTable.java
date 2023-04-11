@@ -62,7 +62,7 @@ public class PerformanceLogTable extends BaseLogTable implements Cloneable, LogT
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 

@@ -68,7 +68,7 @@ public class PDI4910_DenormaliserTest {
     DenormaliserData stepData = new DenormaliserData();
     stepData.keyFieldNr = 0;
     stepData.keyValue = new HashMap<String, List<Integer>>();
-    stepData.keyValue.put( "1", Arrays.asList( new Integer[] { 0, 1 } ) );
+    stepData.keyValue.put( "1", Arrays.asList(0, 1) );
     stepData.fieldNameIndex = new int[] { 1, 2 };
     stepData.inputRowMeta = new RowMeta();
     ValueMetaDate outDateField1 = new ValueMetaDate( "date_field[yyyy-MM-dd]" );

@@ -39,8 +39,8 @@ public class JobEntrySpecialLoadSaveTest extends JobEntryLoadSaveTestSupport<Job
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "start", "dummy", "repeat", "schedulerType", "intervalSeconds",
-      "intervalMinutes", "hour", "minutes", "weekDay", "DayOfMonth" } );
+    return Arrays.asList("start", "dummy", "repeat", "schedulerType", "intervalSeconds",
+            "intervalMinutes", "hour", "minutes", "weekDay", "DayOfMonth");
   }
 
 }

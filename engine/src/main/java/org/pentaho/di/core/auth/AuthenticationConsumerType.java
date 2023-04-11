@@ -28,7 +28,7 @@ import org.pentaho.di.core.auth.core.AuthenticationConsumer;
  * The AuthenticationProvider interface specifies the operations needed to interact with an authentication method.
  */
 public interface AuthenticationConsumerType {
-  public String getDisplayName();
+  String getDisplayName();
 
-  public Class<? extends AuthenticationConsumer<?, ?>> getConsumerClass();
+  Class<? extends AuthenticationConsumer<?, ?>> getConsumerClass();
 }

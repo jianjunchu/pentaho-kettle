@@ -181,11 +181,7 @@ public class JobEntryFileCompare extends JobEntryBase implements Cloneable, JobE
           return false;
         }
       }
-      if ( in1.available() != in2.available() ) {
-        return false;
-      } else {
-        return true;
-      }
+        return in1.available() == in2.available();
     } catch ( IOException e ) {
       throw new KettleFileException( e );
     } finally {

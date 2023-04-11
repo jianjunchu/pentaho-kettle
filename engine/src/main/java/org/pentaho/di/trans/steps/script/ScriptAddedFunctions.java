@@ -230,11 +230,11 @@ public class ScriptAddedFunctions {
         Calendar fisOffsetDate = Calendar.getInstance();
         startDate.setTime( dIn );
         Format dfFormatter = new SimpleDateFormat( "dd.MM.yyyy" );
-        String strOffsetDate = (String) ArgList[1] + String.valueOf( startDate.get( Calendar.YEAR ) );
+        String strOffsetDate = ArgList[1] + startDate.get(Calendar.YEAR);
         java.util.Date dOffset = (java.util.Date) dfFormatter.parseObject( strOffsetDate );
         fisOffsetDate.setTime( dOffset );
 
-        String strFisStartDate = "01.01." + String.valueOf( startDate.get( Calendar.YEAR ) + 1 );
+        String strFisStartDate = "01.01." + (startDate.get(Calendar.YEAR) + 1);
         fisStartDate.setTime( (java.util.Date) dfFormatter.parseObject( strFisStartDate ) );
         int iDaysToAdd = (int) ( ( startDate.getTimeInMillis() - fisOffsetDate.getTimeInMillis() ) / 86400000 );
         fisStartDate.add( Calendar.DATE, iDaysToAdd );
@@ -1661,7 +1661,7 @@ public class ScriptAddedFunctions {
     if ( ArgList.length == 2 ) {
       try {
         InetAddress addr = InetAddress.getByName( (String) ArgList[0] );
-        if ( ( (String) ArgList[1] ).equals( "IP" ) ) {
+        if ( ArgList[1].equals( "IP" ) ) {
           sRC = addr.getHostName();
         } else {
           sRC = addr.getHostAddress();
@@ -1966,7 +1966,7 @@ public class ScriptAddedFunctions {
           if ( fileObject.exists() ) {
             if ( fileObject.getType() == FileType.FILE ) {
               if ( !fileObject.delete() ) {
-                throw new RuntimeException( "We can not delete file [" + (String) ArgList[0] + "]!" );
+                throw new RuntimeException( "We can not delete file [" + ArgList[0] + "]!" );
               }
             }
 
@@ -2051,7 +2051,7 @@ public class ScriptAddedFunctions {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's copy the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 FileUtil.copyContent( fileSource, fileDestination );
               }
 
@@ -2494,7 +2494,7 @@ public class ScriptAddedFunctions {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's move the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 fileSource.moveTo( fileDestination );
               }
 

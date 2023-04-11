@@ -598,7 +598,7 @@ public class TextFileOutputMeta extends BaseFileOutputMeta implements StepMetaIn
       // Default createparentfolder to true if the tag is missing
       String createParentFolderTagValue = XMLHandler.getTagValue( stepnode, "create_parent_folder" );
       createparentfolder =
-          ( createParentFolderTagValue == null ) ? true : "Y".equalsIgnoreCase( createParentFolderTagValue );
+              (createParentFolderTagValue == null) || "Y".equalsIgnoreCase(createParentFolderTagValue);
 
       headerEnabled = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "header" ) );
       footerEnabled = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "footer" ) );

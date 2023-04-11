@@ -43,11 +43,11 @@ public class JobEntrySFTPPUTLoadSaveTest extends JobEntryLoadSaveTestSupport<Job
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "serverName", "serverPort", "userName", "password", "scpDirectory",
-      "localDirectory", "wildcard", "copyPrevious", "copyPreviousFiles", "addFilenameResut", "useKeyFile",
-      "keyFilename", "keyPassPhrase", "compression", "proxyType", "proxyHost", "proxyPort", "proxyUsername",
-      "proxyPassword", "createRemoteFolder", "afterFTPS", "destinationFolder", "createDestinationFolder",
-      "successWhenNoFile" } );
+    return Arrays.asList("serverName", "serverPort", "userName", "password", "scpDirectory",
+            "localDirectory", "wildcard", "copyPrevious", "copyPreviousFiles", "addFilenameResut", "useKeyFile",
+            "keyFilename", "keyPassPhrase", "compression", "proxyType", "proxyHost", "proxyPort", "proxyUsername",
+            "proxyPassword", "createRemoteFolder", "afterFTPS", "destinationFolder", "createDestinationFolder",
+            "successWhenNoFile");
   }
 
   @Override

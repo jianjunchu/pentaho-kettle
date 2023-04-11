@@ -992,11 +992,8 @@ public class Mail extends BaseStep implements StepInterface {
     meta = (MailMeta) smi;
     data = (MailData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {

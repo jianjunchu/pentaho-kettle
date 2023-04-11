@@ -209,7 +209,7 @@ public class Pan {
         /* if (!options[i].isHiddenOption()) */
         System.out.println( Const.rightPad( options[i].getOption(), 12 ) + " : " + options[i].getArgument() );
       }
-      System.out.println( "" );
+      System.out.println();
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////

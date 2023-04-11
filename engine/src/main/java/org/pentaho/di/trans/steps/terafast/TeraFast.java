@@ -241,7 +241,7 @@ public class TeraFast extends AbstractStep implements StepInterface {
         switch ( valueMeta.getType() ) {
           case ValueMetaInterface.TYPE_STRING:
             String s = rowMetaInterface.getString( row, i );
-            dataFilePrintStream.print( pad( valueMeta, s.toString() ) );
+            dataFilePrintStream.print( pad( valueMeta, s) );
             break;
           case ValueMetaInterface.TYPE_INTEGER:
             Long l = rowMetaInterface.getInteger( row, i );

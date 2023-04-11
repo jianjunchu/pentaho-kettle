@@ -104,7 +104,7 @@ public interface Partitioner {
    *
    * @return single instance of Partitioner
    */
-  public abstract Partitioner getInstance();
+  Partitioner getInstance();
 
   /**
    * Gets the partition.
@@ -117,7 +117,7 @@ public interface Partitioner {
    * @throws KettleException
    *           the kettle exception
    */
-  public int getPartition( RowMetaInterface rowMeta, Object[] r ) throws KettleException;
+  int getPartition(RowMetaInterface rowMeta, Object[] r) throws KettleException;
 
   /**
    * Sets the meta.
@@ -125,21 +125,21 @@ public interface Partitioner {
    * @param meta
    *          the new meta
    */
-  public void setMeta( StepPartitioningMeta meta );
+  void setMeta(StepPartitioningMeta meta);
 
   /**
    * Gets the id.
    *
    * @return the id
    */
-  public String getId();
+  String getId();
 
   /**
    * Gets the description.
    *
    * @return the description
    */
-  public String getDescription();
+  String getDescription();
 
   /**
    * Sets the id.
@@ -147,7 +147,7 @@ public interface Partitioner {
    * @param id
    *          the new id
    */
-  public void setId( String id );
+  void setId(String id);
 
   /**
    * Sets the description.
@@ -155,28 +155,28 @@ public interface Partitioner {
    * @param description
    *          the new description
    */
-  public void setDescription( String description );
+  void setDescription(String description);
 
   /**
    * Gets the dialog class name.
    *
    * @return the dialog class name
    */
-  public String getDialogClassName();
+  String getDialogClassName();
 
   /**
    * Clone.
    *
    * @return the partitioner
    */
-  public Partitioner clone();
+  Partitioner clone();
 
   /**
    * Gets the xml.
    *
    * @return the xml
    */
-  public String getXML();
+  String getXML();
 
   /**
    * Load xml.
@@ -186,7 +186,7 @@ public interface Partitioner {
    * @throws KettleXMLException
    *           the kettle xml exception
    */
-  public void loadXML( Node partitioningMethodNode ) throws KettleXMLException;
+  void loadXML(Node partitioningMethodNode) throws KettleXMLException;
 
   /**
    * Saves partitioning properties in the repository for the given step.
@@ -200,7 +200,7 @@ public interface Partitioner {
    * @throws KettleException
    *           In case anything goes wrong
    */
-  public void saveRep( Repository rep, ObjectId id_transformation, ObjectId id_step ) throws KettleException;
+  void saveRep(Repository rep, ObjectId id_transformation, ObjectId id_step) throws KettleException;
 
   /**
    * Load rep.
@@ -212,6 +212,6 @@ public interface Partitioner {
    * @throws KettleException
    *           the kettle exception
    */
-  public void loadRep( Repository rep, ObjectId id_step ) throws KettleException;
+  void loadRep(Repository rep, ObjectId id_step) throws KettleException;
 
 }

@@ -44,20 +44,20 @@ public class JobEntryShellLoadSaveTest extends JobEntryLoadSaveTestSupport<JobEn
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "filename",
-      "workDirectory",
-      "argFromPrevious",
-      "execPerRow",
-      "setLogfile",
-      "logfile",
-      "setAppendLogfile",
-      "logext",
-      "addDate",
-      "addTime",
-      "insertScript",
-      "script",
-      "logFileLevel",
-      "arguments" } );
+    return Arrays.asList("filename",
+            "workDirectory",
+            "argFromPrevious",
+            "execPerRow",
+            "setLogfile",
+            "logfile",
+            "setAppendLogfile",
+            "logext",
+            "addDate",
+            "addTime",
+            "insertScript",
+            "script",
+            "logFileLevel",
+            "arguments");
   }
 
   @Override

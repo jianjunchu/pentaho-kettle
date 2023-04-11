@@ -317,9 +317,7 @@ public class MemoryGroupBy extends BaseStep implements StepInterface {
             if ( obj instanceof byte [] ) {
               obj = new String( (byte []) obj );
             }
-            if ( !aggregate.distinctObjs[i].contains( obj ) ) {
               aggregate.distinctObjs[i].add( obj );
-            }
           }
           aggregate.counts[i] = aggregate.distinctObjs[i].size();
           break;

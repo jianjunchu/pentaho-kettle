@@ -43,9 +43,9 @@ public class JobEntryWaitForSQLLoadSaveTest extends JobEntryLoadSaveTestSupport<
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "database", "schemaname", "tablename", "successCondition",
-      "rowsCountValue", "iscustomSQL", "isUseVars", "customSQL", "isAddRowsResult", "maximumTimeout",
-      "checkCycleTime", "successOnTimeout", "isClearResultList" } );
+    return Arrays.asList("database", "schemaname", "tablename", "successCondition",
+            "rowsCountValue", "iscustomSQL", "isUseVars", "customSQL", "isAddRowsResult", "maximumTimeout",
+            "checkCycleTime", "successOnTimeout", "isClearResultList");
   }
 
   @Override

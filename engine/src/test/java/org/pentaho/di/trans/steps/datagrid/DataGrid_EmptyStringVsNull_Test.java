@@ -108,7 +108,7 @@ public class DataGrid_EmptyStringVsNull_Test {
     List<List<String>> dataRows = Arrays.asList(
       Arrays.asList( " ", " ", " " ),
       Arrays.asList( "", "", "" ),
-      Arrays.asList( (String) null, null, null )
+      Arrays.asList(null, null, null )
     );
     meta.setDataLines( dataRows );
 

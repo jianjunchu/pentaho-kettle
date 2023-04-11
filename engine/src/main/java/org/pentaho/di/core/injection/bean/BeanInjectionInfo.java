@@ -133,7 +133,7 @@ public class BeanInjectionInfo {
     if ( description != null && description.startsWith( "!" ) && description.endsWith( "!" ) ) {
       Class<?> baseClass = clazz.getSuperclass();
       while ( baseClass != null ) {
-        InjectionSupported baseAnnotation = (InjectionSupported) baseClass.getAnnotation( InjectionSupported.class );
+        InjectionSupported baseAnnotation = baseClass.getAnnotation( InjectionSupported.class );
         if ( baseAnnotation != null ) {
           description = BaseMessages.getString( baseClass, baseAnnotation.localizationPrefix() + name );
           if ( description != null && !description.startsWith( "!" ) && !description.endsWith( "!" ) ) {

@@ -283,7 +283,7 @@ public class JobEntryMysqlBulkFile extends JobEntryBase implements Cloneable, Jo
           // Format Date
 
           // Try to clean filename (without wildcard)
-          String wildcard = realFilename.substring( realFilename.length() - 4, realFilename.length() );
+          String wildcard = realFilename.substring( realFilename.length() - 4);
           if ( wildcard.substring( 0, 1 ).equals( "." ) ) {
             // Find wildcard
             realFilename =

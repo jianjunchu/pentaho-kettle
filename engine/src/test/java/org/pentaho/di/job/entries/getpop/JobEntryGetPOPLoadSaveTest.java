@@ -43,14 +43,14 @@ public class JobEntryGetPOPLoadSaveTest extends JobEntryLoadSaveTestSupport<JobE
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "serverName", "userName", "password", "useSSL", "port", "outputDirectory",
-      "filenamePattern", "retrievemails", "firstMails", "delete", "saveMessage", "saveAttachment",
-      "differentFolderForAttachment", "protocol", "attachmentFolder", "attachmentWildcard", "valueImapList",
-      "firstIMAPMails", "IMAPFolder", "senderSearchTerm", "notTermSenderSearch", "receipientSearch",
-      "notTermReceipientSearch", "subjectSearch", "notTermSubjectSearch", "bodySearch", "notTermBodySearch",
-      "conditionReceivedDate", "notTermReceivedDateSearch", "receivedDate1", "receivedDate2", "actiontype",
-      "moveToIMAPFolder", "createMoveToFolder", "createLocalFolder", "afterGetIMAP", "includeSubFolders",
-      "useProxy", "proxyUsername" } );
+    return Arrays.asList("serverName", "userName", "password", "useSSL", "port", "outputDirectory",
+            "filenamePattern", "retrievemails", "firstMails", "delete", "saveMessage", "saveAttachment",
+            "differentFolderForAttachment", "protocol", "attachmentFolder", "attachmentWildcard", "valueImapList",
+            "firstIMAPMails", "IMAPFolder", "senderSearchTerm", "notTermSenderSearch", "receipientSearch",
+            "notTermReceipientSearch", "subjectSearch", "notTermSubjectSearch", "bodySearch", "notTermBodySearch",
+            "conditionReceivedDate", "notTermReceivedDateSearch", "receivedDate1", "receivedDate2", "actiontype",
+            "moveToIMAPFolder", "createMoveToFolder", "createLocalFolder", "afterGetIMAP", "includeSubFolders",
+            "useProxy", "proxyUsername");
   }
 
   @Override

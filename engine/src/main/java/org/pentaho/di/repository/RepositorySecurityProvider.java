@@ -59,7 +59,7 @@ public interface RepositorySecurityProvider extends IRepositoryService {
   /**
    * @return the user information set on the security provider
    */
-  public IUser getUserInfo();
+  IUser getUserInfo();
 
   /**
    * Validates the supplied operation.
@@ -69,27 +69,27 @@ public interface RepositorySecurityProvider extends IRepositoryService {
    * @throws KettleException
    *           in case the action couldn't be validated because of an unexpected problem.
    */
-  public void validateAction( RepositoryOperation... operations ) throws KettleException, KettleSecurityException;
+  void validateAction(RepositoryOperation... operations) throws KettleException, KettleSecurityException;
 
   /**
    * @return true if the repository or the user is read only
    */
-  public boolean isReadOnly();
+  boolean isReadOnly();
 
   /**
    * @return true if this repository supports file locking and if the user is allowed to lock a file
    */
-  public boolean isLockingPossible();
+  boolean isLockingPossible();
 
   /**
    * @return true if the repository supports revisions AND if it is possible to give version comments
    */
-  public boolean allowsVersionComments( String fullPath );
+  boolean allowsVersionComments(String fullPath);
 
   /**
    * @return true if version comments are mandatory if allowed.
    */
-  public boolean isVersionCommentMandatory();
+  boolean isVersionCommentMandatory();
 
   /**
    * Retrieves all users in the system
@@ -98,7 +98,7 @@ public interface RepositorySecurityProvider extends IRepositoryService {
    * @throws KettleSecurityException
    *           in case anything went wrong
    */
-  public List<String> getAllUsers() throws KettleException;
+  List<String> getAllUsers() throws KettleException;
 
   /**
    * Retrieves all roles in the system
@@ -107,9 +107,9 @@ public interface RepositorySecurityProvider extends IRepositoryService {
    * @throws KettleSecurityException
    *           in case anything went wrong
    */
-  public List<String> getAllRoles() throws KettleException;
+  List<String> getAllRoles() throws KettleException;
 
-  public String[] getUserLogins() throws KettleException;
+  String[] getUserLogins() throws KettleException;
 
   /**
    * Determines whether versioning should be enabled in the UI for the given fully qualified file/path.
@@ -117,6 +117,6 @@ public interface RepositorySecurityProvider extends IRepositoryService {
    * apparent in the UI.
    * @return true if version are enabled, false if they if are not
    */
-  public boolean isVersioningEnabled( String fullPath );
+  boolean isVersioningEnabled(String fullPath);
 
 }

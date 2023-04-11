@@ -84,8 +84,8 @@ public enum SelectValuesAttr implements KettleAttributeInterface {
    * @param tooltip
    * @param type
    */
-  private SelectValuesAttr( String xmlCode, String repCode, String description, String tooltip, int type,
-    SelectValuesAttr parent ) {
+  SelectValuesAttr(String xmlCode, String repCode, String description, String tooltip, int type,
+                   SelectValuesAttr parent) {
     this.xmlCode = xmlCode;
     this.repCode = repCode;
     this.description = description;
@@ -100,7 +100,7 @@ public enum SelectValuesAttr implements KettleAttributeInterface {
    * @param tooltip
    * @param type
    */
-  private SelectValuesAttr( String code, String description, String tooltip, int type, SelectValuesAttr parent ) {
+  SelectValuesAttr(String code, String description, String tooltip, int type, SelectValuesAttr parent) {
     this( code, code, description, tooltip, type, parent );
   }
 

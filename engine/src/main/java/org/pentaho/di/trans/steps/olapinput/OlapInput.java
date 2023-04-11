@@ -97,11 +97,7 @@ public class OlapInput extends BaseStep implements StepInterface {
     meta = (OlapInputMeta) smi;
     data = (OlapData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

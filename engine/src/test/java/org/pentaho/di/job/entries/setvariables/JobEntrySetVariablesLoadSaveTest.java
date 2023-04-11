@@ -48,8 +48,8 @@ public class JobEntrySetVariablesLoadSaveTest extends JobEntryLoadSaveTestSuppor
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "replaceVars", "filename", "fileVariableType",
-      "variableName", "variableValue", "variableType" } );
+    return Arrays.asList("replaceVars", "filename", "fileVariableType",
+            "variableName", "variableValue", "variableType");
   }
 
   @Override

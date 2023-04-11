@@ -26,12 +26,12 @@ public interface HasRepositoryInterface {
   /**
    * @return the repository
    */
-  public Repository getRepository();
+  Repository getRepository();
 
   /**
    * @param repository
    *          the repository to set
    */
-  public void setRepository( Repository repository );
+  void setRepository(Repository repository);
 
 }

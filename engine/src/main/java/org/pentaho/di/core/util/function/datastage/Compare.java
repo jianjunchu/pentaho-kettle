@@ -22,12 +22,12 @@ public class Compare extends BaseFunction {
         int result2 = 0;
         for(int i=0;i<max1;i++){
             char a = str1.charAt(i);
-            int b = (int)a;
+            int b = a;
             result1 = result1+b;
         }
         for(int j=0;j<max2;j++){
             char c = str2.charAt(j);
-            int d = (int)c;
+            int d = c;
             result2 = result2+d;
         }
         if(result1>result2){

@@ -113,7 +113,7 @@ public class RunTransServletTest {
     doAnswer( new Answer<Void>() {
       @Override
       public Void answer( InvocationOnMock invocation ) throws Throwable {
-        Thread.currentThread().sleep( 2000 );
+        Thread.sleep( 2000 );
         return null;
       }
     } ).when( trans ).waitUntilFinished();

@@ -55,7 +55,7 @@ public class StepOptionTest {
   public void setup() {
     when( space.environmentSubstitute( anyString() ) ).thenAnswer( incovacationMock -> {
       Object[] arguments = incovacationMock.getArguments();
-      return (String) arguments[ 0 ];
+      return arguments[ 0 ];
     } );
   }
 
