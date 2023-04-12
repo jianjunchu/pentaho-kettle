@@ -199,7 +199,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
   }
 
   public StepMeta() {
-    this(null, null, null);
+    this((String) null, null, null);
   }
 
   @Override
@@ -724,7 +724,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
   }
 
   public StepMeta( ObjectId id_step ) {
-    this(null, null, null);
+    this((String) null, null, null);
     setObjectId( id_step );
   }
 

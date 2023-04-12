@@ -421,7 +421,7 @@ public class FuzzyMatchMeta extends BaseStepMeta implements StepMetaInterface {
     }
   }
 
-  private static String getAlgorithmTypeCode( int i ) {
+  public static String getAlgorithmTypeCode( int i ) {
     if ( i < 0 || i >= algorithmCode.length ) {
       return algorithmCode[0];
     }

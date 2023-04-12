@@ -230,11 +230,11 @@ public class ScriptAddedFunctions {
         Calendar fisOffsetDate = Calendar.getInstance();
         startDate.setTime( dIn );
         Format dfFormatter = new SimpleDateFormat( "dd.MM.yyyy" );
-        String strOffsetDate = ArgList[1] + startDate.get(Calendar.YEAR);
+        String strOffsetDate = (String) ArgList[1] + String.valueOf( startDate.get( Calendar.YEAR ) );
         java.util.Date dOffset = (java.util.Date) dfFormatter.parseObject( strOffsetDate );
         fisOffsetDate.setTime( dOffset );
 
-        String strFisStartDate = "01.01." + (startDate.get(Calendar.YEAR) + 1);
+        String strFisStartDate = "01.01." + String.valueOf( startDate.get( Calendar.YEAR ) + 1 );
         fisStartDate.setTime( (java.util.Date) dfFormatter.parseObject( strFisStartDate ) );
         int iDaysToAdd = (int) ( ( startDate.getTimeInMillis() - fisOffsetDate.getTimeInMillis() ) / 86400000 );
         fisStartDate.add( Calendar.DATE, iDaysToAdd );
