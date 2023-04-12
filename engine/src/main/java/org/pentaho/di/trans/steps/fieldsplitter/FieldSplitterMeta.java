@@ -465,7 +465,7 @@ public class FieldSplitterMeta extends BaseStepMeta implements StepMetaInterface
         .append( "        " )
         .append( XMLHandler.addTagValue( "id", ArrayUtils.isEmpty( fieldID ) ? null : fieldID[i] ) )
         .append( "        " )
-        .append( XMLHandler.addTagValue( "idrem", ArrayUtils.isEmpty( fieldRemoveID ) ? false : fieldRemoveID[i] ) )
+        .append( XMLHandler.addTagValue( "idrem", !ArrayUtils.isEmpty(fieldRemoveID) && fieldRemoveID[i]) )
         .append( "        " )
         .append( XMLHandler.addTagValue( "type",
           ValueMetaFactory.getValueMetaName( ArrayUtils.isEmpty( fieldType ) ? 0 : fieldType[i] ) ) )

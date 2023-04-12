@@ -248,11 +248,11 @@ public class ScriptValuesAddedFunctions extends ScriptableObject {
         Calendar fisOffsetDate = Calendar.getInstance();
         startDate.setTime( dIn );
         Format dfFormatter = new SimpleDateFormat( "dd.MM.yyyy" );
-        String strOffsetDate = Context.toString( ArgList[1] ) + String.valueOf( startDate.get( Calendar.YEAR ) );
+        String strOffsetDate = Context.toString( ArgList[1] ) + startDate.get(Calendar.YEAR);
         java.util.Date dOffset = (java.util.Date) dfFormatter.parseObject( strOffsetDate );
         fisOffsetDate.setTime( dOffset );
 
-        String strFisStartDate = "01.01." + String.valueOf( startDate.get( Calendar.YEAR ) + 1 );
+        String strFisStartDate = "01.01." + (startDate.get(Calendar.YEAR) + 1);
         fisStartDate.setTime( (java.util.Date) dfFormatter.parseObject( strFisStartDate ) );
         int iDaysToAdd = (int) ( ( startDate.getTimeInMillis() - fisOffsetDate.getTimeInMillis() ) / 86400000 );
         fisStartDate.add( Calendar.DATE, iDaysToAdd );
@@ -2115,7 +2115,7 @@ public class ScriptValuesAddedFunctions extends ScriptableObject {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's copy the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 FileUtil.copyContent( fileSource, fileDestination );
               }
 
@@ -2293,7 +2293,7 @@ public class ScriptValuesAddedFunctions extends ScriptableObject {
           file = KettleVFS.getFileObject( Context.toString( ArgList[0] ) );
           String Filename = null;
           if ( file.exists() ) {
-            Filename = file.getName().getBaseName().toString();
+            Filename = file.getName().getBaseName();
 
           } else {
             Context.reportRuntimeError( "file [" + Context.toString( ArgList[0] ) + "] can not be found!" );
@@ -2334,7 +2334,7 @@ public class ScriptValuesAddedFunctions extends ScriptableObject {
           file = KettleVFS.getFileObject( Context.toString( ArgList[0] ) );
           String Extension = null;
           if ( file.exists() ) {
-            Extension = file.getName().getExtension().toString();
+            Extension = file.getName().getExtension();
 
           } else {
             Context.reportRuntimeError( "file [" + Context.toString( ArgList[0] ) + "] can not be found!" );
@@ -2560,7 +2560,7 @@ public class ScriptValuesAddedFunctions extends ScriptableObject {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's move the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 fileSource.moveTo( fileDestination );
               }
 

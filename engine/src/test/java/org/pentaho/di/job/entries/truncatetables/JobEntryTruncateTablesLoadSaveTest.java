@@ -45,7 +45,7 @@ public class JobEntryTruncateTablesLoadSaveTest extends JobEntryLoadSaveTestSupp
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "database", "argFromPrevious", "arguments", "schemaname" } );
+    return Arrays.asList("database", "argFromPrevious", "arguments", "schemaname");
   }
 
   @Override

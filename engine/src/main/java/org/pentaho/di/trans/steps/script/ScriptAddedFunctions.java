@@ -1661,7 +1661,7 @@ public class ScriptAddedFunctions {
     if ( ArgList.length == 2 ) {
       try {
         InetAddress addr = InetAddress.getByName( (String) ArgList[0] );
-        if ( ( (String) ArgList[1] ).equals( "IP" ) ) {
+        if ( ArgList[1].equals( "IP" ) ) {
           sRC = addr.getHostName();
         } else {
           sRC = addr.getHostAddress();
@@ -1966,7 +1966,7 @@ public class ScriptAddedFunctions {
           if ( fileObject.exists() ) {
             if ( fileObject.getType() == FileType.FILE ) {
               if ( !fileObject.delete() ) {
-                throw new RuntimeException( "We can not delete file [" + (String) ArgList[0] + "]!" );
+                throw new RuntimeException( "We can not delete file [" + ArgList[0] + "]!" );
               }
             }
 
@@ -2051,7 +2051,7 @@ public class ScriptAddedFunctions {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's copy the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 FileUtil.copyContent( fileSource, fileDestination );
               }
 
@@ -2494,7 +2494,7 @@ public class ScriptAddedFunctions {
               }
               boolean destinationExists = fileDestination.exists();
               // Let's move the file...
-              if ( ( destinationExists && overwrite ) || !destinationExists ) {
+              if (!destinationExists || overwrite) {
                 fileSource.moveTo( fileDestination );
               }
 

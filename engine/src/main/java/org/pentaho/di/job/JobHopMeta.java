@@ -44,7 +44,7 @@ public class JobHopMeta extends BaseHopMeta<JobEntryCopy> {
   private boolean unconditional;
 
   public JobHopMeta() {
-    this( (JobEntryCopy) null, (JobEntryCopy) null );
+    this((JobEntryCopy) null, null);
   }
 
   public JobHopMeta( JobEntryCopy from, JobEntryCopy to ) {

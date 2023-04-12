@@ -146,10 +146,7 @@ public class BlockUntilStepsFinish extends BaseStep implements StepInterface {
     meta = (BlockUntilStepsFinishMeta) smi;
     data = (BlockUntilStepsFinishData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

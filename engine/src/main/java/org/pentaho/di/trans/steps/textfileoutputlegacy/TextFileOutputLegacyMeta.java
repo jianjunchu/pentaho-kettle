@@ -117,7 +117,7 @@ public class TextFileOutputLegacyMeta extends TextFileOutputMeta {
   @Override
   public String buildFilename( String filename, String extension, VariableSpace space, int stepnr, String partnr,
                                int splitnr, boolean ziparchive, TextFileOutputMeta meta ) {
-    if ( ( (TextFileOutputLegacyMeta) meta ).isFileAsCommand() ) {
+    if ( meta.isFileAsCommand() ) {
       return space.environmentSubstitute( filename );
     } else {
       return super.buildFilename( filename, extension, space, stepnr, partnr, splitnr, ziparchive, meta );

@@ -573,7 +573,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <!--<classifier>auphi</classifier>-->
+          <classifier>auphi</classifier>
         </configuration>
         <executions>
           <execution>

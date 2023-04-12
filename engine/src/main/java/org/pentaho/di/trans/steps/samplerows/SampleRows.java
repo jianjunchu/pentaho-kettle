@@ -142,11 +142,8 @@ public class SampleRows extends BaseStep implements StepInterface {
     meta = (SampleRowsMeta) smi;
     data = (SampleRowsData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

@@ -410,11 +410,9 @@ public class ParGzipCsvInput extends BaseStep implements StepInterface {
       // Oops, we need to read more data...
       // Better resize this before we read other things in it...
       //
-      if ( data.eofReached || data.getMoreData() ) {
         // If we didn't manage to read anything, we return true to indicate we're done
         //
-        return true;
-      }
+        return data.eofReached || data.getMoreData();
     }
     return false;
   }

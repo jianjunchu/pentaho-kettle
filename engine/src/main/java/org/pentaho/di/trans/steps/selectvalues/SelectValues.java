@@ -353,7 +353,7 @@ public class SelectValues extends BaseStep implements StepInterface {
           rowData[ index ] = toMeta.convertData( fromMeta, rowData[ index ] );
         }
       } catch ( KettleValueException e ) {
-        throw new KettleConversionException( e.getMessage(), Collections.<Exception>singletonList( e ),
+        throw new KettleConversionException( e.getMessage(), Collections.singletonList( e ),
           Collections.singletonList( toMeta ), rowData );
       }
     }

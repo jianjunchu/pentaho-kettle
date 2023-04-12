@@ -28,6 +28,8 @@ import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.trans.steps.file.BaseFileField;
 import org.pentaho.di.trans.steps.fileinput.BaseParsingTest;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Base class for all Cube Input step tests.
  */
@@ -71,7 +73,7 @@ public class BaseCubeInputParsingTest extends BaseParsingTest<CubeInputMeta, Cub
   protected void check( Object[][] expected ) throws Exception {
     for ( int r = 0; r < expected.length; r++ ) {
       for ( int c = 0; c < expected[r].length; c++ ) {
-        expected[r][c] = expected[r][c].toString().getBytes( "UTF-8" );
+        expected[r][c] = expected[r][c].toString().getBytes(StandardCharsets.UTF_8);
       }
     }
     super.check( expected );

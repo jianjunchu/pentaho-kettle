@@ -33,13 +33,13 @@ public interface HasDatabasesInterface {
    *
    * @return an ArrayList of defined DatabaseInfo objects.
    */
-  public List<DatabaseMeta> getDatabases();
+  List<DatabaseMeta> getDatabases();
 
   /**
    * @param databases
    *          The databases to set.
    */
-  public void setDatabases( List<DatabaseMeta> databases );
+  void setDatabases(List<DatabaseMeta> databases);
 
   /**
    * Add a database connection to the transformation.
@@ -47,7 +47,7 @@ public interface HasDatabasesInterface {
    * @param databaseMeta
    *          The database connection information.
    */
-  public void addDatabase( DatabaseMeta databaseMeta );
+  void addDatabase(DatabaseMeta databaseMeta);
 
   /**
    * Add a database connection to the transformation if that connection didn't exists yet. Otherwise, replace the
@@ -56,7 +56,7 @@ public interface HasDatabasesInterface {
    * @param databaseMeta
    *          The database connection information.
    */
-  public void addOrReplaceDatabase( DatabaseMeta databaseMeta );
+  void addOrReplaceDatabase(DatabaseMeta databaseMeta);
 
   /**
    * Add a database connection to the transformation on a certain location.
@@ -66,7 +66,7 @@ public interface HasDatabasesInterface {
    * @param ci
    *          The database connection information.
    */
-  public void addDatabase( int p, DatabaseMeta ci );
+  void addDatabase(int p, DatabaseMeta ci);
 
   /**
    * Retrieves a database connection information a a certain location.
@@ -75,7 +75,7 @@ public interface HasDatabasesInterface {
    *          The database number.
    * @return The database connection information.
    */
-  public DatabaseMeta getDatabase( int i );
+  DatabaseMeta getDatabase(int i);
 
   /**
    * Removes a database from the transformation on a certain location.
@@ -83,14 +83,14 @@ public interface HasDatabasesInterface {
    * @param i
    *          The location
    */
-  public void removeDatabase( int i );
+  void removeDatabase(int i);
 
   /**
    * Count the nr of databases in the transformation.
    *
    * @return The nr of databases
    */
-  public int nrDatabases();
+  int nrDatabases();
 
   /**
    * Searches the list of databases for a database with a certain name
@@ -99,7 +99,7 @@ public interface HasDatabasesInterface {
    *          The name of the database connection
    * @return The database connection information or null if nothing was found.
    */
-  public DatabaseMeta findDatabase( String name );
+  DatabaseMeta findDatabase(String name);
 
   /**
    * Find the location of database
@@ -108,12 +108,12 @@ public interface HasDatabasesInterface {
    *          The database queried
    * @return The location of the database, -1 if nothing was found.
    */
-  public int indexOfDatabase( DatabaseMeta ci );
+  int indexOfDatabase(DatabaseMeta ci);
 
   /**
    * Checks whether or not the connections have changed.
    *
    * @return True if the connections have been changed.
    */
-  public boolean haveConnectionsChanged();
+  boolean haveConnectionsChanged();
 }

@@ -737,11 +737,7 @@ public class RssOutput extends BaseStep implements StepInterface {
     meta = (RssOutputMeta) smi;
     data = (RssOutputData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {

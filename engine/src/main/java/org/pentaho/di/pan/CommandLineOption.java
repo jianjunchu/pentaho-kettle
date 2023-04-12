@@ -486,6 +486,6 @@ public class CommandLineOption {
         }
       }
     }
-    System.out.println( "" );
+    System.out.println();
   }
 }

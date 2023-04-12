@@ -228,7 +228,7 @@ public class MetaAnnotationInjectionTest {
     return Collections.singletonList( new RowMetaAndData( meta, TEST_NAME ) );
   }
 
-  private static interface MetadataInterface {
+  private interface MetadataInterface {
   }
 
   @InjectionSupported( localizationPrefix = "", groups = "COMPLEX" )

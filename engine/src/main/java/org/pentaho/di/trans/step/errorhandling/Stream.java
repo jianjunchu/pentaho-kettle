@@ -72,11 +72,7 @@ public class Stream implements StreamInterface {
 
     StreamInterface stream = (StreamInterface) obj;
 
-    if ( description.equals( stream.getDescription() ) ) {
-      return true;
-    }
-
-    return false;
+      return description.equals(stream.getDescription());
   }
 
   @Override

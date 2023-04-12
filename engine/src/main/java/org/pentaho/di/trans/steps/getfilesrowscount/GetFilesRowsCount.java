@@ -104,7 +104,7 @@ public class GetFilesRowsCount extends BaseStep implements StepInterface {
         setOutputDone(); // signal end to receiver(s)
         return false; // end of data or error.
       }
-      if ( ( !meta.isFileField() && data.last_file ) || meta.isFileField() ) {
+      if (meta.isFileField() || data.last_file) {
         putRow( data.outputRowMeta, outputRowData ); // copy row to output rowset(s);
         if ( log.isDetailed() ) {
           logDetailed(

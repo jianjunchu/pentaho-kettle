@@ -351,7 +351,7 @@ public class MemoryGroupByAggregationTest {
     // Spy on step, regrettable but we need to easily inject rows
     MemoryGroupBy step = spy( new MemoryGroupBy( stepMeta, data, 0, transMeta, mock( Trans.class ) ) );
     step.copyVariablesFrom( variables );
-    doNothing().when( step ).putRow( (RowMetaInterface) any(), (Object[]) any() );
+    doNothing().when( step ).putRow(any(), any());
     doNothing().when( step ).setOutputDone();
 
     // Process rows
@@ -360,7 +360,7 @@ public class MemoryGroupByAggregationTest {
       doReturn( row ).when( step ).getRow();
       assertThat( step.processRow( meta, data ), is( true ) );
     }
-    verify( step, never() ).putRow( (RowMetaInterface) any(), (Object[]) any() );
+    verify( step, never() ).putRow(any(), any());
 
     // Mark stop
     doReturn( null ).when( step ).getRow();

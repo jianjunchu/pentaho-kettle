@@ -349,7 +349,7 @@ public class SwitchCaseTest {
   @Test
   public void processRow_NullsArePutIntoDefaultWhenNotSpecified() throws Exception {
     SwitchCaseCustom step = new SwitchCaseCustom( mockHelper );
-    step.meta.loadXML( loadStepXmlMetadata( "SwitchCaseTest_PDI-12671.xml" ), Collections.<DatabaseMeta>emptyList(), mock( IMetaStore.class ) );
+    step.meta.loadXML( loadStepXmlMetadata( "SwitchCaseTest_PDI-12671.xml" ), Collections.emptyList(), mock( IMetaStore.class ) );
 
     List<RowSet> outputRowSets = new LinkedList<RowSet>();
     for ( SwitchCaseTarget item : step.meta.getCaseTargets() ) {
@@ -468,9 +468,7 @@ public class SwitchCaseTest {
           // If it's a string and the string is empty, it's a null value as well
           //
           if ( obj instanceof String ) {
-            if ( ( (String) obj ).length() == 0 ) {
-              return true;
-            }
+              return ((String) obj).length() == 0;
           }
           return false;
         }

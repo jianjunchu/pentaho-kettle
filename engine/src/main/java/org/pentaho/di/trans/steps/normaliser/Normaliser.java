@@ -193,11 +193,8 @@ public class Normaliser extends BaseStep implements StepInterface {
     meta = (NormaliserMeta) smi;
     data = (NormaliserData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

@@ -104,7 +104,7 @@ public class FTPSConnectionTest {
         private Reply dummyReply = new Reply();
 
         @Override
-        public void connect() throws NotConnectedException, IOException, AuthenticationNotSupportedException,
+        public void connect() throws IOException, AuthenticationNotSupportedException,
           FtpIOException, FtpWorkflowException {
           socketProvider = mock( SocketProvider.class );
           when( socketProvider.socket() ).thenReturn( mock( Socket.class ) );

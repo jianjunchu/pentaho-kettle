@@ -417,10 +417,10 @@ public class KettleDatabaseRepositoryMetaStoreDelegate extends KettleDatabaseRep
       return "D:" + new SimpleDateFormat( ValueMetaBase.DEFAULT_DATE_FORMAT_MASK ).format( (Date) object );
     }
     if ( object instanceof Double ) {
-      return "N:" + Double.toString( (Double) object );
+      return "N:" + (Double) object;
     }
     if ( object instanceof Long ) {
-      return "I:" + Long.toString( (Long) object );
+      return "I:" + (Long) object;
     }
     if ( object instanceof Boolean ) {
       return "B:" + ( ( (Boolean) object ) ? "true" : "false" );

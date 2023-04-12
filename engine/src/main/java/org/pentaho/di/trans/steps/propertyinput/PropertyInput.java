@@ -153,7 +153,7 @@ public class PropertyInput extends BaseStep implements StepInterface {
           // In case we read all sections
           // maybe we have to change section for ini files...
           if ( !data.propfiles && data.realSection == null && data.readrow != null && data.itSection.hasNext() ) {
-            data.iniSection = data.wini.get( data.itSection.next().toString() );
+            data.iniSection = data.wini.get(data.itSection.next());
             data.iniIt = data.iniSection.keySet().iterator();
           } else {
             if ( !openNextFile() ) {
@@ -168,7 +168,7 @@ public class PropertyInput extends BaseStep implements StepInterface {
           // In case we read all sections
           // maybe we have to change section for ini files...
           if ( !data.propfiles && data.realSection == null && data.file != null && data.itSection.hasNext() ) {
-            data.iniSection = data.wini.get( data.itSection.next().toString() );
+            data.iniSection = data.wini.get(data.itSection.next());
             data.iniIt = data.iniSection.keySet().iterator();
           } else {
             if ( !openNextFile() ) {
@@ -194,7 +194,7 @@ public class PropertyInput extends BaseStep implements StepInterface {
       if ( data.propfiles ) {
         key = data.it.next().toString();
       } else {
-        key = data.iniIt.next().toString();
+        key = data.iniIt.next();
       }
 
       // Execute for each Input field...
@@ -460,7 +460,7 @@ public class PropertyInput extends BaseStep implements StepInterface {
         } else {
           // We need to fetch all sections
           data.itSection = data.wini.keySet().iterator();
-          data.iniSection = data.wini.get( data.itSection.next().toString() );
+          data.iniSection = data.wini.get(data.itSection.next());
         }
         data.iniIt = data.iniSection.keySet().iterator();
       }

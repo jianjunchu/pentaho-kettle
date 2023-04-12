@@ -23,5 +23,5 @@
 package org.pentaho.di.trans;
 
 public interface TransStoppedListener {
-  public void transStopped( Trans trans );
+  void transStopped(Trans trans);
 }

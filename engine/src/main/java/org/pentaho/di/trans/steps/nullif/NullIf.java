@@ -120,11 +120,8 @@ public class NullIf extends BaseStep implements StepInterface {
     meta = (NullIfMeta) smi;
     data = (NullIfData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

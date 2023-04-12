@@ -137,7 +137,7 @@ public class TextFileInputMetaInjection implements StepMetaInjectionInterface {
     private int valueType;
     private String description;
 
-    private Entry( int valueType, String description ) {
+    Entry(int valueType, String description) {
       this.valueType = valueType;
       this.description = description;
     }

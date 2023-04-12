@@ -41,7 +41,7 @@ public class KettleVariablesListTest {
   @Test
   public void testInit() throws Exception {
     KettleVariablesList variablesList = KettleVariablesList.getInstance();
-    variablesList.init();
+    KettleVariablesList.init();
     //See PDI-14522
     boolean actual = Boolean.valueOf( variablesList.getDefaultValueMap().get( Const.VFS_USER_DIR_IS_ROOT ) );
     assertEquals( false, actual );

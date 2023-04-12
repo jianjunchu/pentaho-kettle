@@ -30,12 +30,12 @@ package org.pentaho.di.trans.steps.symmetriccrypto.symmetricalgorithm;
  */
 public interface SymmetricCryptoInterface extends Cloneable {
 
-  public static final Class<?>[] implementingClasses = {
+  Class<?>[] implementingClasses = {
     DESSymmetricCrypto.class, TripleDESSymmetricCrypto.class, AESSymmetricCrypto.class, };
 
-  public String getAlgorithm();
+  String getAlgorithm();
 
-  public int getAlgorithmType();
+  int getAlgorithmType();
 
-  public String getDefaultScheme();
+  String getDefaultScheme();
 }

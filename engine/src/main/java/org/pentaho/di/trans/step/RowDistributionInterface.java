@@ -31,12 +31,12 @@ public interface RowDistributionInterface {
   /**
    * @return The row distribution code (plugin id)
    */
-  public String getCode();
+  String getCode();
 
   /**
    * @return The row distribution description (plugin description)
    */
-  public String getDescription();
+  String getDescription();
 
   /**
    * Do the actual row distribution in the step
@@ -49,12 +49,12 @@ public interface RowDistributionInterface {
    *          The step to distribute the rows in
    * @throws KettleStepException
    */
-  public void distributeRow( RowMetaInterface rowMeta, Object[] row, StepInterface stepInterface ) throws KettleStepException;
+  void distributeRow(RowMetaInterface rowMeta, Object[] row, StepInterface stepInterface) throws KettleStepException;
 
   /**
    * Which mini-icon needs to be shown on the hop?
    *
    * @return the available code EImage or null if the standard icon needs to be used.
    */
-  public EImage getDistributionImage();
+  EImage getDistributionImage();
 }

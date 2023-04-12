@@ -54,18 +54,14 @@ public class TextFileFieldLoadSaveValidator implements FieldLoadSaveValidator<Te
       return false;
     }
     TextFileField act = (TextFileField) actual;
-    if ( testObject.getName().equals( act.getName() )
-        && testObject.getType() == act.getType()
-        && testObject.getFormat().equals( act.getFormat() )
-        && testObject.getLength() == act.getLength()
-        && testObject.getPrecision() == act.getPrecision()
-        && testObject.getCurrencySymbol().equals( act.getCurrencySymbol() )
-        && testObject.getDecimalSymbol().equals( act.getDecimalSymbol() )
-        && testObject.getGroupingSymbol().equals( act.getGroupingSymbol() )
-        && testObject.getNullString().equals( act.getNullString() ) ) {
-      return true;
-    } else {
-      return false;
-    }
+      return testObject.getName().equals(act.getName())
+              && testObject.getType() == act.getType()
+              && testObject.getFormat().equals(act.getFormat())
+              && testObject.getLength() == act.getLength()
+              && testObject.getPrecision() == act.getPrecision()
+              && testObject.getCurrencySymbol().equals(act.getCurrencySymbol())
+              && testObject.getDecimalSymbol().equals(act.getDecimalSymbol())
+              && testObject.getGroupingSymbol().equals(act.getGroupingSymbol())
+              && testObject.getNullString().equals(act.getNullString());
   }
 }

@@ -74,15 +74,10 @@ public class FieldGetter<T> implements Getter<T> {
     }
     FieldGetter<?> other = (FieldGetter<?>) obj;
     if ( field == null ) {
-      if ( other.field != null ) {
-        return false;
-      }
+        return other.field == null;
     } else {
-      if ( !field.equals( other.field ) ) {
-        return false;
-      }
+        return field.equals(other.field);
     }
-    return true;
   }
 
 }

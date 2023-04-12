@@ -23,9 +23,9 @@
 package org.pentaho.di.core.auth.core;
 
 public interface AuthenticationPerformer<ReturnType, CreateArgType> {
-  public ReturnType perform( CreateArgType consumerCreateArg ) throws AuthenticationConsumptionException;
+  ReturnType perform(CreateArgType consumerCreateArg) throws AuthenticationConsumptionException;
 
-  public String getDisplayName();
+  String getDisplayName();
 
-  public AuthenticationProvider getAuthenticationProvider();
+  AuthenticationProvider getAuthenticationProvider();
 }

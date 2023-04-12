@@ -160,7 +160,7 @@ public class StringSearcher {
       stringList.add( new StringSearchResult( ( (Boolean) obj ).toString(), parentObject, grandParentObject, fieldName
         + " (Boolean)" ) );
     } else if ( obj instanceof Condition ) {
-      stringList.add( new StringSearchResult( ( (Condition) obj).toString(), parentObject, grandParentObject, fieldName + " (Condition)" ) );
+      stringList.add( new StringSearchResult( obj.toString(), parentObject, grandParentObject, fieldName + " (Condition)" ) );
     } else if ( obj instanceof DatabaseInterface ) {
       // Make sure we read the attributes. This is not picked up by default. (getDeclaredFields doesn't pick up
       // inherited fields)

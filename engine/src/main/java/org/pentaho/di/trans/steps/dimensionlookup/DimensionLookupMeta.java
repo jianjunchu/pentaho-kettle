@@ -907,11 +907,7 @@ public class DimensionLookupMeta extends BaseStepMeta implements StepMetaInterfa
       commitSize = Const.toInt( commit, 0 );
 
       upd = XMLHandler.getTagValue( stepnode, "update" );
-      if ( upd.equalsIgnoreCase( "Y" ) ) {
-        update = true;
-      } else {
-        update = false;
-      }
+        update = upd.equalsIgnoreCase("Y");
 
       Node fields = XMLHandler.getSubNode( stepnode, "fields" );
 

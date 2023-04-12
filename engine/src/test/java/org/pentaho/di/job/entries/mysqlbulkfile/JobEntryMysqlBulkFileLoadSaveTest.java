@@ -39,9 +39,9 @@ public class JobEntryMysqlBulkFileLoadSaveTest extends JobEntryLoadSaveTestSuppo
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "schemaname", "tablename", "filename", "separator", "enclosed",
-      "optionEnclosed", "lineterminated", "limitlines", "listColumn", "highPriority", "outdumpvalue",
-      "iffileexists", "addFileToResult", "database" } );
+    return Arrays.asList("schemaname", "tablename", "filename", "separator", "enclosed",
+            "optionEnclosed", "lineterminated", "limitlines", "listColumn", "highPriority", "outdumpvalue",
+            "iffileexists", "addFileToResult", "database");
   }
 
 }

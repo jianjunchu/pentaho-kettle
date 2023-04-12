@@ -25,7 +25,7 @@ public class PhoneMask  extends BaseFunction {
         if(o == null){
             return null;
         }else{
-            return evaluate(o.toString());
+            return evaluate(o);
         }
     }
 

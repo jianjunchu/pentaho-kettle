@@ -43,8 +43,8 @@ public class JobEntryEvalTableContentLoadSaveTest extends JobEntryLoadSaveTestSu
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "connection", "schemaname", "tablename", "successCondition",
-      "limit", "useCustomSQL", "useVars", "customSQL", "addRowsResult", "clearResultList" } );
+    return Arrays.asList("connection", "schemaname", "tablename", "successCondition",
+            "limit", "useCustomSQL", "useVars", "customSQL", "addRowsResult", "clearResultList");
   }
 
   @Override

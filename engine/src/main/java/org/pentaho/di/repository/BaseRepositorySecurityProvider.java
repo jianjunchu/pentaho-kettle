@@ -58,7 +58,7 @@ public class BaseRepositorySecurityProvider {
     this.repositoryMeta = repositoryMeta;
   }
 
-  public void validateAction( RepositoryOperation... operations ) throws KettleException, KettleSecurityException {
+  public void validateAction( RepositoryOperation... operations ) throws KettleException {
 
   }
 }

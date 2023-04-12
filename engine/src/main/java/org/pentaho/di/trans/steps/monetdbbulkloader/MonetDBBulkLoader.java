@@ -246,7 +246,7 @@ public class MonetDBBulkLoader extends BaseStep implements StepInterface {
         int index = data.keynrs[i];
         ValueMetaInterface valueMeta = rowMeta.getValueMeta( index );
         Object valueData = r[index];
-        String nullRep = new String( data.nullrepresentation );
+        String nullRep = data.nullrepresentation;
         if ( valueData != null ) {
           switch ( valueMeta.getType() ) {
             case ValueMetaInterface.TYPE_STRING:
@@ -286,7 +286,7 @@ public class MonetDBBulkLoader extends BaseStep implements StepInterface {
                 if ( value == null ) {
                   line.append( data.nullrepresentation );
                 } else {
-                  line.append( Long.toString( value ) );
+                  line.append(value);
                 }
               }
               break;
@@ -350,7 +350,7 @@ public class MonetDBBulkLoader extends BaseStep implements StepInterface {
                 if ( dbl == null ) {
                   line.append( data.nullrepresentation );
                 } else {
-                  line.append( Double.toString( dbl ) );
+                  line.append(dbl);
                 }
               }
               break;
@@ -470,13 +470,13 @@ public class MonetDBBulkLoader extends BaseStep implements StepInterface {
 
       String nullRep = environmentSubstitute( meta.getNULLrepresentation() );
       if ( nullRep == null ) {
-        nullRep = new String( data.nullrepresentation );
+        nullRep = data.nullrepresentation;
       }
 
       cmdBuff
           .append( "COPY " ).append( data.bufferIndex ).append( " RECORDS INTO " ).append( data.schemaTable )
-          .append( " FROM STDIN USING DELIMITERS '" ).append( new String( data.separator ) ).append(
-          "','" + Const.CR + "','" ).append( new String( data.quote ) )
+          .append( " FROM STDIN USING DELIMITERS '" ).append(data.separator).append(
+          "','" + Const.CR + "','" ).append(data.quote)
           .append( "' NULL AS '" + nullRep + "';" );
       String cmd = cmdBuff.toString();
       if ( log.isDetailed() ) {
@@ -543,7 +543,7 @@ public class MonetDBBulkLoader extends BaseStep implements StepInterface {
 
       String nulls = environmentSubstitute( meta.getNULLrepresentation() );
       if ( nulls == null ) {
-        data.nullrepresentation = new String();
+        data.nullrepresentation = "";
       } else {
         data.nullrepresentation = nulls;
       }

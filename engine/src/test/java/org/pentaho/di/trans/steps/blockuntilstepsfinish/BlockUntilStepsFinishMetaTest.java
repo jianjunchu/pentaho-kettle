@@ -76,7 +76,7 @@ public class BlockUntilStepsFinishMetaTest implements InitializerInterface<Block
   @Override
   public void modify( BlockUntilStepsFinishMeta someMeta ) {
     if ( someMeta instanceof BlockUntilStepsFinishMeta ) {
-      ( (BlockUntilStepsFinishMeta) someMeta ).allocate( 5 );
+      someMeta.allocate( 5 );
     }
   }
 

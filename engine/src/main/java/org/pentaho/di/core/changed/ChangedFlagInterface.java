@@ -23,11 +23,11 @@
 package org.pentaho.di.core.changed;
 
 public interface ChangedFlagInterface {
-  public boolean hasChanged();
+  boolean hasChanged();
 
-  public void setChanged( boolean changed );
+  void setChanged(boolean changed);
 
-  public void setChanged();
+  void setChanged();
 
-  public void clearChanged();
+  void clearChanged();
 }

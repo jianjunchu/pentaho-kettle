@@ -117,7 +117,7 @@ public class MailConnectionTest {
         @Override
         public Boolean answer( InvocationOnMock invocation ) throws Throwable {
           Object arg0 = invocation.getArguments()[0];
-          mode = Integer.class.cast( arg0 );
+          mode = (Integer) arg0;
           cCreated = true;
           return true;
         }

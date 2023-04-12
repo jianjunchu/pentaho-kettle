@@ -75,7 +75,7 @@ public class SyslogMessageTest {
         initialized[0] = true;
         return initialized;
       }
-    } ).when( syslog ).initialize( anyString(), (SyslogConfigIF) anyObject() );
+    } ).when( syslog ).initialize( anyString(), anyObject());
     doAnswer( new Answer<Object>() {
       public Object answer( InvocationOnMock invocation ) {
         if ( !initialized[0] ) {

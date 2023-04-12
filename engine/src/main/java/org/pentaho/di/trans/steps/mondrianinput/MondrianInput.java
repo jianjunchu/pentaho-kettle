@@ -105,11 +105,7 @@ public class MondrianInput extends BaseStep implements StepInterface {
     meta = (MondrianInputMeta) smi;
     data = (MondrianData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

@@ -23,5 +23,5 @@
 package org.pentaho.test.util;
 
 public interface ObjectValidator<T> {
-  public void validate( T expected, Object actual );
+  void validate(T expected, Object actual);
 }

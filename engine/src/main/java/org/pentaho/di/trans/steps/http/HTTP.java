@@ -247,8 +247,8 @@ public class HTTP extends BaseStep implements StepInterface {
     }
   }
 
-  private URIBuilder constructUrlBuilder( RowMetaInterface outputRowMeta, Object[] row ) throws KettleValueException,
-    KettleException {
+  private URIBuilder constructUrlBuilder( RowMetaInterface outputRowMeta, Object[] row ) throws
+          KettleException {
     URIBuilder uriBuilder;
     try {
       String baseUrl = data.realUrl;

@@ -44,6 +44,6 @@ public interface ReconnectableRepository extends Repository {
    * @throws KettleException
    *           in case there is a general unexpected error.
    */
-  public void connect( String username, String password ) throws KettleException, KettleSecurityException;
+  void connect(String username, String password) throws KettleException, KettleSecurityException;
 
 }

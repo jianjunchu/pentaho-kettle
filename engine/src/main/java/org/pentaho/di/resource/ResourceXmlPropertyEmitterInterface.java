@@ -33,6 +33,6 @@ public interface ResourceXmlPropertyEmitterInterface {
    *          If -1, then no indenting, otherwise, it's the indent level to indent the XML strings
    * @return String of injected XML
    */
-  public String getExtraResourceProperties( ResourceHolderInterface ref, int indention );
+  String getExtraResourceProperties(ResourceHolderInterface ref, int indention);
 
 }

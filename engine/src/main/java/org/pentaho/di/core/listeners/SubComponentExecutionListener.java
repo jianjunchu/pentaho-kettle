@@ -37,7 +37,7 @@ public interface SubComponentExecutionListener {
    * @throws KettleException
    *           In case something goes wrong
    */
-  public void beforeTransformationExecution( Trans trans ) throws KettleException;
+  void beforeTransformationExecution(Trans trans) throws KettleException;
 
   /**
    * This method is called right after a sub-transformation, mapping, single threader template, ... was executed in a
@@ -48,7 +48,7 @@ public interface SubComponentExecutionListener {
    * @throws KettleException
    *           In case something goes wrong
    */
-  public void afterTransformationExecution( Trans trans ) throws KettleException;
+  void afterTransformationExecution(Trans trans) throws KettleException;
 
   /**
    * This method is called right before a job is to be executed in a parent job or transformation (Job job-entry, Job
@@ -59,7 +59,7 @@ public interface SubComponentExecutionListener {
    * @throws KettleException
    *           In case something goes wrong
    */
-  public void beforeJobExecution( Job job ) throws KettleException;
+  void beforeJobExecution(Job job) throws KettleException;
 
   /**
    * This method is called right after a job was executed in a parent job or transformation (Job job-entry, Job Executor
@@ -70,5 +70,5 @@ public interface SubComponentExecutionListener {
    * @throws KettleException
    *           In case something goes wrong
    */
-  public void afterJobExecution( Job job ) throws KettleException;
+  void afterJobExecution(Job job) throws KettleException;
 }

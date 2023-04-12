@@ -80,7 +80,7 @@ public class KettleDatabaseRepositoryMetaStore extends MemoryMetaStore implement
   }
 
   @Override
-  public void createNamespace( String namespace ) throws MetaStoreException, MetaStoreNamespaceExistsException {
+  public void createNamespace( String namespace ) throws MetaStoreException {
     try {
       ObjectId namespaceId = delegate.getNamespaceId( namespace );
       if ( namespaceId != null ) {
@@ -98,7 +98,7 @@ public class KettleDatabaseRepositoryMetaStore extends MemoryMetaStore implement
   }
 
   @Override
-  public void deleteNamespace( String namespace ) throws MetaStoreException, MetaStoreDependenciesExistsException {
+  public void deleteNamespace( String namespace ) throws MetaStoreException {
     try {
       ObjectId namespaceId = delegate.verifyNamespace( namespace );
 
@@ -139,8 +139,7 @@ public class KettleDatabaseRepositoryMetaStore extends MemoryMetaStore implement
 
   // Handle the element types
 
-  public void createElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException,
-    MetaStoreElementTypeExistsException {
+  public void createElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException {
     try {
 
       ObjectId namespaceId = delegate.verifyNamespace( namespace );
@@ -272,8 +271,7 @@ public class KettleDatabaseRepositoryMetaStore extends MemoryMetaStore implement
   }
 
   @Override
-  public void deleteElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException,
-    MetaStoreDependenciesExistsException {
+  public void deleteElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException {
     try {
       Collection<RowMetaAndData> elementTypeRows =
         delegate.getElements( new LongObjectId( new StringObjectId( elementType.getId() ) ) );
@@ -370,7 +368,7 @@ public class KettleDatabaseRepositoryMetaStore extends MemoryMetaStore implement
   }
 
   @Override
-  public void createElement( String namespace, IMetaStoreElementType elementType, IMetaStoreElement element ) throws MetaStoreException, MetaStoreElementExistException {
+  public void createElement( String namespace, IMetaStoreElementType elementType, IMetaStoreElement element ) throws MetaStoreException {
     try {
       IMetaStoreElement found = getElementByName( namespace, elementType, element.getName() );
       if ( found != null ) {

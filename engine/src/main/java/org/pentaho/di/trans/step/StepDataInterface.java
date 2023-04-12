@@ -40,54 +40,54 @@ public interface StepDataInterface {
    * @param status
    *          the new status
    */
-  public void setStatus( StepExecutionStatus status );
+  void setStatus(StepExecutionStatus status);
 
   /**
    * Gets the status.
    *
    * @return the status
    */
-  public StepExecutionStatus getStatus();
+  StepExecutionStatus getStatus();
 
   /**
    * Checks if is empty.
    *
    * @return true, if is empty
    */
-  public boolean isEmpty();
+  boolean isEmpty();
 
   /**
    * Checks if is initialising.
    *
    * @return true, if is initialising
    */
-  public boolean isInitialising();
+  boolean isInitialising();
 
   /**
    * Checks if is running.
    *
    * @return true, if is running
    */
-  public boolean isRunning();
+  boolean isRunning();
 
   /**
    * Checks if is idle.
    *
    * @return true, if is idle
    */
-  public boolean isIdle();
+  boolean isIdle();
 
   /**
    * Checks if is finished.
    *
    * @return true, if is finished
    */
-  public boolean isFinished();
+  boolean isFinished();
 
   /**
    * Checks if is disposed.
    *
    * @return true, if is disposed
    */
-  public boolean isDisposed();
+  boolean isDisposed();
 }

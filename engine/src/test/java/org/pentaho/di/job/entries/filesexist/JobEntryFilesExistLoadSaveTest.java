@@ -39,7 +39,7 @@ public class JobEntryFilesExistLoadSaveTest extends JobEntryLoadSaveTestSupport<
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "filename", "arguments" } );
+    return Arrays.asList("filename", "arguments");
   }
 
 }

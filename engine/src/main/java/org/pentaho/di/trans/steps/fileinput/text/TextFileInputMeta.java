@@ -1383,7 +1383,7 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
 
   @Override
   public boolean hasHeader() {
-    return content == null ? false : content.header;
+    return content != null && content.header;
   }
 
   @Override

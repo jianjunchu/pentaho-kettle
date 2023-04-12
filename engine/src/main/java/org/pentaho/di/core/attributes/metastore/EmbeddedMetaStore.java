@@ -74,7 +74,7 @@ public class EmbeddedMetaStore extends BaseMetaStore implements ReadWriteLock {
       @Override public Void call() throws Exception {
         String groupName = JsonElementType.groupName( namespace );
         if ( !attributesInterface.getAttributesMap().containsKey( groupName ) ) {
-          attributesInterface.setAttributes( groupName, Maps.<String, String>newHashMap() );
+          attributesInterface.setAttributes( groupName, Maps.newHashMap() );
         }
         return null;
       }
@@ -161,7 +161,7 @@ public class EmbeddedMetaStore extends BaseMetaStore implements ReadWriteLock {
     return MetaStoreUtil.executeLockedOperation( readLock(), new Callable<List<String>>() {
       @Override public List<String> call() throws Exception {
         Map<String, String> attributes = attributesInterface.getAttributes( JsonElementType.groupName( namespace ) );
-        return attributes == null ? ImmutableList.<String>of() : ImmutableList.copyOf( attributes.keySet() );
+        return attributes == null ? ImmutableList.of() : ImmutableList.copyOf( attributes.keySet() );
       }
     } );
   }
@@ -269,7 +269,7 @@ public class EmbeddedMetaStore extends BaseMetaStore implements ReadWriteLock {
         @Override public List<String> call() throws Exception {
           elementType.setNamespace( namespace );
           Map<String, String> attributes = attributesInterface.getAttributes( JsonElement.groupName( elementType ) );
-          return attributes == null ? ImmutableList.<String>of() : ImmutableList.copyOf( attributes.keySet() );
+          return attributes == null ? ImmutableList.of() : ImmutableList.copyOf( attributes.keySet() );
         }
       }
     );

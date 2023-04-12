@@ -116,11 +116,8 @@ public class MappingOutput extends BaseStep implements StepInterface {
     meta = (MappingOutputMeta) smi;
     data = (MappingOutputData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
   public void setConnectorSteps( StepInterface[] targetSteps, List<MappingValueRename> inputValueRenames,

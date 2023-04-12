@@ -223,12 +223,12 @@ public class FixedInputMetaInjection implements StepMetaInjectionInterface {
     private String description;
     private Entry parent;
 
-    private Entry( int valueType, String description ) {
+    Entry(int valueType, String description) {
       this.valueType = valueType;
       this.description = description;
     }
 
-    private Entry( Entry parent, int valueType, String description ) {
+    Entry(Entry parent, int valueType, String description) {
       this.parent = parent;
       this.valueType = valueType;
       this.description = description;

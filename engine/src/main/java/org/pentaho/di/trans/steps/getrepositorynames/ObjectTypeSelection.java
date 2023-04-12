@@ -32,7 +32,7 @@ public enum ObjectTypeSelection {
 
   private String description;
 
-  private ObjectTypeSelection( String description ) {
+  ObjectTypeSelection(String description) {
     this.description = description;
   }
 

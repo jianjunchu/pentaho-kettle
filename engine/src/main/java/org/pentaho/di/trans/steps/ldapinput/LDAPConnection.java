@@ -656,13 +656,13 @@ public class LDAPConnection {
     String strSID;
     strSID = "S";
     version = SID[0];
-    strSID = strSID + "-" + Long.toString( version );
+    strSID = strSID + "-" + version;
     authority = SID[4];
     for ( int i = 0; i < 4; i++ ) {
       authority <<= 8;
       authority += SID[4 + i] & 0xFF;
     }
-    strSID = strSID + "-" + Long.toString( authority );
+    strSID = strSID + "-" + authority;
     count = SID[2];
     count <<= 8;
     count += SID[1] & 0xFF;
@@ -672,7 +672,7 @@ public class LDAPConnection {
         rid <<= 8;
         rid += SID[11 - k + ( j * 4 )] & 0xFF;
       }
-      strSID = strSID + "-" + Long.toString( rid );
+      strSID = strSID + "-" + rid;
     }
     return strSID;
   }

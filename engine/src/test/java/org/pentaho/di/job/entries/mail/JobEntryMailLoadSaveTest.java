@@ -48,12 +48,12 @@ public class JobEntryMailLoadSaveTest extends JobEntryLoadSaveTestSupport<JobEnt
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "server", "port", "destination", "destinationCc", "destinationBCc",
-      "replyAddress", "replyName", "subject", "includeDate", "contactPerson", "contactPhone", "comment",
-      "includingFiles", "zipFiles", "zipFilename", "usingAuthentication", "usingSecureAuthentication",
-      "authenticationUser", "authenticationPassword", "onlySendComment", "useHTML", "usePriority",
-      "encoding", "priority", "importance", "sensitivity", "secureConnectionType", "replyToAddresses",
-      "fileType", "embeddedimages", "contentids" } );
+    return Arrays.asList("server", "port", "destination", "destinationCc", "destinationBCc",
+            "replyAddress", "replyName", "subject", "includeDate", "contactPerson", "contactPhone", "comment",
+            "includingFiles", "zipFiles", "zipFilename", "usingAuthentication", "usingSecureAuthentication",
+            "authenticationUser", "authenticationPassword", "onlySendComment", "useHTML", "usePriority",
+            "encoding", "priority", "importance", "sensitivity", "secureConnectionType", "replyToAddresses",
+            "fileType", "embeddedimages", "contentids");
   }
 
   @Override

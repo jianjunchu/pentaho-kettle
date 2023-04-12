@@ -669,7 +669,7 @@ public class TransPainter extends BasePainter<TransHopMeta, StepMeta> {
         if ( partitionSchema.isDynamicallyDefined() ) {
           nrInput = "Dx" + partitionSchema.getNumberOfPartitionsPerSlave();
         } else {
-          nrInput = "Px" + Integer.toString( partitionSchema.getPartitionIDs().size() );
+          nrInput = "Px" + partitionSchema.getPartitionIDs().size();
         }
 
         Point textExtent = gc.textExtent( nrInput );

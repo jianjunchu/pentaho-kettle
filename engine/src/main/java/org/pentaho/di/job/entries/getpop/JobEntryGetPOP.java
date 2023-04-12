@@ -1145,7 +1145,7 @@ public class JobEntryGetPOP extends JobEntryBase implements Cloneable, JobEntryI
               // Get next message
               mailConn.fetchNext();
               int messagenumber = mailConn.getMessage().getMessageNumber();
-              boolean okPOP3 = usePOP3 ? true : false; // (mailConn.getMessagesCounter()<nbrmailtoretrieve &&
+              boolean okPOP3 = usePOP3; // (mailConn.getMessagesCounter()<nbrmailtoretrieve &&
                                                        // retrievemails==2)||(retrievemails!=2):false;
               boolean okIMAP = !usePOP3;
 
@@ -1263,7 +1263,7 @@ public class JobEntryGetPOP extends JobEntryBase implements Cloneable, JobEntryI
         DateFormat dateFormat = new SimpleDateFormat( varName );
         Object Value = dateFormat.format( datetime );
 
-        buffer.append( rest.substring( 0, i ) );
+        buffer.append(rest, 0, i);
         buffer.append( Value );
         rest = rest.substring( j + close.length() );
       } else {

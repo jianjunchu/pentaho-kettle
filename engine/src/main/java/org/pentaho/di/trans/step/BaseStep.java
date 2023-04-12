@@ -802,9 +802,7 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
       }
 
       // if we failed and environment subsutitue
-      if ( envSubFailed ) {
-        return false;
-      }
+        return !envSubFailed;
     }
 
     return true;
@@ -3308,9 +3306,9 @@ public class BaseStep implements VariableSpace, StepInterface, LoggingObjectInte
       string.append( stepname ).append( '.' ).append( partitionID );
     } else if ( clusterSize > 1 ) {
       string
-        .append( stepname ).append( '.' ).append( slaveNr ).append( '.' ).append( Integer.toString( getCopy() ) );
+        .append( stepname ).append( '.' ).append( slaveNr ).append( '.' ).append(getCopy());
     } else {
-      string.append( stepname ).append( '.' ).append( Integer.toString( getCopy() ) );
+      string.append( stepname ).append( '.' ).append(getCopy());
     }
 
     return string.toString();

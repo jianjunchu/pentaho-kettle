@@ -240,11 +240,8 @@ public class IfNull extends BaseStep implements StepInterface {
     meta = (IfNullMeta) smi;
     data = (IfNullData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

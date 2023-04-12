@@ -630,8 +630,7 @@ public class JobEntryDosToUnix extends JobEntryBase implements Cloneable, JobEnt
         updateErrors();
       }
     } catch ( Exception e ) {
-      logError( BaseMessages.getString( PKG, "JobDosToUnix.Error.Exception.Processing", realSourceFilefoldername
-        .toString(), e.getMessage() ) );
+      logError( BaseMessages.getString( PKG, "JobDosToUnix.Error.Exception.Processing", realSourceFilefoldername, e.getMessage() ) );
       // Update Errors
       updateErrors();
     } finally {
@@ -663,20 +662,12 @@ public class JobEntryDosToUnix extends JobEntryBase implements Cloneable, JobEnt
       if ( convertion == CONVERTION_TYPE_GUESS ) {
         // Get file Type
         int fileType = getFileType( file );
-        if ( fileType == TYPE_DOS_FILE ) {
           // File type is DOS
           // We need to convert it to UNIX
-          convertToUnix = true;
-        } else {
           // File type is not DOS
           // so let's convert it to DOS
-          convertToUnix = false;
-        }
-      } else if ( convertion == CONVERTION_TYPE_DOS_TO_UNIX ) {
-        convertToUnix = true;
-      } else {
-        convertToUnix = false;
-      }
+          convertToUnix = fileType == TYPE_DOS_FILE;
+      } else convertToUnix = convertion == CONVERTION_TYPE_DOS_TO_UNIX;
 
       retval = convert( file, convertToUnix );
 

@@ -149,10 +149,10 @@ public class InfobrightLoaderMeta extends TableOutputMeta implements StepMetaInt
   @Override
   public String getXML() {
     String ret = super.getXML();
-    ret = ret + new String( "    " + XMLHandler.addTagValue( TAG_DATA_FORMAT, dataFormat.toString() ) );
-    ret = ret + new String( "    " + XMLHandler.addTagValue( TAG_AGENT_PORT, agentPort ) );
-    ret = ret + new String( "    " + XMLHandler.addTagValue( TAG_CHARSET, charset.name() ) );
-    ret = ret + new String( "    " + XMLHandler.addTagValue( TAG_DEBUG_FILE, debugFile ) );
+    ret = ret + "    " + XMLHandler.addTagValue(TAG_DATA_FORMAT, dataFormat.toString());
+    ret = ret + "    " + XMLHandler.addTagValue(TAG_AGENT_PORT, agentPort);
+    ret = ret + "    " + XMLHandler.addTagValue(TAG_CHARSET, charset.name());
+    ret = ret + "    " + XMLHandler.addTagValue(TAG_DEBUG_FILE, debugFile);
     return ret;
   }
 

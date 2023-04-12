@@ -116,7 +116,7 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
   }
 
   public RepositoryImporter( Repository repository, LogChannelInterface log ) {
-    this( repository, new ImportRules(), Collections.<String>emptyList(), log );
+    this( repository, new ImportRules(), Collections.emptyList(), log );
   }
 
   public RepositoryImporter( Repository repository, ImportRules importRules, List<String> limitDirs ) {
@@ -363,10 +363,7 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
 
   private boolean equals( Object obj1, Object obj2 ) {
     if ( obj1 == null ) {
-      if ( obj2 == null ) {
-        return true;
-      }
-      return false;
+        return obj2 == null;
     }
     if ( obj2 == null ) {
       return false;
@@ -409,10 +406,7 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
         return false;
       }
     }
-    if ( databaseMeta2Attributes.size() > 0 ) {
-      return false;
-    }
-    return true;
+      return databaseMeta2Attributes.size() <= 0;
   }
 
   protected boolean equals( SlaveServer slaveServer, SlaveServer slaveServer2 ) {
@@ -434,10 +428,7 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
       return false;
     } else if ( !equals( slaveServer.getNonProxyHosts(), slaveServer2.getNonProxyHosts() ) ) {
       return false;
-    } else if ( !equals( slaveServer.isMaster(), slaveServer2.isMaster() ) ) {
-      return false;
-    }
-    return true;
+    } else return equals(slaveServer.isMaster(), slaveServer2.isMaster());
   }
 
   protected boolean equals( PartitionSchema partitionSchema, PartitionSchema partitionSchema2 ) {
@@ -447,11 +438,8 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
       return false;
     } else if ( !equals( partitionSchema.isDynamicallyDefined(), partitionSchema2.isDynamicallyDefined() ) ) {
       return false;
-    } else if ( !equals( partitionSchema.getNumberOfPartitionsPerSlave(), partitionSchema2
-        .getNumberOfPartitionsPerSlave() ) ) {
-      return false;
-    }
-    return true;
+    } else return equals(partitionSchema.getNumberOfPartitionsPerSlave(), partitionSchema2
+            .getNumberOfPartitionsPerSlave());
   }
 
   protected boolean equals( ClusterSchema clusterSchema, ClusterSchema clusterSchema2 ) {
@@ -467,10 +455,7 @@ public class RepositoryImporter implements IRepositoryImporter, CanLimitDirs {
       return false;
     } else if ( !equals( clusterSchema.isDynamic(), clusterSchema2.isDynamic() ) ) {
       return false;
-    } else if ( !equals( clusterSchema.getSlaveServers(), clusterSchema2.getSlaveServers() ) ) {
-      return false;
-    }
-    return true;
+    } else return equals(clusterSchema.getSlaveServers(), clusterSchema2.getSlaveServers());
   }
 
   private void replaceSharedObjects( AbstractMeta abstractMeta ) {

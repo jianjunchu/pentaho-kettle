@@ -43,7 +43,7 @@ public enum EncodingType {
    * @param length
    * @param bom
    */
-  private EncodingType( int length, int bom, int carriageReturnChar, int lineFeedChar ) {
+  EncodingType(int length, int bom, int carriageReturnChar, int lineFeedChar) {
     this.length = length;
     this.bom = bom;
     this.carriageReturnChar = carriageReturnChar;

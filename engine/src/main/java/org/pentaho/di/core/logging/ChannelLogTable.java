@@ -59,7 +59,7 @@ public class ChannelLogTable extends BaseLogTable implements Cloneable, LogTable
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 

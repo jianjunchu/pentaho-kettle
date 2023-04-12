@@ -199,7 +199,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
   }
 
   public StepMeta() {
-    this( (String) null, (String) null, (StepMetaInterface) null );
+    this((String) null, null, null);
   }
 
   @Override
@@ -559,7 +559,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
 
   public boolean hasChanged() {
     StepMetaInterface bsi = this.getStepMetaInterface();
-    return bsi != null ? bsi.hasChanged() : false;
+    return bsi != null && bsi.hasChanged();
   }
 
   public void setChanged( boolean ch ) {
@@ -724,7 +724,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
   }
 
   public StepMeta( ObjectId id_step ) {
-    this( (String) null, (String) null, (StepMetaInterface) null );
+    this((String) null, null, null);
     setObjectId( id_step );
   }
 
@@ -1046,10 +1046,7 @@ public class StepMeta extends SharedObjectBase implements Cloneable, Comparable<
     if ( !isPartitioned() && isTargetPartitioned() ) {
       return true;
     }
-    if ( isPartitioned() && isTargetPartitioned() && !stepPartitioningMeta.equals( targetStepPartitioningMeta ) ) {
-      return true;
-    }
-    return false;
+      return isPartitioned() && isTargetPartitioned() && !stepPartitioningMeta.equals(targetStepPartitioningMeta);
   }
 
   @Override

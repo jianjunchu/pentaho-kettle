@@ -61,7 +61,7 @@ public class DecimalToString extends Operator {
             }
         }else{
 //            throw new Exception("DecimalToString function: Parameter2's value error["+string2.toString()+"], possible values: fix_zero, suppress_zero");
-            throw new Exception("DecimalToString function: Parameter2's value error["+ String.valueOf(string2)+"], possible values: fix_zero, suppress_zero");
+            throw new Exception("DecimalToString function: Parameter2's value error["+ string2 +"], possible values: fix_zero, suppress_zero");
         }
         return string1;
     }

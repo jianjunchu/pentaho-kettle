@@ -27,19 +27,19 @@ import org.pentaho.di.trans.TransMeta;
 
 public interface RepositoryImportFeedbackInterface {
 
-  public void addLog( String line );
+  void addLog(String line);
 
-  public void setLabel( String labelText );
+  void setLabel(String labelText);
 
-  public void updateDisplay();
+  void updateDisplay();
 
-  public boolean transOverwritePrompt( TransMeta transMeta );
+  boolean transOverwritePrompt(TransMeta transMeta);
 
-  public boolean jobOverwritePrompt( JobMeta jobMeta );
+  boolean jobOverwritePrompt(JobMeta jobMeta);
 
-  public void showError( String title, String message, Exception e );
+  void showError(String title, String message, Exception e);
 
-  public boolean askContinueOnErrorQuestion( String title, String message );
+  boolean askContinueOnErrorQuestion(String title, String message);
 
-  public boolean isAskingOverwriteConfirmation();
+  boolean isAskingOverwriteConfirmation();
 }

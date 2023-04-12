@@ -299,7 +299,7 @@ public class ConcurrentMapProperties extends Properties {
   }
 
   @Override
-  public synchronized void loadFromXML( InputStream in ) throws IOException, InvalidPropertiesFormatException {
+  public synchronized void loadFromXML( InputStream in ) throws IOException {
     super.putAll( storageMap );
     super.loadFromXML( in );
     super.forEach( ( key, value ) -> storageMap.putIfAbsent( key, value ) );

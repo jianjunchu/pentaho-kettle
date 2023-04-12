@@ -34,6 +34,7 @@ import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.trans.steps.mock.StepMockHelper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -179,8 +180,8 @@ public class ReplaceStringTest {
     RowMetaInterface inputRowMeta = new RowMeta();
     byte[] array = { 0, 97, 0, 65, -1, 65, -1, 33 };
     byte[] matcharray = { -1, 33 };
-    String match = new String( matcharray , "UTF-16BE" );
-    Object[] _row = new Object[] { new String( array, "UTF-16BE" ), "another data" };
+    String match = new String( matcharray , StandardCharsets.UTF_16BE);
+    Object[] _row = new Object[] { new String( array, StandardCharsets.UTF_16BE), "another data" };
     doReturn( _row ).when( replaceString ).getRow();
     inputRowMeta.addValueMeta( 0, new ValueMetaString( "string" ) );
     ReplaceStringMeta meta = stepMockHelper.processRowsStepMetaInterface;

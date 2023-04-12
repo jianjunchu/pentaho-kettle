@@ -61,12 +61,12 @@ public class SharedObjectsMetaStore extends MemoryMetaStore implements IMetaStor
   }
 
   @Override
-  public void createNamespace( String namespace ) throws MetaStoreException, MetaStoreNamespaceExistsException {
+  public void createNamespace( String namespace ) throws MetaStoreException {
     throw new MetaStoreException( "The shared objects metadata store doesn't support creating namespaces" );
   }
 
   @Override
-  public void deleteNamespace( String namespace ) throws MetaStoreException, MetaStoreDependenciesExistsException {
+  public void deleteNamespace( String namespace ) throws MetaStoreException {
     throw new MetaStoreException( "The shared objects metadata store doesn't support deleting namespaces" );
   }
 
@@ -104,8 +104,7 @@ public class SharedObjectsMetaStore extends MemoryMetaStore implements IMetaStor
   }
 
   @Override
-  public void createElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException,
-    MetaStoreElementTypeExistsException {
+  public void createElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException {
     throw new MetaStoreException( "The shared objects metadata store doesn't support creating new element types" );
   }
 
@@ -115,8 +114,7 @@ public class SharedObjectsMetaStore extends MemoryMetaStore implements IMetaStor
   }
 
   @Override
-  public void deleteElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException,
-    MetaStoreDependenciesExistsException {
+  public void deleteElementType( String namespace, IMetaStoreElementType elementType ) throws MetaStoreException {
     throw new MetaStoreException( "The shared objects metadata store doesn't support deleting element types" );
   }
 
@@ -163,7 +161,7 @@ public class SharedObjectsMetaStore extends MemoryMetaStore implements IMetaStor
   }
 
   @Override
-  public void createElement( String namespace, IMetaStoreElementType elementType, IMetaStoreElement element ) throws MetaStoreException, MetaStoreElementExistException {
+  public void createElement( String namespace, IMetaStoreElementType elementType, IMetaStoreElement element ) throws MetaStoreException {
     try {
       IMetaStoreElement exists = getElementByName( namespace, elementType, element.getId() );
       if ( exists != null ) {

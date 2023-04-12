@@ -37,6 +37,7 @@ import org.pentaho.di.junit.rules.RestorePDIEngineEnvironment;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -119,7 +120,7 @@ public class CarteTest {
     Carte.callStopCarteRestService( "localhost", "8080", "admin", "Encrypted 2be98afc86aa7f2e4bb18bd63c99dbdde" );
 
     // the expected value is: "Basic <base64 encoded username:password>"
-    assertEquals( "Basic " + new String( Base64.getEncoder().encode( "admin:password".getBytes( "utf-8" ) ) ),
+    assertEquals( "Basic " + new String( Base64.getEncoder().encode( "admin:password".getBytes(StandardCharsets.UTF_8) ) ),
       getInternalState( client.getHeadHandler(), "authentication" ) );
   }
 }

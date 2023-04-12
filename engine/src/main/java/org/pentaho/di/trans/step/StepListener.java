@@ -39,7 +39,7 @@ public interface StepListener {
    * @param stepMeta
    * @param step
    */
-  public void stepActive( Trans trans, StepMeta stepMeta, StepInterface step );
+  void stepActive(Trans trans, StepMeta stepMeta, StepInterface step);
 
   /**
    * This method is called when a step completes all work and is finished.
@@ -48,5 +48,5 @@ public interface StepListener {
    * @param stepMeta
    * @param step
    */
-  public void stepFinished( Trans trans, StepMeta stepMeta, StepInterface step );
+  void stepFinished(Trans trans, StepMeta stepMeta, StepInterface step);
 }

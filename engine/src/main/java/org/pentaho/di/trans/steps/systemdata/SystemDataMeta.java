@@ -404,11 +404,7 @@ public class SystemDataMeta extends BaseStepMeta implements StepMetaInterface {
     if ( !Arrays.equals( fieldName, that.fieldName ) ) {
       return false;
     }
-    if ( !Arrays.equals( fieldType, that.fieldType ) ) {
-      return false;
-    }
-
-    return true;
+      return Arrays.equals(fieldType, that.fieldType);
   }
 
   @Override

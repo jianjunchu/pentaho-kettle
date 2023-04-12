@@ -182,7 +182,7 @@ public class DimensionLookupMetaTest implements InitializerInterface<StepMetaInt
     meta.setFieldLookup( new String[] { "field1" } );
     meta.setFieldStream( new String[] { "" } );
     meta.setDatabaseMeta( dbMeta );
-    doReturn( extraFields ).when( meta ).getDatabaseTableFields( (Database) anyObject(), anyString(), anyString() );
+    doReturn( extraFields ).when( meta ).getDatabaseTableFields(anyObject(), anyString(), anyString() );
     doReturn( mock( LogChannelInterface.class ) ).when( meta ).getLog();
 
     RowMeta row = new RowMeta();

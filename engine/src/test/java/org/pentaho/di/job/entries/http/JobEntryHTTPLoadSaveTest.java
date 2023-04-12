@@ -45,10 +45,10 @@ public class JobEntryHTTPLoadSaveTest extends JobEntryLoadSaveTestSupport<JobEnt
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "url", "targetFilename", "fileAppended", "dateTimeAdded",
-      "targetFilenameExtension", "uploadFilename", "runForEveryRow", "urlFieldname", "uploadFieldname",
-      "destinationFieldname", "username", "password", "proxyHostname", "proxyPort", "nonProxyHosts",
-      "addFilenameToResult", "headerName", "headerValue" } );
+    return Arrays.asList("url", "targetFilename", "fileAppended", "dateTimeAdded",
+            "targetFilenameExtension", "uploadFilename", "runForEveryRow", "urlFieldname", "uploadFieldname",
+            "destinationFieldname", "username", "password", "proxyHostname", "proxyPort", "nonProxyHosts",
+            "addFilenameToResult", "headerName", "headerValue");
   }
 
   @Override

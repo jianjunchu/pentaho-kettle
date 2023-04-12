@@ -396,8 +396,8 @@ public class TextFileOutputTest {
     Mockito.when( stepMockHelper.processRowsStepMetaInterface.isHeaderEnabled() ).thenReturn( isHeaderEnabled );
     Mockito.when( stepMockHelper.processRowsStepMetaInterface.getFileName() ).thenReturn( pathToFile );
     Mockito.when( stepMockHelper.processRowsStepMetaInterface.buildFilename( Mockito.anyString(), Mockito.anyString(),
-        ( (VariableSpace) Mockito.anyObject() ), Mockito.anyInt(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyBoolean(),
-        (TextFileOutputMeta) Mockito.anyObject() ) ).thenReturn( pathToFile );
+            Mockito.anyObject(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyInt(), Mockito.anyBoolean(),
+            Mockito.anyObject()) ).thenReturn( pathToFile );
 
     Mockito.when( stepMockHelper.processRowsStepMetaInterface.getOutputFields() ).thenReturn( textFileField );
 
@@ -409,7 +409,7 @@ public class TextFileOutputTest {
     RowMetaInterface inputRowMeta = Mockito.mock( RowMetaInterface.class );
     textFileOutput.setInputRowMeta( inputRowMeta );
 
-    Mockito.when( rowSet.getRowWait( Mockito.anyInt(), (TimeUnit) Mockito.anyObject() ) ).thenReturn( rows.isEmpty() ? null : rows.iterator()
+    Mockito.when( rowSet.getRowWait( Mockito.anyInt(), Mockito.anyObject()) ).thenReturn( rows.isEmpty() ? null : rows.iterator()
         .next() );
     Mockito.when( rowSet.getRowMeta() ).thenReturn( inputRowMeta );
     Mockito.when( inputRowMeta.clone() ).thenReturn( inputRowMeta );

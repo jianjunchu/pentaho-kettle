@@ -28,28 +28,28 @@ import org.pentaho.di.trans.step.errorhandling.StreamInterface;
 
 public interface StepIOMetaInterface {
 
-  public boolean isInputAcceptor();
+  boolean isInputAcceptor();
 
-  public boolean isOutputProducer();
+  boolean isOutputProducer();
 
-  public boolean isInputOptional();
+  boolean isInputOptional();
 
-  public boolean isSortedDataRequired();
+  boolean isSortedDataRequired();
 
-  public List<StreamInterface> getInfoStreams();
+  List<StreamInterface> getInfoStreams();
 
-  public List<StreamInterface> getTargetStreams();
+  List<StreamInterface> getTargetStreams();
 
-  public String[] getInfoStepnames();
+  String[] getInfoStepnames();
 
-  public String[] getTargetStepnames();
+  String[] getTargetStepnames();
 
   /**
    * Replace the info steps with the supplied source steps.
    *
    * @param infoSteps
    */
-  public void setInfoSteps( StepMeta[] infoSteps );
+  void setInfoSteps(StepMeta[] infoSteps);
 
   /**
    * Add a stream to the steps I/O interface
@@ -57,7 +57,7 @@ public interface StepIOMetaInterface {
    * @param stream
    *          The stream to add
    */
-  public void addStream( StreamInterface stream );
+  void addStream(StreamInterface stream);
 
   /**
    * Set the general info stream description
@@ -65,7 +65,7 @@ public interface StepIOMetaInterface {
    * @param string
    *          the info streams description
    */
-  public void setGeneralInfoDescription( String string );
+  void setGeneralInfoDescription(String string);
 
   /**
    * Set the general target stream description
@@ -73,41 +73,41 @@ public interface StepIOMetaInterface {
    * @param string
    *          the target streams description
    */
-  public void setGeneralTargetDescription( String string );
+  void setGeneralTargetDescription(String string);
 
   /**
    * @return the generalTargetDescription
    */
-  public String getGeneralTargetDescription();
+  String getGeneralTargetDescription();
 
   /**
    * @return the generalInfoDescription
    */
-  public String getGeneralInfoDescription();
+  String getGeneralInfoDescription();
 
   /**
    * @return true if the output targets of this step are dynamic (variable)
    */
-  public boolean isOutputDynamic();
+  boolean isOutputDynamic();
 
   /**
    * @param outputDynamic
    *          set to true if the output targets of this step are dynamic (variable)
    */
-  public void setOutputDynamic( boolean outputDynamic );
+  void setOutputDynamic(boolean outputDynamic);
 
   /**
    * @return true if the input info sources of this step are dynamic (variable)
    */
-  public boolean isInputDynamic();
+  boolean isInputDynamic();
 
   /**
    * @param inputDynamic
    *          set to true if the input info sources of this step are dynamic (variable)
    */
-  public void setInputDynamic( boolean inputDynamic );
+  void setInputDynamic(boolean inputDynamic);
 
-  public StreamInterface findTargetStream( StepMeta targetStep );
+  StreamInterface findTargetStream(StepMeta targetStep);
 
-  public StreamInterface findInfoStream( StepMeta infoStep );
+  StreamInterface findInfoStream(StepMeta infoStep);
 }

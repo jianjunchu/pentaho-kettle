@@ -6337,7 +6337,7 @@ public class TransMeta extends AbstractMeta
   }
 
   public void removeMissingTrans( MissingTrans trans ) {
-    if ( missingTrans != null && trans != null && missingTrans.contains( trans ) ) {
+    if ( missingTrans != null && trans != null) {
       missingTrans.remove( trans );
     }
   }

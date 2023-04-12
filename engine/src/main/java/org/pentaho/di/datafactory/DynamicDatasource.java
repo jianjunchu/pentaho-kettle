@@ -36,7 +36,7 @@ public interface DynamicDatasource {
    *
    * @return fully qualified class name of dialog class; must implement <code>BaseStepGenericXulDialog</code> @
    */
-  public String getDialogClass();
+  String getDialogClass();
 
   /**
    * Return the name of the Kettle transformation template that holds the uninitialized input step. The template should
@@ -44,27 +44,27 @@ public interface DynamicDatasource {
    *
    * @return template name as String
    */
-  public String getTemplate();
+  String getTemplate();
 
   /**
    * The name of the resource to embed the transformation as.
    *
    * @return resource name as String
    */
-  public String getResourceEntryName();
+  String getResourceEntryName();
 
   /**
    * The name of the step that represents the datasource, as it appears in the Kettle transformation template.
    *
    * @return the step name as String
    */
-  public String getStepName();
+  String getStepName();
 
   /**
    * The name of the query as it appears in the UI of the receiver module. TODO: this should be localizable.
    *
    * @return the query name as String
    */
-  public String getQueryName();
+  String getQueryName();
 
 }

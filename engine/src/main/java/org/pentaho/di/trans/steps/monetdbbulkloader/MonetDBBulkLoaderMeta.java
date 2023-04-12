@@ -976,7 +976,7 @@ public class MonetDBBulkLoaderMeta extends BaseStepMeta implements StepMetaInjec
         }
         if ( !Utils.isEmpty( getFieldStream() ) ) {
           for ( int i = 0; i < getFieldStream().length; i++ ) {
-            logDetailed( "row " + Integer.toString( i ) + ": stream=" + getFieldStream()[i]
+            logDetailed( "row " + i + ": stream=" + getFieldStream()[i]
                 + " : table=" + getFieldTable()[i] );
           }
         }
@@ -1032,7 +1032,7 @@ public class MonetDBBulkLoaderMeta extends BaseStepMeta implements StepMetaInjec
     try {
       monetDBVersion = getMonetDBVersion();
       this.compatibilityDbVersionMode =
-          monetDBVersion.compareTo( MonetDbVersion.JAN_2014_SP2_DB_VERSION ) < 0 ? false : true;
+              monetDBVersion.compareTo(MonetDbVersion.JAN_2014_SP2_DB_VERSION) >= 0;
       if ( isDebug() && this.compatibilityDbVersionMode ) {
         logDebug( BaseMessages.getString( PKG, "MonetDBVersion.Info.UsingCompatibilityMode",
             MonetDbVersion.JAN_2014_SP2_DB_VERSION ) );

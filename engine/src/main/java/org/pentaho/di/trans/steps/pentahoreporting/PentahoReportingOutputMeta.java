@@ -70,7 +70,7 @@ public class PentahoReportingOutputMeta extends BaseStepMeta implements StepMeta
     private String code;
     private String description;
 
-    private ProcessorType( String code, String description ) {
+    ProcessorType(String code, String description) {
       this.code = code;
       this.description = description;
     }

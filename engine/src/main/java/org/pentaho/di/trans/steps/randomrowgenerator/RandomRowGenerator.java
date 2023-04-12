@@ -195,7 +195,7 @@ public class RandomRowGenerator extends BaseStep implements StepInterface {
     return new RowMetaAndData( rowMeta, rowData );
   }
 
-    private static Object buildField(ValueMetaInterface valueMeta, String stringValue, String stringMinValue, String stringMaxValue, String stringEnumValue, String stringPrefixValue, String stringSuffiexValue, String stringCharacterTypeValue) throws KettlePluginException, KettleValueException,Exception {
+    private static Object buildField(ValueMetaInterface valueMeta, String stringValue, String stringMinValue, String stringMaxValue, String stringEnumValue, String stringPrefixValue, String stringSuffiexValue, String stringCharacterTypeValue) throws Exception {
         ValueMetaInterface stringMeta =
                 ValueMetaFactory.cloneValueMeta( valueMeta, ValueMetaInterface.TYPE_STRING );
         java.util.Random random = new java.util.Random();
@@ -214,7 +214,7 @@ public class RandomRowGenerator extends BaseStep implements StepInterface {
                 if(!isEmpty(stringSuffiexValue))
                     leng -= stringSuffiexValue.length();
                 //    resultValue=leng+"";
-                resultValue= ZhCharacterUtil.generateRandomCharacters(leng);;
+                resultValue= ZhCharacterUtil.generateRandomCharacters(leng);
             }
             else if (stringCharacterTypeValue.equals("UUID"))
                 resultValue= ZhCharacterUtil.generateUUID();

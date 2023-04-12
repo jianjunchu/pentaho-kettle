@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class RepositoryExporterTest {
     Answer<JobMeta> jobLoader = new Answer<JobMeta>() {
       @Override
       public JobMeta answer( InvocationOnMock invocation ) throws Throwable {
-        String jobName = String.class.cast( invocation.getArguments()[ 0 ] );
+        String jobName = (String) invocation.getArguments()[0];
         JobMeta jobMeta = Mockito.mock( JobMeta.class );
         Mockito.when( jobMeta.getXML() ).thenReturn( "<" + jobName + ">" + "found" + "</" + jobName + ">" );
         Mockito.when( jobMeta.getName() ).thenReturn( jobName );
@@ -110,7 +111,7 @@ public class RepositoryExporterTest {
     Answer<TransMeta> transLoader = new Answer<TransMeta>() {
       @Override
       public TransMeta answer( InvocationOnMock invocation ) throws Throwable {
-        String transName = String.class.cast( invocation.getArguments()[ 0 ] );
+        String transName = (String) invocation.getArguments()[0];
         TransMeta transMeta = Mockito.mock( TransMeta.class );
         Mockito.when( transMeta.getXML() ).thenReturn( "<" + transName + ">" + "found" + "</" + transName + ">" );
         Mockito.when( transMeta.getName() ).thenReturn( transName );
@@ -235,7 +236,7 @@ public class RepositoryExporterTest {
   private String validateXmlFile( InputStream is, String xpath ) throws Exception {
     XPath xPath = XPathFactory.newInstance().newXPath();
     XPathExpression expression = xPath.compile( xpath );
-    BufferedReader in = new BufferedReader( new InputStreamReader( is, "UTF8" ) );
+    BufferedReader in = new BufferedReader( new InputStreamReader( is, StandardCharsets.UTF_8) );
     InputSource input = new InputSource( in );
     String result = expression.evaluate( input );
 

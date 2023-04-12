@@ -71,11 +71,11 @@ public class JobEntryFolderIsEmptyTest {
 
     job.setStopped( false );
 
-    File dir = Files.createTempDirectory( "dir", new FileAttribute<?>[0] ).toFile();
+    File dir = Files.createTempDirectory( "dir").toFile();
     dir.deleteOnExit();
     emptyDir = dir.getPath();
 
-    dir = Files.createTempDirectory( "dir", new FileAttribute<?>[0] ).toFile();
+    dir = Files.createTempDirectory( "dir").toFile();
     dir.deleteOnExit();
     nonEmptyDir = dir.getPath();
 

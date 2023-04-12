@@ -78,13 +78,12 @@ public class KettleDatabaseRepositoryStepDelegateUnitTest {
     when( connectionDelegate.getDatabaseMeta() ).thenReturn( databaseMeta );
     when( databaseMeta.quoteField( anyString() ) ).thenAnswer( new Answer<String>() {
       @Override public String answer( InvocationOnMock invocationOnMock ) throws Throwable {
-        return "QUOTE_" + String.valueOf( invocationOnMock.getArguments()[ 0 ] + "_QUOTE" );
+        return "QUOTE_" + invocationOnMock.getArguments()[0] + "_QUOTE";
       }
     } );
     when( databaseMeta.getQuotedSchemaTableCombination( anyString(), anyString() ) ).thenAnswer( new Answer<String>() {
       @Override public String answer( InvocationOnMock invocationOnMock ) throws Throwable {
-        return "QUOTE_" + String.valueOf( invocationOnMock.getArguments()[ 0 ] ) + "____" + String
-          .valueOf( invocationOnMock.getArguments()[ 1 ] + "_QUOTE" );
+        return "QUOTE_" + invocationOnMock.getArguments()[0] + "____" + invocationOnMock.getArguments()[1] + "_QUOTE";
       }
     } );
     when( connectionDelegate.getDatabaseMeta() ).thenReturn( databaseMeta );

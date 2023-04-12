@@ -39,7 +39,7 @@ public class JobEntryTableExistsLoadSaveTest extends JobEntryLoadSaveTestSupport
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "tablename", "schemaname", "database" } );
+    return Arrays.asList("tablename", "schemaname", "database");
   }
 
 }

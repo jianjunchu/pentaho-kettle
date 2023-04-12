@@ -183,11 +183,8 @@ public class WriteToLog extends BaseStep implements StepInterface {
     meta = (WriteToLogMeta) smi;
     data = (WriteToLogData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
 }

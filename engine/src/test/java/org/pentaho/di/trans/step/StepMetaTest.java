@@ -120,7 +120,7 @@ public class StepMetaTest {
     meta.setStepPartitioningMeta( createStepPartitioningMeta( "stepMethod", "stepSchema" ) );
     meta.setTargetStepPartitioningMeta( createStepPartitioningMeta( "targetMethod", "targetSchema" ) );
 
-    meta.setClusterSchema( new ClusterSchema( "cluster_schema", Collections.<SlaveServer>emptyList() ) );
+    meta.setClusterSchema( new ClusterSchema( "cluster_schema", Collections.emptyList() ) );
 
     return meta;
   }
@@ -131,7 +131,7 @@ public class StepMetaTest {
 
   private static StepPartitioningMeta createStepPartitioningMeta( String method, String schemaName ) throws Exception {
     StepPartitioningMeta meta = new StepPartitioningMeta( method, new PartitionSchema( schemaName,
-      Collections.<String>emptyList() ) );
+      Collections.emptyList() ) );
     meta.setPartitionSchemaName( "schema_name" );
     return meta;
   }

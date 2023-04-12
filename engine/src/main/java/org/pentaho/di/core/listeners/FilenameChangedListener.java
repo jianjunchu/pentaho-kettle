@@ -39,5 +39,5 @@ public interface FilenameChangedListener {
    * @param newFilename
    *          the new filename
    */
-  public void filenameChanged( Object object, String oldFilename, String newFilename );
+  void filenameChanged(Object object, String oldFilename, String newFilename);
 }

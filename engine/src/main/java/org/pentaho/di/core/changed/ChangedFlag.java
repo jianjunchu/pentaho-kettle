@@ -41,9 +41,7 @@ public class ChangedFlag implements ChangedFlagInterface {
   }
 
   private synchronized void validateAdd( PDIObserver o ) {
-    if ( !obs.contains( o ) ) {
       obs.add( o );
-    }
   }
 
   public void deleteObserver( PDIObserver o ) {

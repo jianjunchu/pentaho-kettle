@@ -84,8 +84,8 @@ public abstract class AbstractBaseCommandExecutor {
                                               String processingEndAfterLongMsgTkn, String processingEndAfterLongerMsgTkn,
                                               String processingEndAfterLongestMsgTkn ) {
 
-    String begin = getDateFormat().format( start ).toString();
-    String end = getDateFormat().format( stop ).toString();
+    String begin = getDateFormat().format( start );
+    String end = getDateFormat().format( stop );
 
     getLog().logMinimal( BaseMessages.getString( getPkgClazz(), startStopMsgTkn, begin, end ) );
 
@@ -157,12 +157,12 @@ public abstract class AbstractBaseCommandExecutor {
   }
 
   public Repository establishRepositoryConnection( RepositoryMeta repositoryMeta, final String username, final String password,
-                                                     final RepositoryOperation... operations ) throws KettleException, KettleSecurityException {
+                                                     final RepositoryOperation... operations ) throws KettleException {
 
     Repository rep = PluginRegistry.getInstance().loadClass( RepositoryPluginType.class, repositoryMeta, Repository.class );
     rep.init( repositoryMeta );
     rep.getLog().setLogLevel( getLog().getLogLevel() );
-    rep.connect( username != null ? username : null, password != null ? password : null );
+    rep.connect(username, password);
 
     if ( operations != null ) {
       // throws KettleSecurityException if username does does have permission for given operations

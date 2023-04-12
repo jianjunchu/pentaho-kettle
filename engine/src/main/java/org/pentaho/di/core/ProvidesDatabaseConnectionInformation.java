@@ -38,21 +38,21 @@ public interface ProvidesDatabaseConnectionInformation {
    *
    * @return
    */
-  public DatabaseMeta getDatabaseMeta();
+  DatabaseMeta getDatabaseMeta();
 
   /**
    * Returns the table name for this step
    *
    * @return
    */
-  public String getTableName();
+  String getTableName();
 
   /**
    * Returns the schema name for this step.
    *
    * @return
    */
-  public String getSchemaName();
+  String getSchemaName();
 
   /**
    * Provides a way for this object to return a custom message when database connection information is incomplete or
@@ -60,6 +60,6 @@ public interface ProvidesDatabaseConnectionInformation {
    *
    * @return A friendly message that describes that database connection information is missing and, potentially, why.
    */
-  public String getMissingDatabaseConnectionInformationMessage();
+  String getMissingDatabaseConnectionInformationMessage();
 
 }

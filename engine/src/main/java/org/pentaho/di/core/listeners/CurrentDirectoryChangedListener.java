@@ -27,6 +27,6 @@ package org.pentaho.di.core.listeners;
  */
 public interface CurrentDirectoryChangedListener {
 
-  public void directoryChanged( Object origin, String previous, String current );
+  void directoryChanged(Object origin, String previous, String current);
 
 }

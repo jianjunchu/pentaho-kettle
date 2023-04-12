@@ -152,6 +152,6 @@ public class StepMockHelper<Meta extends StepMetaInterface, Data extends StepDat
         }
         return false;
       }
-    } ).when( log ).println( (LogMessageInterface) anyObject(), (LogLevel) anyObject() );
+    } ).when( log ).println(anyObject(), anyObject());
   }
 }

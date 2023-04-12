@@ -40,7 +40,7 @@ public interface TransListener {
    * @param trans
    * @throws KettleException
    */
-  public void transActive( Trans trans );
+  void transActive(Trans trans);
 
   /**
    * The transformation has finished.
@@ -48,5 +48,5 @@ public interface TransListener {
    * @param trans
    * @throws KettleException
    */
-  public void transFinished( Trans trans ) throws KettleException;
+  void transFinished(Trans trans) throws KettleException;
 }

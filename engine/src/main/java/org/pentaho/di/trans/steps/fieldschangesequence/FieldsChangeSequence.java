@@ -173,11 +173,8 @@ public class FieldsChangeSequence extends BaseStep implements StepInterface {
     meta = (FieldsChangeSequenceMeta) smi;
     data = (FieldsChangeSequenceData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
       // Add init code here.
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
   @Override

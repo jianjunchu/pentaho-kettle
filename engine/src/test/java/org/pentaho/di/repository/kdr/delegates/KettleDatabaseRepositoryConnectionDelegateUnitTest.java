@@ -88,7 +88,7 @@ public class KettleDatabaseRepositoryConnectionDelegateUnitTest {
     when( database.getRows( eq( "SELECT " + lookupfield + ", " + idfield + " FROM " + tablename ), any(
         RowMetaInterface.class ),
       eq( new Object[] {} ), eq( ResultSet.FETCH_FORWARD ),
-      eq( false ), eq( -1 ), eq( (ProgressMonitorListener) null ) ) ).thenReturn( rows );
+      eq( false ), eq( -1 ), eq(null) ) ).thenReturn( rows );
     Map<String, LongObjectId> valueToIdMap =
       kettleDatabaseRepositoryConnectionDelegate.getValueToIdMap( tablename, idfield, lookupfield );
     assertEquals( 1, valueToIdMap.size() );

@@ -36,7 +36,7 @@ public interface ContentChangedListener {
    * @param parentObject
    *          The changed object.
    */
-  public void contentChanged( Object parentObject );
+  void contentChanged(Object parentObject);
 
   /**
    * This method will be called when the parent object has been declared safe (or saved, persisted, ...)
@@ -44,5 +44,5 @@ public interface ContentChangedListener {
    * @param parentObject
    *          The safe object.
    */
-  public void contentSafe( Object parentObject );
+  void contentSafe(Object parentObject);
 }

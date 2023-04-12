@@ -39,10 +39,10 @@ public class JobEntryExportRepositoryLoadSaveTest extends JobEntryLoadSaveTestSu
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "repositoryname", "username", "password", "targetfilename",
-      "ifFileExists", "exportType", "directory", "addDate", "addTime", "SpecifyFormat",
-      "date_time_format", "createFolder", "newFolder", "addresultfilesname", "nrLimit",
-      "successCondition" } );
+    return Arrays.asList("repositoryname", "username", "password", "targetfilename",
+            "ifFileExists", "exportType", "directory", "addDate", "addTime", "SpecifyFormat",
+            "date_time_format", "createFolder", "newFolder", "addresultfilesname", "nrLimit",
+            "successCondition");
   }
 
 }

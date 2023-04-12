@@ -202,20 +202,20 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
 
     StringBuilder contents = new StringBuilder( 500 );
     contents.append( "OPTIONS(" ).append( Const.CR );
-    contents.append( "  ERRORS=\'" ).append( meta.getMaxErrors() ).append( "\'" ).append( Const.CR );
+    contents.append("  ERRORS='").append( meta.getMaxErrors() ).append("'").append( Const.CR );
 
     if ( meta.getCommitSizeAsInt( this ) != 0 && !( meta.isDirectPath() && getStepMeta().getCopies() > 1 ) ) {
       // For the second part of the above expressions: ROWS is not supported
       // in parallel mode (by sqlldr).
-      contents.append( "  , ROWS=\'" ).append( meta.getCommitSize() ).append( "\'" ).append( Const.CR );
+      contents.append("  , ROWS='").append( meta.getCommitSize() ).append("'").append( Const.CR );
     }
 
     if ( meta.getBindSizeAsInt( this ) != 0 ) {
-      contents.append( "  , BINDSIZE=\'" ).append( meta.getBindSize() ).append( "\'" ).append( Const.CR );
+      contents.append("  , BINDSIZE='").append( meta.getBindSize() ).append("'").append( Const.CR );
     }
 
     if ( meta.getReadSizeAsInt( this ) != 0 ) {
-      contents.append( "  , READSIZE=\'" ).append( meta.getReadSize() ).append( "\'" ).append( Const.CR );
+      contents.append("  , READSIZE='").append( meta.getReadSize() ).append("'").append( Const.CR );
     }
 
     contents.append( ")" ).append( Const.CR );
@@ -365,9 +365,9 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
         FileObject fileObject =
           KettleVFS.getFileObject( environmentSubstitute( meta.getControlFile() ), getTransMeta() );
 
-        sb.append( " control=\'" );
+        sb.append(" control='");
         sb.append( KettleVFS.getFilename( fileObject ) );
-        sb.append( "\'" );
+        sb.append("'");
       } catch ( KettleFileException ex ) {
         throw new KettleException( "Error retrieving controlfile string", ex );
       }
@@ -376,7 +376,7 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
     }
 
     if ( OraBulkLoaderMeta.METHOD_AUTO_CONCURRENT.equals( meta.getLoadMethod() ) ) {
-      sb.append( " data=\'-\'" );
+      sb.append(" data='-'");
     }
 
     if ( meta.getLogFile() != null ) {
@@ -384,9 +384,9 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
         FileObject fileObject =
           KettleVFS.getFileObject( environmentSubstitute( meta.getLogFile() ), getTransMeta() );
 
-        sb.append( " log=\'" );
+        sb.append(" log='");
         sb.append( KettleVFS.getFilename( fileObject ) );
-        sb.append( "\'" );
+        sb.append("'");
       } catch ( KettleFileException ex ) {
         throw new KettleException( "Error retrieving logfile string", ex );
       }
@@ -397,9 +397,9 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
         FileObject fileObject =
           KettleVFS.getFileObject( environmentSubstitute( meta.getBadFile() ), getTransMeta() );
 
-        sb.append( " bad=\'" );
+        sb.append(" bad='");
         sb.append( KettleVFS.getFilename( fileObject ) );
-        sb.append( "\'" );
+        sb.append("'");
       } catch ( KettleFileException ex ) {
         throw new KettleException( "Error retrieving badfile string", ex );
       }
@@ -410,9 +410,9 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
         FileObject fileObject =
           KettleVFS.getFileObject( environmentSubstitute( meta.getDiscardFile() ), getTransMeta() );
 
-        sb.append( " discard=\'" );
+        sb.append(" discard='");
         sb.append( KettleVFS.getFilename( fileObject ) );
-        sb.append( "\'" );
+        sb.append("'");
       } catch ( KettleFileException ex ) {
         throw new KettleException( "Error retrieving discardfile string", ex );
       }
@@ -488,7 +488,7 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
       }
     } catch ( Exception ex ) {
       // Don't throw the message upwards, the message contains the password.
-      throw new KettleException( "Error while executing sqlldr \'" + createCommandLine( meta, false ) + "\'" );
+      throw new KettleException("Error while executing sqlldr '" + createCommandLine( meta, false ) + "'");
     }
 
     return true;
@@ -633,8 +633,8 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
             fileObject.delete();
             fileObject.close();
           } catch ( Exception ex ) {
-            logError( "Error deleting control file \'"
-              + KettleVFS.getFilename( fileObject ) + "\': " + ex.getMessage(), ex );
+            logError("Error deleting control file '"
+              + KettleVFS.getFilename( fileObject ) + "': " + ex.getMessage(), ex );
           }
         }
       }
@@ -647,14 +647,14 @@ public class OraBulkLoader extends BaseStep implements StepInterface {
             fileObject.delete();
             fileObject.close();
           } catch ( Exception ex ) {
-            logError( "Error deleting data file \'"
-              + KettleVFS.getFilename( fileObject ) + "\': " + ex.getMessage(), ex );
+            logError("Error deleting data file '"
+              + KettleVFS.getFilename( fileObject ) + "': " + ex.getMessage(), ex );
           }
         }
       }
 
       if ( OraBulkLoaderMeta.METHOD_MANUAL.equals( method ) ) {
-        logBasic( "Deletion of files is not compatible with \'manual load method\'" );
+        logBasic("Deletion of files is not compatible with 'manual load method'");
       }
     }
   }

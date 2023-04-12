@@ -250,11 +250,7 @@ public class JobEntryFoldersCompare extends JobEntryBase implements Cloneable, J
           return false;
         }
       }
-      if ( in1.available() != in2.available() ) {
-        return false;
-      } else {
-        return true;
-      }
+        return in1.available() == in2.available();
     } catch ( IOException e ) {
       throw new KettleFileException( e );
     } finally {
@@ -371,17 +367,17 @@ public class JobEntryFoldersCompare extends JobEntryBase implements Cloneable, J
                     ok = false;
                     if ( log.isDetailed() ) {
                       logDetailed( BaseMessages.getString(
-                        PKG, "JobFoldersCompare.Log.FileCanNotBeFoundIn", entree.getKey().toString(),
+                        PKG, "JobFoldersCompare.Log.FileCanNotBeFoundIn", entree.getKey(),
                         realFilename2 ) );
                     }
                   } else {
                     if ( log.isDebug() ) {
                       logDebug( BaseMessages.getString( PKG, "JobFoldersCompare.Log.FileIsFoundIn", entree
-                        .getKey().toString(), realFilename2 ) );
+                        .getKey(), realFilename2 ) );
                     }
 
-                    filefolder1 = KettleVFS.getFileObject( entree.getValue().toString(), this );
-                    filefolder2 = KettleVFS.getFileObject( collection2.get( entree.getKey() ).toString(), this );
+                    filefolder1 = KettleVFS.getFileObject(entree.getValue(), this );
+                    filefolder2 = KettleVFS.getFileObject(collection2.get( entree.getKey() ), this );
 
                     if ( !filefolder2.getType().equals( filefolder1.getType() ) ) {
                       // The file1 exist in the folder2..but they don't have the same type
@@ -462,8 +458,7 @@ public class JobEntryFoldersCompare extends JobEntryBase implements Cloneable, J
                 // The 2 folders don't have the same files number
                 if ( log.isDetailed() ) {
                   logDetailed( BaseMessages.getString(
-                    PKG, "JobFoldersCompare.Log.FoldersDifferentFiles", realFilename1.toString(), realFilename2
-                      .toString() ) );
+                    PKG, "JobFoldersCompare.Log.FoldersDifferentFiles", realFilename1, realFilename2) );
                 }
               }
 

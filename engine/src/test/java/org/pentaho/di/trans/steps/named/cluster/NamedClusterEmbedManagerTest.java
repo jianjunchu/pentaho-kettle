@@ -101,7 +101,7 @@ public class NamedClusterEmbedManagerTest {
   @Test
   public void testRegisterUrlFullVariable() throws Exception {
     when( mockNamedClusterService.listNames( mockMeta.getMetaStore() ) )
-      .thenReturn( Arrays.asList( new String[] { CLUSTER1_NAME, CLUSTER2_NAME } ) );
+      .thenReturn( Arrays.asList(CLUSTER1_NAME, CLUSTER2_NAME) );
 
     namedClusterEmbedManager.registerUrl( "${variable)" );
     verify( mockMetaStoreFactory ).saveElement( mockNamedCluster1 );
@@ -112,7 +112,7 @@ public class NamedClusterEmbedManagerTest {
   @Test
   public void testRegisterUrlClusterVariable() throws Exception {
     when( mockNamedClusterService.listNames( mockMeta.getMetaStore() ) )
-      .thenReturn( Arrays.asList( new String[] { CLUSTER1_NAME, CLUSTER2_NAME } ) );
+      .thenReturn( Arrays.asList(CLUSTER1_NAME, CLUSTER2_NAME) );
 
     namedClusterEmbedManager.registerUrl( "hc://${variable)/dir1/file" );
     verify( mockMetaStoreFactory ).saveElement( mockNamedCluster1 );
@@ -129,7 +129,7 @@ public class NamedClusterEmbedManagerTest {
   @Test
   public void testClear() throws Exception {
     when( mockMetaStoreFactory.getElements() )
-      .thenReturn( Arrays.asList( new NamedClusterOsgi[] { mockNamedCluster1, mockNamedCluster2 } ) );
+      .thenReturn( Arrays.asList(mockNamedCluster1, mockNamedCluster2) );
 
     namedClusterEmbedManager.clear( );
     verify( mockMetaStoreFactory ).deleteElement( CLUSTER1_NAME );

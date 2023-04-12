@@ -1093,7 +1093,7 @@ public class SlaveServer extends ChangedFlag implements Cloneable, SharedObjectI
     String address = inetAddress.getHostAddress();
 
     String service = AllocateServerSocketServlet.CONTEXT_PATH + "/?";
-    service += AllocateServerSocketServlet.PARAM_RANGE_START + "=" + Integer.toString( portRangeStart );
+    service += AllocateServerSocketServlet.PARAM_RANGE_START + "=" + portRangeStart;
     service += "&" + AllocateServerSocketServlet.PARAM_ID + "=" + URLEncoder.encode( runId, "UTF-8" );
     service += "&" + AllocateServerSocketServlet.PARAM_HOSTNAME + "=" + address;
     service +=
@@ -1313,7 +1313,7 @@ public class SlaveServer extends ChangedFlag implements Cloneable, SharedObjectI
       String xml =
         execService( NextSequenceValueServlet.CONTEXT_PATH + "/" + "?" + NextSequenceValueServlet.PARAM_NAME + "="
           + URLEncoder.encode( slaveSequenceName, "UTF-8" ) + "&" + NextSequenceValueServlet.PARAM_INCREMENT + "="
-          + Long.toString( incrementValue ) );
+          + incrementValue);
 
       Document doc = XMLHandler.loadXMLString( xml );
       Node seqNode = XMLHandler.getSubNode( doc, NextSequenceValueServlet.XML_TAG );

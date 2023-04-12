@@ -816,7 +816,7 @@ public class JobEntryEvalFilesMetrics extends JobEntryBase implements Cloneable,
     } catch ( Exception e ) {
       incrementErrors();
       logError( BaseMessages.getString(
-        PKG, "JobEvalFilesMetrics.Error.Exception.Processing", realSourceFilefoldername.toString(), e
+        PKG, "JobEvalFilesMetrics.Error.Exception.Processing", realSourceFilefoldername, e
           .getMessage() ) );
 
     } finally {

@@ -65,7 +65,7 @@ public class LoadSaveTester<T extends JobEntryInterface> extends LoadSaveBase<T>
                          Map<String, String> getterMap, Map<String, String> setterMap,
                          Map<String, FieldLoadSaveValidator<?>> fieldLoadSaveValidatorAttributeMap,
                          Map<String, FieldLoadSaveValidator<?>> fieldLoadSaveValidatorTypeMap ) {
-    this( clazz, commonAttributes, Arrays.<String>asList(), Arrays.<String>asList(), getterMap, setterMap,
+    this( clazz, commonAttributes, Arrays.asList(), Arrays.asList(), getterMap, setterMap,
       fieldLoadSaveValidatorAttributeMap, fieldLoadSaveValidatorTypeMap );
   }
 
@@ -78,7 +78,7 @@ public class LoadSaveTester<T extends JobEntryInterface> extends LoadSaveBase<T>
 
   public LoadSaveTester( Class<T> clazz, List<String> commonAttributes,
                          Map<String, String> getterMap, Map<String, String> setterMap ) {
-    this( clazz, commonAttributes, Arrays.<String>asList(), Arrays.<String>asList(), getterMap, setterMap,
+    this( clazz, commonAttributes, Arrays.asList(), Arrays.asList(), getterMap, setterMap,
       new HashMap<String, FieldLoadSaveValidator<?>>(), new HashMap<String, FieldLoadSaveValidator<?>>() );
   }
 

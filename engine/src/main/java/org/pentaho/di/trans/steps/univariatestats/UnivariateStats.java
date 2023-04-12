@@ -261,9 +261,6 @@ public class UnivariateStats extends BaseStep implements StepInterface {
     m_meta = (UnivariateStatsMeta) smi;
     m_data = (UnivariateStatsData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 }

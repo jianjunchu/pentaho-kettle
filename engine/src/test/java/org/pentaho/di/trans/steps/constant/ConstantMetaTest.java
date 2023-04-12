@@ -99,7 +99,7 @@ public class ConstantMetaTest implements InitializerInterface<ConstantMeta> {
   @Override
   public void modify( ConstantMeta someMeta ) {
     if ( someMeta instanceof ConstantMeta ) {
-      ( (ConstantMeta) someMeta ).allocate( 5 );
+      someMeta.allocate( 5 );
     }
   }
 

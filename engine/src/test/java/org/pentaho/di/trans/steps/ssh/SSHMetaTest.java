@@ -84,7 +84,7 @@ public class SSHMetaTest {
 
   @Test
   public void testRoundTrips() throws KettleException {
-    List<String> commonFields = Arrays.<String>asList( "dynamicCommandField", "command", "commandfieldname", "port",
+    List<String> commonFields = Arrays.asList( "dynamicCommandField", "command", "commandfieldname", "port",
       "servername", "userName", "password", "usePrivateKey", "keyFileName", "passPhrase", "stdOutFieldName",
       "stdErrFieldName", "timeOut", "proxyHost", "proxyPort", "proxyUsername", "proxyPassword" );
 

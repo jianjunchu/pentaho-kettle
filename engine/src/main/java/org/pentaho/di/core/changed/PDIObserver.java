@@ -23,6 +23,6 @@
 package org.pentaho.di.core.changed;
 
 public interface PDIObserver {
-  public void update( ChangedFlagInterface o, Object arg );
+  void update(ChangedFlagInterface o, Object arg);
 
 }

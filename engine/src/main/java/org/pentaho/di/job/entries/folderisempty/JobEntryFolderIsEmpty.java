@@ -285,8 +285,7 @@ public class JobEntryFolderIsEmpty extends JobEntryBase implements Cloneable, Jo
           if ( ( info.getFile().getType() == FileType.FILE ) ) {
             if ( info.getFile().getParent().equals( info.getBaseFolder() ) ) {
               // We are in the Base folder
-              if ( ( isSpecifyWildcard() && GetFileWildcard( info.getFile().getName().getBaseName() ) )
-                || !isSpecifyWildcard() ) {
+              if (!isSpecifyWildcard() || GetFileWildcard(info.getFile().getName().getBaseName())) {
                 if ( log.isDetailed() ) {
                   log.logDetailed( "We found file : " + info.getFile().toString() );
                 }
@@ -296,8 +295,7 @@ public class JobEntryFolderIsEmpty extends JobEntryBase implements Cloneable, Jo
               // We are not in the base Folder...ONLY if Use sub folders
               // We are in the Base folder
               if ( isIncludeSubFolders() ) {
-                if ( ( isSpecifyWildcard() && GetFileWildcard( info.getFile().getName().getBaseName() ) )
-                  || !isSpecifyWildcard() ) {
+                if (!isSpecifyWildcard() || GetFileWildcard(info.getFile().getName().getBaseName())) {
                   if ( log.isDetailed() ) {
                     log.logDetailed( "We found file : " + info.getFile().toString() );
                   }

@@ -43,15 +43,15 @@ public interface UndoInterface {
    * @param nextAlso
    *          indicates that the next undo operation needs to follow this one.
    */
-  public void addUndo( Object[] from, Object[] to, int[] pos, Point[] prev, Point[] curr, int type_of_change,
-    boolean nextAlso );
+  void addUndo(Object[] from, Object[] to, int[] pos, Point[] prev, Point[] curr, int type_of_change,
+               boolean nextAlso);
 
   /**
    * Get the maximum number of undo operations possible
    *
    * @return The maximum number of undo operations that are allowed.
    */
-  public int getMaxUndo();
+  int getMaxUndo();
 
   /**
    * Sets the maximum number of undo operations that are allowed.
@@ -59,41 +59,41 @@ public interface UndoInterface {
    * @param mu
    *          The maximum number of undo operations that are allowed.
    */
-  public void setMaxUndo( int mu );
+  void setMaxUndo(int mu);
 
   /**
    * Get the previous undo operation and change the undo pointer
    *
    * @return The undo transaction to be performed.
    */
-  public TransAction previousUndo();
+  TransAction previousUndo();
 
   /**
    * View current undo, don't change undo position
    *
    * @return The current undo transaction
    */
-  public TransAction viewThisUndo();
+  TransAction viewThisUndo();
 
   /**
    * View previous undo, don't change undo position
    *
    * @return The previous undo transaction
    */
-  public TransAction viewPreviousUndo();
+  TransAction viewPreviousUndo();
 
   /**
    * Get the next undo transaction on the list. Change the undo pointer.
    *
    * @return The next undo transaction (for redo)
    */
-  public TransAction nextUndo();
+  TransAction nextUndo();
 
   /**
    * Get the next undo transaction on the list.
    *
    * @return The next undo transaction (for redo)
    */
-  public TransAction viewNextUndo();
+  TransAction viewNextUndo();
 
 }

@@ -67,7 +67,7 @@ public class JobLogTable extends BaseLogTable implements Cloneable, LogTableInte
 
     private String id;
 
-    private ID( String id ) {
+    ID(String id) {
       this.id = id;
     }
 

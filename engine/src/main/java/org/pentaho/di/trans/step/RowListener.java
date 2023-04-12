@@ -49,7 +49,7 @@ public interface RowListener {
    * @throws KettleStepException
    *           an exception that can be thrown to hard stop the step
    */
-  public void rowReadEvent( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException;
+  void rowReadEvent(RowMetaInterface rowMeta, Object[] row) throws KettleStepException;
 
   /**
    * This method is called when a row is written to another step (even if there is no next step)
@@ -61,7 +61,7 @@ public interface RowListener {
    * @throws KettleStepException
    *           an exception that can be thrown to hard stop the step
    */
-  public void rowWrittenEvent( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException;
+  void rowWrittenEvent(RowMetaInterface rowMeta, Object[] row) throws KettleStepException;
 
   /**
    * This method is called when the error handling of a row is writing a row to the error stream.
@@ -73,5 +73,5 @@ public interface RowListener {
    * @throws KettleStepException
    *           an exception that can be thrown to hard stop the step
    */
-  public void errorRowWrittenEvent( RowMetaInterface rowMeta, Object[] row ) throws KettleStepException;
+  void errorRowWrittenEvent(RowMetaInterface rowMeta, Object[] row) throws KettleStepException;
 }

@@ -305,7 +305,7 @@ public class FuzzyMatch extends BaseStep implements StepInterface {
           if ( rowData[0] == null ) {
             rowData[0] = cacheValue;
           } else {
-            rowData[0] = (String) rowData[0] + data.valueSeparator + cacheValue;
+            rowData[0] = rowData[0] + data.valueSeparator + cacheValue;
           }
         }
       }
@@ -438,7 +438,7 @@ public class FuzzyMatch extends BaseStep implements StepInterface {
           if ( rowData[0] == null ) {
             rowData[0] = cacheValue;
           } else {
-            rowData[0] = (String) rowData[0] + data.valueSeparator + cacheValue;
+            rowData[0] = rowData[0] + data.valueSeparator + cacheValue;
           }
         }
       }

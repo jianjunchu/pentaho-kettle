@@ -43,12 +43,12 @@ public class JobEntryFTPSGetLoadSaveTest extends JobEntryLoadSaveTestSupport<Job
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "port", "serverName", "userName", "password", "FTPSDirectory",
-      "targetDirectory", "wildcard", "binaryMode", "timeout", "remove", "onlyGettingNewFiles",
-      "activeConnection", "moveFiles", "moveToDirectory", "dateInFilename", "timeInFilename",
-      "specifyFormat", "dateTimeFormat", "addDateBeforeExtension", "addToResult", "createMoveFolder",
-      "proxy_host", "proxy_port", "proxy_username", "proxy_password", "ifFileExists", "limit",
-      "success_condition", "connection_type" } );
+    return Arrays.asList("port", "serverName", "userName", "password", "FTPSDirectory",
+            "targetDirectory", "wildcard", "binaryMode", "timeout", "remove", "onlyGettingNewFiles",
+            "activeConnection", "moveFiles", "moveToDirectory", "dateInFilename", "timeInFilename",
+            "specifyFormat", "dateTimeFormat", "addDateBeforeExtension", "addToResult", "createMoveFolder",
+            "proxy_host", "proxy_port", "proxy_username", "proxy_password", "ifFileExists", "limit",
+            "success_condition", "connection_type");
   }
 
   @Override

@@ -45,7 +45,7 @@ public class JobEntryEvalLoadSaveTest extends JobEntryLoadSaveTestSupport<JobEnt
 
   @Override
   protected List<String> listCommonAttributes() {
-    return Arrays.asList( new String[] { "script" } );
+    return Arrays.asList("script");
   }
 
   @Override

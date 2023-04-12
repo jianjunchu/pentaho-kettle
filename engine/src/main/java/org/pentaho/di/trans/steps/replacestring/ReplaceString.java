@@ -251,11 +251,7 @@ public class ReplaceString extends BaseStep implements StepInterface {
     meta = (ReplaceStringMeta) smi;
     data = (ReplaceStringData) sdi;
 
-    if ( super.init( smi, sdi ) ) {
-
-      return true;
-    }
-    return false;
+      return super.init(smi, sdi);
   }
 
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {

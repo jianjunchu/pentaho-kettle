@@ -2024,8 +2024,8 @@ public class KettleDatabaseRepositoryConnectionDelegate extends KettleDatabaseRe
     try {
       return callable.call();
     } catch ( Exception e ) {
-      if ( KettleDatabaseException.class.isInstance( e ) ) {
-        throw KettleDatabaseException.class.cast( e );
+      if (e instanceof KettleDatabaseException) {
+        throw (KettleDatabaseException) e;
       } else {
         throw new RuntimeException( e );
       }
