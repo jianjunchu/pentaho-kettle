@@ -20,6 +20,8 @@
   <properties>
     <!-- Test running configuration -->
     <maven-surefire-plugin.reuseForks>true</maven-surefire-plugin.reuseForks>
+    <pentaho-metaverse.version>8.3.0.0-SNAPSHOT</pentaho-metaverse.version>
+    <platform.version>8.3.0.0-SNAPSHOT</platform.version>
 
     <!-- Third-party dependencies -->
     <slf4j-api.version>1.7.7</slf4j-api.version>
@@ -48,6 +50,7 @@
     <httpclient.version>4.5.3</httpclient.version>
     <httpccore.version>4.4.6</httpccore.version>
     <xmlunit.version>1.5</xmlunit.version>
+    <json-simple.version>1.1</json-simple.version>
   </properties>
 
 
@@ -511,6 +514,58 @@
       <version>${xmlunit.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-metaverse-api</artifactId>
+      <version>${pentaho-metaverse.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>pentaho</groupId>
+      <artifactId>pentaho-platform-core</artifactId>
+      <version>${platform.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>${json-simple.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.13</version>
+    </dependency>
+-->
   </dependencies>
 
   <build>

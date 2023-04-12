@@ -139,7 +139,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-       <classifier>auphi</classifier>
+       <!-- <classifier>auphi</classifier> -->
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
@@ -204,6 +204,18 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>commons-math</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -1013,7 +1025,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-         <!--<classifier>auphi</classifier>-->
+          <!--<classifier>auphi</classifier> -->
         </configuration>
         <executions>
           <execution>
