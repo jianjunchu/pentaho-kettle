@@ -572,4 +572,9 @@ public class PostgreSQLDatabaseMeta extends BaseDatabaseMeta implements Database
   public int getMaxTextFieldLength() {
     return GB_LIMIT;
   }
+
+  @Override
+  public boolean isQuoteAllFields() {
+    return true;
+  }
 }

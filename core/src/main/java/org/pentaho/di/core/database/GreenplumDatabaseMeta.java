@@ -46,4 +46,7 @@ public class GreenplumDatabaseMeta extends PostgreSQLDatabaseMeta implements Dat
   public boolean supportsErrorHandlingOnBatchUpdates() {
     return false;
   }
+
+
+
 }
