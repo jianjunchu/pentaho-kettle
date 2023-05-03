@@ -14,8 +14,14 @@
 
 package org.pentaho.di.trans.steps.obsoutput;
 
-import org.pentaho.di.trans.step.BaseStepData;
+import com.obs.services.ObsClient;
+import com.obs.services.model.ObsBucket;
+import com.obs.services.model.ObsObject;
 import org.pentaho.di.trans.step.StepDataInterface;
+import org.pentaho.di.trans.steps.textfileoutput.TextFileOutputData;
+
+import java.io.OutputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * 
@@ -25,11 +31,19 @@ import org.pentaho.di.trans.step.StepDataInterface;
  * @version
  * 
  */
-public class OBSOutputData extends BaseStepData implements StepDataInterface {
+public class OBSOutputData extends TextFileOutputData implements StepDataInterface {
 
   /**
    * 
    */
+
+  public ObsClient client;
+  public ObsBucket bucket;
+  public int maxLineSize;
+  public ObsObject object;
+  public ObjectOutputStream obsObjectOutputtStream;
+  public OutputStream fos;
+
   public OBSOutputData() {
     super();
   }

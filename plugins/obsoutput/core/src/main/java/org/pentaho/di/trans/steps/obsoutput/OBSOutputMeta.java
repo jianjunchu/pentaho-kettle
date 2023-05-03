@@ -77,6 +77,8 @@ public class OBSOutputMeta extends TextFileOutputMeta /* BaseStepMeta implements
   private String bucket;
 
   private String objectKey;
+  public int previoudfileNameIndex;
+  public int previoudfileContentIndex;
 
   public OBSOutputMeta() {
     super(); // allocate BaseStepMeta
@@ -177,9 +179,9 @@ public class OBSOutputMeta extends TextFileOutputMeta /* BaseStepMeta implements
   }
 
   // @Override
-  // public StepDataInterface getStepData() {
-  // return new OBSOutputData();
-  // }
+   public StepDataInterface getStepData() {
+   return new OBSOutputData();
+   }
 
   public ObsClient getObsClient(VariableSpace space) {
 

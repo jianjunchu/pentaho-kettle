@@ -10,7 +10,7 @@
         <version>8.3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kettle-obsoutput-plugin-core</artifactId>
+    <artifactId>pentaho-obs-output-plugin-core</artifactId>
     <name>PDI obsoutput Plugin Core</name>
 
     <properties>
@@ -31,14 +31,17 @@
             <artifactId>kettle-engine</artifactId>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-ui-swt</artifactId>
             <version>${pdi.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+            <version>${org.eclipse.swt.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.huawei.storage</groupId>
             <artifactId>esdk-obs-java</artifactId>
@@ -74,7 +77,7 @@
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>pentaho-obs-vfs</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

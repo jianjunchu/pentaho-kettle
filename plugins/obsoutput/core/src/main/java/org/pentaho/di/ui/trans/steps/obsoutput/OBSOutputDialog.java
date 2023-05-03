@@ -453,7 +453,7 @@ public class OBSOutputDialog extends BaseStepDialog implements StepDialogInterfa
     // ObjectKey line
     //
     wlObjectKey = new Label(wFileComp, SWT.RIGHT);
-    wlObjectKey.setText(BaseMessages.getString(PKG, "OBSOutputDialog.Filename.Label"));
+    wlObjectKey.setText(BaseMessages.getString(PKG, "OBSOutputDialog.Filename.Label")+" 或目录");
     props.setLook(wlObjectKey);
     fdlObjectKey = new FormData();
     fdlObjectKey.left = new FormAttachment(0, 0);
