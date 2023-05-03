@@ -78,6 +78,11 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
 
   private Label wlMessage, wlSecretKey, wlSecretKeyField, wlSecretKeyInField;
 
+  private Label wlIVParameter;
+  private FormData fdlIVParameter;
+  private TextVar wIVParameter;
+  private FormData fdIVParameter;
+
   private Button wSecretKeyInField;
 
   private SymmetricCryptoTransMeta input;
@@ -107,6 +112,7 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
   private FormData fdlScheme;
   private TextVar wScheme;
   private FormData fdScheme;
+
 
   private Label wlOutputAsBinary;
   private Button wOutputAsBinary;
@@ -284,6 +290,26 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
     fdSecretKey.top = new FormAttachment( wScheme, 2 * margin );
     wSecretKey.setLayoutData( fdSecretKey );
 
+    // IVPamater
+    wlIVParameter = new Label( wCryptoSettings, SWT.RIGHT );
+    wlIVParameter.setText( BaseMessages.getString( PKG, "SymmetricCryptoTransDialog.IVParameter.Label" ) );
+    props.setLook( wlIVParameter );
+    FormData fdlIVParameter = new FormData();
+    fdlIVParameter.left = new FormAttachment( 0, 0 );
+    fdlIVParameter.top = new FormAttachment( wSecretKey, 2 * margin );
+    fdlIVParameter.right = new FormAttachment( middle, -margin );
+    wlIVParameter.setLayoutData( fdlIVParameter );
+
+    wIVParameter = new PasswordTextVar( transMeta, wCryptoSettings, SWT.SINGLE | SWT.LEFT | SWT.BORDER,
+            BaseMessages.getString( PKG, "SymmetricCryptoTransDialog.IVParameter.Tooltip" ) );
+    props.setLook( wlIVParameter );
+    wIVParameter.addModifyListener( lsMod );
+    FormData fdIVParameter = new FormData();
+    fdIVParameter.left = new FormAttachment( middle, margin );
+    fdIVParameter.right = new FormAttachment( 100, -margin );
+    fdIVParameter.top = new FormAttachment( wSecretKey, 2 * margin );
+    wIVParameter.setLayoutData( fdIVParameter );
+
     // Is secret key extracted from a field?
     wlSecretKeyInField = new Label( wCryptoSettings, SWT.RIGHT );
     wlSecretKeyInField.setText( BaseMessages
@@ -291,7 +317,7 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
     props.setLook( wlSecretKeyInField );
     fdlSecretKeyInField = new FormData();
     fdlSecretKeyInField.left = new FormAttachment( 0, 0 );
-    fdlSecretKeyInField.top = new FormAttachment( wSecretKey, margin );
+    fdlSecretKeyInField.top = new FormAttachment( wIVParameter, margin );
     fdlSecretKeyInField.right = new FormAttachment( middle, -margin );
     wlSecretKeyInField.setLayoutData( fdlSecretKeyInField );
     wSecretKeyInField = new Button( wCryptoSettings, SWT.CHECK );
@@ -300,7 +326,7 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
       PKG, "SymmetricCryptoTransDialog.SecretKeyFileField.Tooltip" ) );
     fdSecretKeyInField = new FormData();
     fdSecretKeyInField.left = new FormAttachment( middle, margin );
-    fdSecretKeyInField.top = new FormAttachment( wSecretKey, margin );
+    fdSecretKeyInField.top = new FormAttachment( wIVParameter, margin );
     wSecretKeyInField.setLayoutData( fdSecretKeyInField );
 
     SelectionAdapter lsXslFile = new SelectionAdapter() {
@@ -618,6 +644,10 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
     if ( input.getSecretKey() != null ) {
       wSecretKey.setText( input.getSecretKey() );
     }
+    if ( input.getIVParameter() != null ) {
+      wIVParameter.setText( input.getIVParameter() );
+    }
+
     if ( input.getSchema() != null ) {
       wScheme.setText( input.getSchema() );
     }
@@ -651,7 +681,7 @@ public class SymmetricCryptoTransDialog extends BaseStepDialog implements StepDi
     input.setsecretKeyField( wSecretKeyField.getText() );
     input.setOutputResultAsBinary( wOutputAsBinary.getSelection() );
     input.setResultfieldname( wResultField.getText() );
-
+    input.setIVParameter(wIVParameter.getText());
     dispose();
   }
 

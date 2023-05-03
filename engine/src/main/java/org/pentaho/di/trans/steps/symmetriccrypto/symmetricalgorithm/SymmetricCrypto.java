@@ -25,13 +25,18 @@ package org.pentaho.di.trans.steps.symmetriccrypto.symmetricalgorithm;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import mondrian.olap.Util;
+import org.pentaho.di.core.util.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.vfs2.FileObject;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.i18n.BaseMessages;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Symmetric algorithm
@@ -48,6 +53,7 @@ public class SymmetricCrypto {
   private Cipher cipher;
 
   private SecretKeySpec secretKeySpec;
+  private IvParameterSpec ivParameterSpec;
 
   /** Encryption/ decryption scheme **/
   private String scheme;
@@ -55,7 +61,7 @@ public class SymmetricCrypto {
   /**
    * Construct a new Symetric SymmetricCrypto trans
    *
-   * @param inf
+   * @param meta
    *          The Database Connection Info to construct the connection with.
    */
   public SymmetricCrypto( SymmetricCryptoMeta meta ) throws CryptoException {
@@ -74,7 +80,7 @@ public class SymmetricCrypto {
   /**
    * Construct a new Symetric SymmetricCrypto trans
    *
-   * @param inf
+   * @param meta
    *          The Database Connection Info to construct the connection with.
    */
   public SymmetricCrypto( SymmetricCryptoMeta meta, String xform ) throws CryptoException {
@@ -92,7 +98,10 @@ public class SymmetricCrypto {
 
   public void setEncryptMode() throws CryptoException {
     try {
-      this.cipher.init( Cipher.ENCRYPT_MODE, this.secretKeySpec );
+      if(ivParameterSpec!=null) {
+        this.cipher.init(Cipher.ENCRYPT_MODE, this.secretKeySpec,ivParameterSpec );
+      }else
+        this.cipher.init( Cipher.ENCRYPT_MODE, this.secretKeySpec );
     } catch ( Exception e ) {
       throw new CryptoException( e );
     }
@@ -100,7 +109,10 @@ public class SymmetricCrypto {
 
   public void setDecryptMode() throws CryptoException {
     try {
-      this.cipher.init( Cipher.DECRYPT_MODE, this.secretKeySpec );
+      if(ivParameterSpec!=null&& ivParameterSpec.getIV().length>0) {
+        this.cipher.init(Cipher.DECRYPT_MODE, this.secretKeySpec,ivParameterSpec );
+      }else
+        this.cipher.init( Cipher.DECRYPT_MODE, this.secretKeySpec );
     } catch ( Exception e ) {
       throw new CryptoException( e );
     }
@@ -122,6 +134,25 @@ public class SymmetricCrypto {
       throw new CryptoKeyException( e );
     }
   }
+
+  public void setIVParameter( String parameterBytes ) throws CryptoKeyException {
+    try {
+      // Convert the raw bytes to a secret key like this
+      setIVParameter( Hex.decodeHex( parameterBytes.toCharArray() ) );
+    } catch ( Exception e ) {
+      throw new CryptoKeyException( e );
+    }
+  }
+  public void setIVParameter( byte[] parameterBytes ) throws CryptoKeyException {
+    try {
+      // Convert the raw bytes to a secret key like this
+      this.ivParameterSpec = new IvParameterSpec(parameterBytes);
+    } catch ( Exception e ) {
+      throw new CryptoKeyException( e );
+    }
+  }
+
+
 
   public void setSecretKeyFromFile( String filename ) throws CryptoKeyException {
     FileObject file = null;

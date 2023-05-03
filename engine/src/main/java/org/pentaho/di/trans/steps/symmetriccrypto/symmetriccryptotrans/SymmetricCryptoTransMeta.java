@@ -87,6 +87,7 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
   private String messageField;
 
   private String secretKey;
+  private String IVParameter;
   private boolean secretKeyInField;
   private String secretKeyField;
 
@@ -270,6 +271,8 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
       resultfieldname = XMLHandler.getTagValue( stepnode, "resultfieldname" );
 
       setSecretKey( Encr.decryptPasswordOptionallyEncrypted( XMLHandler.getTagValue( stepnode, "secretKey" ) ) );
+      setIVParameter( Encr.decryptPasswordOptionallyEncrypted( XMLHandler.getTagValue( stepnode, "ivParameter" ) ) );
+
       secretKeyInField = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "secretKeyInField" ) );
       readKeyAsBinary = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "readKeyAsBinary" ) );
       outputResultAsBinary = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "outputResultAsBinary" ) );
@@ -323,6 +326,9 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
     retval.append( "    " ).append(
       XMLHandler.addTagValue( "secretKey", Encr.encryptPasswordIfNotUsingVariables( secretKey ) ) );
 
+    retval.append( "    " ).append(
+            XMLHandler.addTagValue( "ivParameter", Encr.encryptPasswordIfNotUsingVariables( this.getIVParameter() ) ) );
+
     retval.append( "    " + XMLHandler.addTagValue( "secretKeyInField", secretKeyInField ) );
     retval.append( "    " + XMLHandler.addTagValue( "readKeyAsBinary", readKeyAsBinary ) );
     retval.append( "    " + XMLHandler.addTagValue( "outputResultAsBinary", outputResultAsBinary ) );
@@ -341,6 +347,8 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
       resultfieldname = rep.getStepAttributeString( id_step, "resultfieldname" );
 
       secretKey = Encr.decryptPasswordOptionallyEncrypted( rep.getStepAttributeString( id_step, "secretKey" ) );
+      IVParameter = Encr.decryptPasswordOptionallyEncrypted( rep.getStepAttributeString( id_step, "ivParameter" ) );
+
       secretKeyInField = rep.getStepAttributeBoolean( id_step, "secretKeyInField" );
       readKeyAsBinary = rep.getStepAttributeBoolean( id_step, "readKeyAsBinary" );
       outputResultAsBinary = rep.getStepAttributeBoolean( id_step, "outputResultAsBinary" );
@@ -370,6 +378,9 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
 
       rep.saveStepAttribute( id_transformation, id_step, "secretKey", Encr
         .encryptPasswordIfNotUsingVariables( secretKey ) );
+
+      rep.saveStepAttribute( id_transformation, id_step, "ivParameter", Encr
+              .encryptPasswordIfNotUsingVariables( IVParameter ) );
       rep.saveStepAttribute( id_transformation, id_step, "secretKeyInField", secretKeyInField );
       rep.saveStepAttribute( id_transformation, id_step, "readKeyAsBinary", readKeyAsBinary );
       rep.saveStepAttribute( id_transformation, id_step, "outputResultAsBinary", outputResultAsBinary );
@@ -425,4 +436,12 @@ public class SymmetricCryptoTransMeta extends BaseStepMeta implements StepMetaIn
   public boolean supportsErrorHandling() {
     return true;
   }
+
+    public String getIVParameter() {
+        return IVParameter;
+    }
+
+    public void setIVParameter(String ivParameter) {
+        this.IVParameter = ivParameter;
+    }
 }

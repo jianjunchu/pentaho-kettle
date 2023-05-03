@@ -102,13 +102,15 @@ public class SymmetricCryptoTrans extends BaseStep implements StepInterface {
       if ( !meta.isSecretKeyInField() ) {
         String realSecretKey =
           Encr.decryptPasswordOptionallyEncrypted( environmentSubstitute( meta.getSecretKey() ) );
+        String ivParameter =
+                Encr.decryptPasswordOptionallyEncrypted( environmentSubstitute( meta.getIVParameter() ) );
         if ( Utils.isEmpty( realSecretKey ) ) {
           throw new KettleStepException( BaseMessages.getString(
             PKG, "SymmetricCryptoTrans.Exception.SecretKeyMissing" ) );
         }
         // We have a static secret key
         // Set secrete key
-        setSecretKey( realSecretKey );
+        setSecretKey( realSecretKey,ivParameter );
 
       } else {
         // dynamic secret key
@@ -133,9 +135,11 @@ public class SymmetricCryptoTrans extends BaseStep implements StepInterface {
 
       // handle dynamic secret key
       Object realSecretKey;
+      Object ivParameter ;
       if ( meta.isSecretKeyInField() ) {
         if ( meta.isReadKeyAsBinary() ) {
           realSecretKey = getInputRowMeta().getBinary( r, data.indexOfSecretkeyField );
+          ivParameter = Encr.decryptPasswordOptionallyEncrypted( environmentSubstitute( meta.getIVParameter() ) );
           if ( realSecretKey == null ) {
             throw new KettleStepException( BaseMessages.getString(
               PKG, "SymmetricCryptoTrans.Exception.SecretKeyMissing" ) );
@@ -144,14 +148,15 @@ public class SymmetricCryptoTrans extends BaseStep implements StepInterface {
           realSecretKey =
             Encr.decryptPasswordOptionallyEncrypted( environmentSubstitute( getInputRowMeta().getString(
               r, data.indexOfSecretkeyField ) ) );
+          ivParameter =
+                  Encr.decryptPasswordOptionallyEncrypted( environmentSubstitute( meta.getIVParameter() ) );
           if ( Utils.isEmpty( (String) realSecretKey ) ) {
             throw new KettleStepException( BaseMessages.getString(
               PKG, "SymmetricCryptoTrans.Exception.SecretKeyMissing" ) );
           }
         }
-
         // Set secrete key
-        setSecretKey( realSecretKey );
+        setSecretKey( realSecretKey,ivParameter );
       }
 
       // Get the field value
@@ -235,13 +240,19 @@ public class SymmetricCryptoTrans extends BaseStep implements StepInterface {
     return false;
   }
 
-  private void setSecretKey( Object key ) throws KettleException {
+  private void setSecretKey( Object key,Object parameter ) throws KettleException {
 
     // Set secrete key
     if ( key instanceof byte[] ) {
       data.Crypt.setSecretKey( (byte[]) key );
     } else {
       data.Crypt.setSecretKey( (String) key );
+    }
+
+    if ( parameter instanceof byte[] ) {
+      data.Crypt.setIVParameter( (byte[]) parameter );
+    } else {
+      data.Crypt.setIVParameter( (String) parameter );
     }
 
     if ( meta.getOperationType() == SymmetricCryptoTransMeta.OPERATION_TYPE_ENCRYPT ) {
@@ -251,6 +262,15 @@ public class SymmetricCryptoTrans extends BaseStep implements StepInterface {
     }
 
   }
+//
+//  private void setIVParameter( Object parameter ) throws KettleException {
+//    // Set secrete key
+//    if ( parameter instanceof byte[] ) {
+//      data.Crypt.setIVParameter( (byte[]) parameter );
+//    } else {
+//      data.Crypt.setIVParameter( (String) parameter );
+//    }
+//  }
 
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (SymmetricCryptoTransMeta) smi;
