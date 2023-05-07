@@ -40,7 +40,8 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 	private InfoExtractorMeta meta;
 	private InfoExtractorData data;
 	String[] defaultDigitals = {"0","1","2","3","4","5","6","7","8","9","%",".",","};
-	
+	String defaultDigitalsStr = "%.,";
+
 	public InfoExtractor(StepMeta stepMeta, StepDataInterface stepDataInterface,
 						 int copyNr, TransMeta transMeta, Trans trans) {
 		super(stepMeta, stepDataInterface, copyNr, transMeta, trans);
@@ -52,18 +53,15 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 	public  RowMetaAndData buildRow(InfoExtractorMeta meta,
 									InfoExtractorData data, List<CheckResultInterface> remarks) {
 		RowMetaInterface rowMeta = new RowMeta();
-		Object[] rowData = new Object[meta.getFieldName().length];
+		Object[] rowData = new Object[1];
 
-		for (int i = 0; i < meta.getFieldName().length; i++) {
-			int valtype = ValueMeta.getType("String");
-			if (meta.getFieldName()[i] != null) {
-				ValueMetaInterface value = new ValueMeta(
-						meta.getFieldName()[i], valtype); // build a value!
-				value.setLength(-1);
-				rowMeta.addValueMeta(value);
-				}
-			}
-
+		int valtype = ValueMeta.getType("String");
+		if (meta.getResultField()!= null) {
+			ValueMetaInterface value = new ValueMeta(
+					meta.getResultField(), valtype); // build a value!
+			value.setLength(-1);
+			rowMeta.addValueMeta(value);
+		}
 		return new RowMetaAndData(rowMeta, rowData);
 	}
 
@@ -74,12 +72,10 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 		InfoExtractorMeta infoExtractorMeta = (InfoExtractorMeta)smi;
 		InfoExtractorData infoExtractorData = (InfoExtractorData)sdi;
 		
-		String contentField = infoExtractorMeta.getResultField();
+		String contentField = infoExtractorMeta.getContentField();
 		if(contentField==null || contentField.length()==0)
 			throw new KettleException("content field not found");
-		
-		
-		
+
 		if (r == null) // no more rows to be expected from the previous step(s)
 		{
 			setOutputDone();
@@ -97,55 +93,63 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 		if(r[infoExtractorData.getContentFieldIndex()] instanceof String)
 		{
 			content = (String)r[infoExtractorData.getContentFieldIndex()];
-			String contentMark = infoExtractorMeta.getContentStartMark();
-			Object[] values =  new Object[infoExtractorMeta.getFieldName().length];
-			for (int i = 0; i < infoExtractorMeta.getFieldName().length; i++)
-			{
-				String position = infoExtractorMeta.getPosition()[i];
-				int order = infoExtractorMeta.getOrder()[i];
-				int minDigitals = infoExtractorMeta.getMinLength()[i];
-				int maxDigitals = infoExtractorMeta.getMaxLength()[i];
-				String DigitalDef = infoExtractorMeta.getDefinedDigitals()[i];
-				String keyWord = infoExtractorMeta.getKeyWord()[i];
-				String contentMode = infoExtractorMeta.getContentMode()[i];
-				
-				if (data.firstRow) {
-					data.firstRow = false;
-					data.outputMeta = getInputRowMeta().clone();
-					RowMetaInterface constants = data.constants.getRowMeta();
-					data.outputMeta.mergeRowMeta(constants);
-				}
-				String scope = null;
-				if(contentMark==null || contentMark.length()==0)
+			if(meta.isRemoveHtml())
+				content = this.removeHTMLTags(this.removeSpecifiedTags(content,"script"));
+			if(meta.isRemoveBlank())
+				content = this.removeBlankSpace(content);
+			if(meta.isRemoveCRLF())
+				content = this.removeCRLF(content);
+			if(meta.isRemoveControlChars())
+				content = this.removeControlChars(content);
+			//String DigitalDef = infoExtractorMeta.getDefinedDigitals();
+			int infoType = infoExtractorMeta.getInfoType();
+			if (data.firstRow) {
+				data.firstRow = false;
+				data.outputMeta = getInputRowMeta().clone();
+				RowMetaInterface constants = data.constants.getRowMeta();
+				data.outputMeta.mergeRowMeta(constants);
+			}
+			String scope = null;
+
+			String value =  null;
+			if(meta.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_KEYWORD) {
+				String keyWord = infoExtractorMeta.getKeyWord();
+				String position = "A";// after key word
+				int order = 1;// the first occurs
+				int minDigitals = 1;
+				int maxDigitals = 1000;
+				if(keyWord==null || keyWord.length()==0)
 					scope = content;
 				else
 				{
-					int index = content.indexOf(contentMark);
+					int index = content.indexOf(keyWord);
 					if(index>-1)
 						scope = content.substring(index);
 					else
-						scope = content; 
+						scope = content;
 				}
-				String value = null;
-				if(Rule.getContentMode(contentMode) == Rule.CONTENT_MODE_EMAIL)
-					value = extractEmail(scope,keyWord,position,order,minDigitals,maxDigitals,DigitalDef);
-				else if(Rule.getContentMode(contentMode) == Rule.CONTENT_MODE_DIGITAL)
-					value = extractNumber(scope,keyWord,position,order,minDigitals,maxDigitals,DigitalDef);
-				
-				values[i] = value;
+	//			if(infoType == InfoExtractorMeta.INFO_TYPE_EMAIL)
+	//				value = extractEmail(scope,keyWord,position,order,minDigitals,maxDigitals,defaultDigitalsStr);
+				if (infoType == InfoExtractorMeta.INFO_TYPE_NUMBER)
+					value = extractNumber(scope, keyWord, position, order, minDigitals, maxDigitals, defaultDigitalsStr);
+				else if(infoType == InfoExtractorMeta.INFO_TYPE_TEXT)
+					value = extractText(scope,keyWord,position,new char[]{'\r','\n'});
+				else if(infoType == InfoExtractorMeta.INFO_TYPE_DATE)
+					value = extractDate(scope,keyWord,position,order);
+			}else if(meta.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_REGEXP)
+				value = extractBypatternStr(scope,meta.getRegularExpression());
+			else{
+				if (log.isBasic())
+					logBasic("Unsupported extract type");
+				return false;
 			}
-			r = RowDataUtil.addRowData(r, getInputRowMeta().size(),values);
+			r = RowDataUtil.addRowData(r, getInputRowMeta().size(),new Object[]{value});
 			
 			putRow(data.outputMeta, r);
 		}else
 		{
-			Object[] values =  new Object[infoExtractorMeta.getFieldName().length];
-			for (int i = 0; i < infoExtractorMeta.getFieldName().length; i++)
-			{
-				values[i] = null;
-
-			}
-			
+			String value=null;//if the content field is not string, result is null
+			r = RowDataUtil.addRowData(r, getInputRowMeta().size(),new Object[]{value});
 			putRow(data.outputMeta, r);
 		}
 		
@@ -168,8 +172,8 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 	 * @param keyWord: string to extract from
 	 * @param position: After/Before
 	 * @param order:  sequence of the number to be extracted
-	 * @param minLength: minum digitals of the number to be extracted
-	 * @param digitalDef: digital defitination, can be null for default 
+	 * @param minLength: minLength of the number to be extracted
+	 * @param digitalDef: digitalDef, can be null for default
 	 * @return
 	 * @throws KettleException 
 	 */
@@ -177,24 +181,188 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 			int minLength, int maxLength, String digitalDef) throws KettleException {
 		int index = scope.indexOf(keyWord);
 		if( index == -1)
-			index = 0;
+			return null; //keyword not found, return null;
+		String content;
 		if(position.equalsIgnoreCase("A")||position.equalsIgnoreCase("After"))
-			return search(scope.substring(index),true,order,minLength,maxLength,digitalDef);
+		 	content = scope.substring(index);
 		else if (position.equalsIgnoreCase("B")||position.equalsIgnoreCase("Before"))
-			return search(scope.substring(0,index),false,order,minLength,maxLength,digitalDef);
-		else 
+			content = scope.substring(0,index);
+		else
 			throw new KettleException("unknown position:" + position);
-	
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i=0;i<content.length();i++) {
+			char c = content.charAt(i);
+			if(isNumber(c,digitalDef.toCharArray()))
+				stringBuilder.append(c);
+			else if(stringBuilder.length()>0)
+			{
+				break;
+			}
+		}
+		return stringBuilder.toString();
 	}
-	
+
+	private String extractDate(String scope, String keyWord, String position, int order) throws KettleException {
+		int index = scope.indexOf(keyWord);
+		if( index == -1)
+			return null; //keyword not found, return null;
+		String content;
+		if(position.equalsIgnoreCase("A")||position.equalsIgnoreCase("After"))
+			content = scope.substring(index);
+		else if (position.equalsIgnoreCase("B")||position.equalsIgnoreCase("Before"))
+			content = scope.substring(0,index);
+		else
+			throw new KettleException("unknown position:" + position);
+		String yearMonth = null;
+		String[] patternStr = new String[]{
+				"[0-9|\\s]{2,}年[0-9|\\s]*月[0-9|\\s]*日",
+				"[0-9|\\s]{2,}[-|/][0-9|\\s]*[-|/][0-9|\\s]{2,}",
+				"[0-9|\\s]{2,}年[0-9|\\s]*月",
+				"[\\u96f6|\\u3007|\\u25CB|\\u4e00|\\u4e8c|\\u4e09|\\u56db|\\u4e94|\\u516d|\\u4e03|\\u516b|\\u4e5d|\\s]{2,}年[\\u96f6|\\u3007|\\u25CB|\\u4e00|\\u4e8c|\\u4e09|\\u56db|\\u4e94|\\u516d|\\u4e03|\\u516b|\\u4e5d|\\u5341||\\s]*月",
+				"[\\u96f6|\\u3007|\\u25CB|\\u4e00|\\u4e8c|\\u4e09|\\u56db|\\u4e94|\\u516d|\\u4e03|\\u516b|\\u4e5d|\\s]{2,}年",
+				"[a-z|A-Z|\\s]{2,}年[a-z|A-Z|\\\\s]*月",
+				"[0-9|\\s]{2,}年",
+				"[a-z|A-Z|\\s]{2,}年"
+		};
+
+		for(int i =0 ;i<patternStr.length;i++)
+		{
+			yearMonth= find(patternStr[i],content);
+			if(yearMonth!=null)
+			{
+				break;
+			}
+		}
+		return yearMonth;
+		//return initDate(yearMonth);
+	}
+
+	private String extractBypatternStr(String scope, String patternStr) throws KettleException {
+		String result = null;
+		result= find(patternStr,scope);
+		return result;
+	}
+
+	private String extractText(String scope, String keyWord, String position, char[] stopCharacters) throws KettleException {
+		int index = scope.indexOf(keyWord);
+		if( index == -1)
+			return null; //keyword not found, return null;
+		String content;
+		if(position.equalsIgnoreCase("A")||position.equalsIgnoreCase("After"))
+			content = scope.substring(index+keyWord.length());
+		else if (position.equalsIgnoreCase("B")||position.equalsIgnoreCase("Before"))
+			content = scope.substring(0,index);
+		else
+			throw new KettleException("unknown position:" + position);
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i=0;i<content.length();i++) {
+			char c = content.charAt(i);
+			if(!isCharacter(c,stopCharacters))
+				stringBuilder.append(c);
+			else if(stringBuilder.length()>0)
+			{
+				break;
+			}
+		}
+		return stringBuilder.toString();
+	}
+	private String initDate(String yearMonth) {
+		char[] chars = yearMonth.toCharArray();
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			switch (c) {
+				case '\u25CB':
+				case '\u96f6':
+				case '\u3007':
+				case '0':
+					sb.append('0');
+					break;
+				case '\u4e00':
+				case '1':
+					sb.append('1');
+					break;
+				case '\u4e8c':
+				case '2':
+					sb.append('2');
+					break;
+				case '\u4e09':
+				case '3':
+					sb.append('3');
+					break;
+				case '\u56db':
+				case '4':
+					sb.append('4');
+					break;
+				case '\u4e94':
+				case '5':
+					sb.append('5');
+					break;
+				case '\u516d':
+				case '6':
+					sb.append('6');
+					break;
+				case '\u4e03':
+				case '7':
+					sb.append('7');
+					break;
+				case '\u516b':
+				case '8':
+					sb.append('8');
+					break;
+				case '\u4e5d':
+				case '9':
+					sb.append('9');
+					break;
+				case '\u5e74':
+					sb.append('\u5e74');
+					break;
+				case '\u6708':
+					sb.append('\u6708');
+					break;
+				case '\u5341':
+					sb.append('1').append('0');
+					break;
+				case ' ':
+					break;
+				default:
+					sb.append(c);
+					break;
+			}
+		}
+		yearMonth = sb.toString();
+		return yearMonth;
+	}
+
+
+	private boolean isNumber(char c, char[] chars) {
+		if( 48 <= c && c<= 57 )
+			return true;
+		else {
+			for(int i=0;i<chars.length;i++)
+			{
+				if(chars[i]==c)
+					return true;
+			}
+		}
+		return false;
+	}
+	private boolean isCharacter(char c, char[] chars) {
+		for(int i=0;i<chars.length;i++)
+		{
+			if(chars[i]==c)
+				return true;
+		}
+		return false;
+	}
 	/**
 	 * extract report's first writer's email
 	 * @param scope
 	 * @param keyWord
 	 * @return
 	 */
-	public String extractEmail(String scope, String keyWord, String position, int order,
-			int minDigitals, int maxDigitals, String EmailPatternDef)
+	public String extractEmail(String scope, String keyWord, String position, int order,String EmailPatternDef)
 	{
 		String result="";
 		int index;
@@ -213,39 +381,32 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 		{
 			patternStr = EmailPatternDef;
 		}		
-		ArrayList<String> matched = find(patternStr,scope);
+		String matched = find(patternStr,scope);
 		if(matched == null)
 			return null; 
-		for (int i=0;i<matched.size();i++)
-		{
-			result +=matched.get(i)+";";
-		}
-		
-		if(result.endsWith(";"))
-			result= result.substring(0,result.length()-2);
-		return result;
+		else
+		    return matched;
 	}
 	
 	/**
-	 * found all matched strings
+	 * found the first matched strings
 	 * @param patternStr1
 	 * @param content
 	 * @return
 	 */
-	private ArrayList<String> find(String patternStr1,String content)
+	private String find(String patternStr1,String content)
 	{
-		ArrayList<String> results = null;
-		String one = null;
+		String result = null;
 		Pattern pattern = Pattern.compile(patternStr1);
-		Matcher matcher = pattern.matcher(content);			
-		while (matcher.find())
+		Matcher matcher = pattern.matcher(content);
+		if (matcher.find())
 		{
-			one = content.substring(matcher.start(),matcher.end());
-			if(results==null)
-				results = new ArrayList<String>();
-			results.add(one);			
+			result = content.substring(matcher.start(),matcher.end());
+		}else
+		{
+			result = null;
 		}
-		return results;
+		return result;
 	}
 	
 /**
@@ -263,7 +424,7 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 			String[] digitalChars = null;
 			
 			if (digitalDef!=null && digitalDef.length()>0)
-				digitalChars = digitalDef.split(" ");
+				digitalChars = digitalDef.split(";");
 			else				
 				digitalChars = defaultDigitals;
 			
@@ -358,4 +519,102 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 //		BaseStep.runStepThread(this, meta, data);
 //	}
 
+
+	public  String removeHTMLTags(String htmlContent) {
+		if(htmlContent==null)
+			return null;
+		StringBuffer result = new StringBuffer();
+		char[] array = htmlContent.toCharArray();
+		//boolean tag = false;
+		int level = 0;
+		for (int i = 0; i < array.length; i++) {
+			switch (array[i]) {
+				case '<':
+					level++;
+					break;
+				case '>':
+					level--;
+					break;
+				default:
+					if (level == 0) {
+						result.append(array[i]);
+					}
+					break;
+			}
+		}
+		return result.toString().replaceAll("&nbsp;", " ").trim();
+	}
+
+	/**
+	 * remove specified tag and content in the tag from a html string
+	 * @param htmlContent
+	 * @param tagToRemove
+	 * @return
+	 */
+	private String removeSpecifiedTags(String htmlContent, String tagToRemove) {
+		if(htmlContent==null)
+			return null;
+		int startIndex = htmlContent.indexOf("<"+tagToRemove);
+		if(startIndex==-1)//not found tag in the content
+			return htmlContent;
+		else {
+			String endTag = "</"+tagToRemove+">";
+			int endIndex = htmlContent.indexOf(endTag);
+			int tagLength = endTag.length();
+			return htmlContent.substring(0,startIndex)+removeSpecifiedTags(htmlContent.substring(endIndex+tagLength,htmlContent.length()),tagToRemove);
+		}
+	}
+
+	private String removeControlChars(String str)
+	{
+		if(str==null)
+			return null;
+		char[] result = new char[str.length()];
+		int count=0;
+		//ArrayList<Char> result = new ArrayList();
+		for(int index =0;index<str.length();index++)
+		{
+			char c = str.charAt(index);
+			if((c<32 || c==127)&&(c!=10 ||c!=13 ) ) //control chars except CRLF
+				continue;
+			else
+				result[count++]=c;
+		}
+		return new String(result).substring(0,count);
+
+	}
+	private String removeCRLF(String str)
+	{
+		if(str==null)
+			return null;
+		char[] result = new char[str.length()];
+		int count=0;
+		for(int index =0;index<str.length();index++)
+		{
+			char c = str.charAt(index);
+			if(c!=10 && c!=13 )
+				result[count++]=c;
+		}
+		return new String(result).substring(0,count);
+
+	}
+
+	private String removeBlankSpace(String str)
+	{
+		if(str==null)
+			return null;
+		char[] result = new char[str.length()];
+		int count=0;
+		//ArrayList<Char> result = new ArrayList();
+		for(int index =0;index<str.length();index++)
+		{
+			char c = str.charAt(index);
+			if(c=='\u0020' || c=='\u00A0' || c=='\u3000' )//A0 is "nbsp"
+				continue;
+			else
+				result[count++]=c;
+		}
+		return new String(result).substring(0,count);
+
+	}
 }

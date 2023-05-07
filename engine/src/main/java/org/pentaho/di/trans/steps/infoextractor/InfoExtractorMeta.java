@@ -10,7 +10,6 @@
  * the license for the specific language governing your rights and limitations.*/
  package org.pentaho.di.trans.steps.infoextractor;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -41,27 +40,46 @@ import org.w3c.dom.Node;
 
 
 public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
-{	
+{
+
+
 	private static Class<?> PKG = InfoExtractorMeta.class;
 	private  String definedDigitals[];
 //	private  String decimal[];
 //	private  String group[];
 //	private  String value[];
 	
-	private  String fieldName[];
-	private  String contentMode[];
-	private  String keyWord[];
-	private  String position[];
+	private  String contentField;
+	//private  String contentMode;
+	private  String keyWord;
 
-	private  int order[];
-	private  int minLength[];
-	private  int maxLength[];
-	private  String searchtMode[];
-	
+	private  String regularExpression;
+
+
+	private  boolean isRemoveHtml;
+	private  boolean isRemoveBlank;
+	private  boolean isRemoveControlChars;
+	private  boolean isRemoveCRLF;
+
+	private  int extractType;
+	public  static int EXTRACT_TYPE_KEYWORD =1;
+	public  static int EXTRACT_TYPE_REGEXP =2;
+	private  int infoType;
+
+	public static final int INFO_TYPE_TEXT = 1;
+	public static final int INFO_TYPE_NUMBER = 2;
+	public static final int INFO_TYPE_DATE = 3;
+
 	private String resultField;
 	private String contentStartMark;
 	private String contentEndMark;
 
+
+	//following variables will not be used by now, take as a constant. maybe useful in the future
+	private  String position="A";
+	private  int order=1;
+	private  int minLength=1;
+	private  int maxLength=1000;
 
 	public InfoExtractorMeta()
 	{
@@ -103,7 +121,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @return Returns the fieldFormat.
      */
-    public String[] getPosition()
+    public String getPosition()
     {
         return position;
     }
@@ -111,15 +129,21 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @param position The fieldFormat to set.
      */
-    public void setPosition(String[] position)
+    public void setPosition(String position)
     {
         this.position = position;
     }
-    
+	public String getRegularExpression() {
+		return regularExpression;
+	}
+
+	public void setRegularExpression(String regularExpression) {
+		this.regularExpression = regularExpression;
+	}
     /**
      * @return Returns the fieldLength.
      */
-    public int[] getOrder()
+    public int getOrder()
     {
         return order;
     }
@@ -127,7 +151,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @param order The fieldLength to set.
      */
-    public void setOrder(int[] order)
+    public void setOrder(int order)
     {
         this.order = order;
     }
@@ -135,23 +159,23 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @return Returns the fieldName.
      */
-    public String[] getFieldName()
+    public String getContentField()
     {
-        return fieldName;
+        return contentField;
     }
     
     /**
-     * @param fieldName The fieldName to set.
+     * @param contentField The fieldName to set.
      */
-    public void setFieldName(String[] fieldName)
+    public void setContentField(String contentField)
     {
-        this.fieldName = fieldName;
+        this.contentField = contentField;
     }
     
     /**
      * @return Returns the fieldPrecision.
      */
-    public int[] getMinLength()
+    public int getMinLength()
     {
         return minLength;
     }
@@ -159,7 +183,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @return Returns the fieldPrecision.
      */
-    public int[] getMaxLength()
+    public int getMaxLength()
     {
         return maxLength;
     }
@@ -167,7 +191,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @param digitals
      */
-    public void setMinLength(int[] digitals)
+    public void setMinLength(int digitals)
     {
         this.minLength = digitals;
     }
@@ -175,14 +199,14 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @param digitals
      */
-    public void setMaxLength(int[] digitals)
+    public void setMaxLength(int digitals)
     {
         this.maxLength = digitals;
     }
     /**
      * @return Returns the fieldType.
      */
-    public String[] getKeyWord()
+    public String getKeyWord()
     {
         return keyWord;
     }
@@ -190,7 +214,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
     /**
      * @param keyWord The fieldType to set.
      */
-    public void setKeyWord(String[] keyWord)
+    public void setKeyWord(String keyWord)
     {
         this.keyWord = keyWord;
     }
@@ -233,79 +257,68 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 		readData(stepnode);
 	}
 
-	public void allocate(int nrfields)
-	{
-		fieldName      = new String[nrfields];
-		contentMode = new String[nrfields];
-		keyWord      = new String[nrfields];
-		position    = new String[nrfields];
-		order    = new int[nrfields];
-		minLength = new int[nrfields];
-		maxLength = new int[nrfields];
-		definedDigitals       = new String[nrfields];
-//		decimal        = new String[nrfields];
-//		group          = new String[nrfields];
-//		value          = new String[nrfields];
-	}
+//	public void allocate(int nrfields)
+//	{
+//		fieldName      = new String[nrfields];
+//		contentMode = new String[nrfields];
+//		keyWord      = new String[nrfields];
+//		position    = new String[nrfields];
+//		order    = new int[nrfields];
+//		minLength = new int[nrfields];
+//		maxLength = new int[nrfields];
+//		definedDigitals       = new String[nrfields];
+////		decimal        = new String[nrfields];
+////		group          = new String[nrfields];
+////		value          = new String[nrfields];
+//	}
 	
 	public Object clone()
 	{
 		InfoExtractorMeta retval = (InfoExtractorMeta)super.clone();
-		
 		retval.resultField = resultField;
-		retval.contentStartMark = contentStartMark;
-		
-		int nrfields=fieldName.length;
-
-		retval.allocate(nrfields);
-		
-		for (int i=0;i<nrfields;i++)
-		{
-			retval.fieldName[i]   = fieldName[i];
-			retval.contentMode[i]   = contentMode[i];
-			retval.keyWord[i]   = keyWord[i];
-			retval.position[i] = position[i];
-			retval.definedDigitals[i]    = definedDigitals[i];
-			retval.order[i]        = order[i]; 
-			retval.minLength[i]     = minLength[i];
-			retval.maxLength[i]     = maxLength[i]; 
-		}
-		
+		retval.contentField = contentField;
+		retval.extractType = extractType;
+		retval.keyWord  = keyWord;
+		retval.infoType = infoType;
+		retval.regularExpression   = regularExpression;
+		retval.isRemoveBlank = isRemoveBlank;
+		retval.isRemoveControlChars = isRemoveControlChars;
+		retval.isRemoveCRLF = isRemoveCRLF;
+		retval.isRemoveHtml = isRemoveHtml;
+//		retval.position = position;
+//		retval.definedDigitals    = definedDigitals;
+//		retval.order        = order;
+//		retval.minLength     = minLength;
+//		retval.maxLength     = maxLength;
+//      retval.contentStartMark = contentStartMark;
+//		retval.contentMode   = contentMode;
 		return retval;
 	}
 
 	private void readData(Node stepnode)
 		throws KettleXMLException
 	{
+
 		try
 		{
-			this.resultField = XMLHandler.getTagValue(stepnode, "content_field");
-			this.contentStartMark = XMLHandler.getTagValue(stepnode, "content_mark");
-			
-			Node fields = XMLHandler.getSubNode(stepnode, "fields");
-			int  nrfields=XMLHandler.countNodes(fields, "field");
-	
-			allocate(nrfields);
-			
-			String sorder, sminDigitals, smaxDigitals;
-			
-			for (int i=0;i<nrfields;i++)
-			{
-				Node fnode = XMLHandler.getSubNodeByNr(fields, "field", i);
-				
-				fieldName[i]   = XMLHandler.getTagValue(fnode, "name");
-				contentMode[i]   = XMLHandler.getTagValue(fnode, "contentMode");
-				keyWord[i]   = XMLHandler.getTagValue(fnode, "keyWord");
-				position[i] = XMLHandler.getTagValue(fnode, "position");
-				definedDigitals[i]    = XMLHandler.getTagValue(fnode, "definedDigitals");
-				sorder        = XMLHandler.getTagValue(fnode, "order");
-				sminDigitals     = XMLHandler.getTagValue(fnode, "minDigitals");
-				smaxDigitals     = XMLHandler.getTagValue(fnode, "maxDigitals");
-				order[i]    = Const.toInt(sorder, -1);
-				minLength[i] = Const.toInt(sminDigitals, -1);
-				maxLength[i] = Const.toInt(smaxDigitals, -1);
-			}
-        }
+			resultField = XMLHandler.getTagValue(stepnode, "result_field");
+			contentField = XMLHandler.getTagValue(stepnode, "content_field");
+			extractType = Const.toInt(XMLHandler.getTagValue(stepnode, "extract_type"),1);
+			keyWord = XMLHandler.getTagValue(stepnode, "key_word");
+			regularExpression = XMLHandler.getTagValue(stepnode, "regular_expression");
+			infoType = Const.toInt(XMLHandler.getTagValue(stepnode, "info_type"),1);
+			isRemoveHtml= "Y".equalsIgnoreCase( XMLHandler.getTagValue(stepnode, "remove_html"));
+			isRemoveBlank= "Y".equalsIgnoreCase( XMLHandler.getTagValue(stepnode, "remove_blank"));
+			isRemoveCRLF= "Y".equalsIgnoreCase( XMLHandler.getTagValue(stepnode, "remove_crlf"));
+			isRemoveControlChars= "Y".equalsIgnoreCase( XMLHandler.getTagValue(stepnode, "remove_control_chars"));
+
+			contentStartMark = XMLHandler.getTagValue(stepnode, "content_mark");
+			position = XMLHandler.getTagValue(stepnode, "position");
+			//definedDigitals    = XMLHandler.getTagValue(fnode, "definedDigitals");
+			order    = Const.toInt(XMLHandler.getTagValue(stepnode, "order"), -1);
+			minLength = Const.toInt(XMLHandler.getTagValue(stepnode, "minDigitals"), -1);
+			maxLength = Const.toInt(XMLHandler.getTagValue(stepnode, "maxDigitals"), -1);
+	    }
 		catch(Exception e)
 		{
 			throw new KettleXMLException("Unable to load step info from XML", e);
@@ -314,71 +327,39 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 	
 	public void setDefault()
 	{
-		int i, nrfields=0;
-	
-		allocate(nrfields);
-
-        DecimalFormat decimalFormat = new DecimalFormat();
-
-		for (i=0;i<nrfields;i++)
-		{
-			fieldName[i]      = "field"+i;				
-			keyWord[i]      = "Number";
-			position[i]    = "\u00A40,000,000.00;\u00A4-0,000,000.00";
-			order[i]    = 9;
-			minLength[i] = 2;
-			maxLength[i] = 10;
-			definedDigitals[i]       = decimalFormat.getDecimalFormatSymbols().getCurrencySymbol();
-//			decimal[i]        = new String(new char[] { decimalFormat.getDecimalFormatSymbols().getDecimalSeparator() } );
-//			group[i]          = new String(new char[] { decimalFormat.getDecimalFormatSymbols().getGroupingSeparator() } );
-//			value[i]          = "-";
-		}
 
 	}
 	
 	public void getFields(RowMetaInterface rowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) throws KettleStepException
 	{
-		for (int i=0;i<fieldName.length;i++)
-		{
-			if (fieldName[i]!=null && fieldName[i].length()!=0)
-			{
-				int type=ValueMeta.getType(keyWord[i]);
-				if (type==ValueMetaInterface.TYPE_NONE) type=ValueMetaInterface.TYPE_STRING;
-				ValueMetaInterface v=new ValueMeta(fieldName[i], type);
-				v.setLength(order[i]);
-                v.setPrecision(minLength[i]);
-				v.setOrigin(name);
-				rowMeta.addValueMeta(v);
-			}
-		}
+		int type=ValueMeta.getType(keyWord);
+		if (type==ValueMetaInterface.TYPE_NONE) type=ValueMetaInterface.TYPE_STRING;
+		ValueMetaInterface v=new ValueMeta(contentField, type);
+		v.setOrigin(name);
+		rowMeta.addValueMeta(v);
 	}
 		
 	public String getXML()
 	{
         StringBuffer retval = new StringBuffer(300);
-		
-		
-		retval.append("        ").append(XMLHandler.addTagValue("content_field", resultField));
+
+		retval.append("        ").append(XMLHandler.addTagValue("result_field", resultField));
+		retval.append("        ").append(XMLHandler.addTagValue("content_field", contentField));
+		retval.append("        ").append(XMLHandler.addTagValue("extract_type", extractType));
+		retval.append("        ").append(XMLHandler.addTagValue("key_word", keyWord));
+		retval.append("        ").append(XMLHandler.addTagValue("regular_expression", regularExpression));
+		retval.append("        ").append(XMLHandler.addTagValue("info_type", infoType));
+		retval.append("        ").append(XMLHandler.addTagValue("remove_html", isRemoveHtml));
+		retval.append("        ").append(XMLHandler.addTagValue("remove_blank", isRemoveBlank));
+		retval.append("        ").append(XMLHandler.addTagValue("remove_crlf", isRemoveCRLF));
+		retval.append("        ").append(XMLHandler.addTagValue("remove_control_chars", isRemoveControlChars));
+
 		retval.append("        ").append(XMLHandler.addTagValue("content_mark", contentStartMark));
-		
-		retval.append("    <fields>").append(Const.CR);
-		for (int i=0;i<fieldName.length;i++)
-		{
-			if (fieldName[i]!=null && fieldName[i].length()!=0)
-			{
-				retval.append("      <field>").append(Const.CR);
-				retval.append("        ").append(XMLHandler.addTagValue("name",      fieldName[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("contentMode", contentMode[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("keyWord",      keyWord[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("position",    position[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("definedDigitals",  definedDigitals[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("order",    order[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("minDigitals", minLength[i]));
-				retval.append("        ").append(XMLHandler.addTagValue("maxDigitals", maxLength[i]));
-				retval.append("      </field>").append(Const.CR);
-			}
-		}
-		retval.append("    </fields>").append(Const.CR);
+		retval.append("        ").append(XMLHandler.addTagValue("position",    position));
+		//retval.append("        ").append(XMLHandler.addTagValue("definedDigitals",  definedDigitals));
+		retval.append("        ").append(XMLHandler.addTagValue("order",    order));
+		retval.append("        ").append(XMLHandler.addTagValue("minDigitals", minLength));
+		retval.append("        ").append(XMLHandler.addTagValue("maxDigitals", maxLength));
 
 		return retval.toString();
 	}
@@ -388,25 +369,25 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 	{
 		try
 		{
-			int nrfields = rep.countNrStepAttributes(id_step, "field_name");
+			resultField =       rep.getStepAttributeString (id_step, "result_field");
+			contentField =       rep.getStepAttributeString (id_step,  "content_field");
+			extractType =       new Integer(rep.getStepAttributeString (id_step,  "extract_type")).intValue();
+			keyWord     =       rep.getStepAttributeString (id_step,  "key_word");
+			regularExpression     =       rep.getStepAttributeString (id_step,  "regular_xpression");
+			infoType      =       new Integer(rep.getStepAttributeString (id_step,  "info_type")).intValue();
+			isRemoveHtml = rep.getStepAttributeBoolean( id_step, "remove_html" );
+			isRemoveBlank = rep.getStepAttributeBoolean( id_step, "remove_blank" );
+			isRemoveCRLF = rep.getStepAttributeBoolean( id_step, "remove_crlf" );
+			isRemoveControlChars = rep.getStepAttributeBoolean( id_step, "remove_control_chars" );
 
-			resultField =       rep.getStepAttributeString (id_step, "content_field");
+
 			contentStartMark =       rep.getStepAttributeString (id_step,  "content_mark");
+			position    =       rep.getStepAttributeString (id_step,  "position");
+			//definedDigitalStr       =       rep.getStepAttributeString (id_step,  "difine_digitals");
+			order    =  (int)rep.getStepAttributeInteger(id_step,  "order");
+			minLength =  (int)rep.getStepAttributeInteger(id_step, "min_length");
+			maxLength =  (int)rep.getStepAttributeInteger(id_step, "max_length");
 
-			allocate(nrfields);
-	
-			for (int i=0;i<nrfields;i++)
-			{
-				fieldName[i]      =       rep.getStepAttributeString (id_step, i, "field_name");
-				contentMode[i]      =       rep.getStepAttributeString (id_step, i, "content_mode");
-				keyWord[i]      =       rep.getStepAttributeString (id_step, i, "key_word");
-	
-				position[i]    =       rep.getStepAttributeString (id_step, i, "position");
-				definedDigitals[i]       =       rep.getStepAttributeString (id_step, i, "difine_digitals");
-				order[i]    =  (int)rep.getStepAttributeInteger(id_step, i, "order");
-				minLength[i] =  (int)rep.getStepAttributeInteger(id_step, i, "min_length");
-				maxLength[i] =  (int)rep.getStepAttributeInteger(id_step, i, "max_length");
-			}
 		}
 		catch(Exception e)
 		{
@@ -419,23 +400,24 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 	{
 		try
 		{
-			rep.saveStepAttribute(id_transformation, id_step, "content_field", resultField);
-			rep.saveStepAttribute(id_transformation, id_step, "content_mark", contentStartMark);
+			rep.saveStepAttribute(id_transformation, id_step, "result_field", resultField);
+			rep.saveStepAttribute(id_transformation, id_step, "content_field", contentField);
+			rep.saveStepAttribute(id_transformation, id_step, "extractType",    extractType);
+			rep.saveStepAttribute(id_transformation, id_step,  "key_word",      keyWord);
+			rep.saveStepAttribute(id_transformation, id_step,  "regular_xpression",      regularExpression);
+			rep.saveStepAttribute(id_transformation, id_step,  "info_type",    infoType);
+			rep.saveStepAttribute( id_transformation, id_step, "remove_html", isRemoveHtml );
+			rep.saveStepAttribute( id_transformation, id_step, "remove_blank", isRemoveBlank );
+			rep.saveStepAttribute( id_transformation, id_step, "remove_crlf", isRemoveCRLF );
+			rep.saveStepAttribute( id_transformation, id_step, "remove_control_chars", isRemoveControlChars );
 
-			for (int i=0;i<fieldName.length;i++)
-			{
-				if (fieldName[i]!=null && fieldName[i].length()!=0)
-				{
-					rep.saveStepAttribute(id_transformation, id_step, i, "field_name",      fieldName[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "content_mode",    contentMode[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "key_word",      keyWord[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "position",    position[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "define_digitals",  definedDigitals[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "order",    order[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "min_length", minLength[i]);
-					rep.saveStepAttribute(id_transformation, id_step, i, "max_length", maxLength[i]);
-				}
-			}
+			rep.saveStepAttribute(id_transformation, id_step, "content_mark", contentStartMark);
+			rep.saveStepAttribute(id_transformation, id_step,  "position",    position);
+			//rep.saveStepAttribute(id_transformation, id_step,  "define_digitals",  definedDigitals);
+			rep.saveStepAttribute(id_transformation, id_step,  "order",    order);
+			rep.saveStepAttribute(id_transformation, id_step,  "min_length", minLength);
+			rep.saveStepAttribute(id_transformation, id_step,  "max_length", maxLength);
+
 		}
 		catch(Exception e)
 		{
@@ -489,20 +471,49 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 		this.contentStartMark = contentStartMark;
 	}
 
-	public String[] getContentMode() {
-		return contentMode;
+	public int getExtractType() {
+		return extractType;
+	}
+	public void setExtractType(int extractType) {
+		this.extractType = extractType;
 	}
 
-	public void setContentMode(String[] contentMode) {
-		this.contentMode = contentMode;
+	public int getInfoType() {
+		return infoType;
+	}
+	public void setInfoType(int t) {
+		this.infoType = t;
 	}
 
-	public String[] getSearchtMode() {
-		return searchtMode;
+	public void setRemoveHtml(boolean removeHtml) {
+		isRemoveHtml = removeHtml;
 	}
 
-	public void setSearchtMode(String[] searchtMode) {
-		this.searchtMode = searchtMode;
+	public void setRemoveBlank(boolean removeBlank) {
+		isRemoveBlank = removeBlank;
 	}
-	
+
+	public void setRemoveControlChars(boolean removeControlChars) {
+		isRemoveControlChars = removeControlChars;
+	}
+
+	public void setRemoveCRLF(boolean removeCRLF) {
+		isRemoveCRLF = removeCRLF;
+	}
+
+	public boolean isRemoveHtml() {
+		return isRemoveHtml;
+	}
+
+	public boolean isRemoveBlank() {
+		return isRemoveBlank;
+	}
+
+	public boolean isRemoveControlChars() {
+		return isRemoveControlChars;
+	}
+
+	public boolean isRemoveCRLF() {
+		return isRemoveCRLF;
+	}
 }

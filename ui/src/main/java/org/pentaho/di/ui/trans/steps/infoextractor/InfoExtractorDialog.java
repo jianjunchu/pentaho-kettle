@@ -20,13 +20,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -60,14 +54,19 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 	private Text wRExp;
 	private FormData fdlRExp, fdRExp;
 
+	Group group0, group1,group2;
 
-	private Label wlFromField;
-	private CCombo wFromField;
-	private FormData fdlFromField, fdFromField;
+	private Label wlContentField;
+	private CCombo wContentField;
+	private FormData fdlContentField, fdContentField;
 
 	private Label wlExtractType;
 	private Button wExtractByKeyword, wExtractByRExp;
 	private FormData fdlExtractType, fdExtractType;
+
+	private Label wlPreProcessType;
+	private Button wPreProcessRemoveHtml, wPreProcessRemoveBlank,wPreProcessRemoveControlChar, wPreProcessRemoveCRLF;
+	private FormData fdlPreProcessType, fdPreProcessType;
 
 	private Label        wlContentMark;
 //	private Text    	 wContentMark;
@@ -134,24 +133,24 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		fdStepname.right= new FormAttachment(100, 0);
 		wStepname.setLayoutData(fdStepname);
 
-		wlFromField = new Label(shell, SWT.RIGHT );
-		wlFromField.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.FromField.Label" ) );
-		props.setLook(wlFromField);
-		fdlFromField = new FormData();
-		fdlFromField.left = new FormAttachment( 0, 0 );
-		fdlFromField.top = new FormAttachment( wStepname, margin );
-		fdlFromField.right = new FormAttachment( middle, -margin );
-		wlFromField.setLayoutData(fdlFromField);
-		wFromField = new CCombo(shell, SWT.BORDER | SWT.READ_ONLY );
-		wFromField.setEditable( true );
-		props.setLook(wFromField);
-		wFromField.addModifyListener( lsMod );
-		fdFromField = new FormData();
-		fdFromField.left = new FormAttachment( middle, 0 );
-		fdFromField.top = new FormAttachment( wStepname, margin );
-		fdFromField.right = new FormAttachment( 100, 0 );
-		wFromField.setLayoutData(fdFromField);
-		wFromField.addFocusListener(new FocusListener() {
+		wlContentField = new Label(shell, SWT.RIGHT );
+		wlContentField.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.FromField.Label" ) );
+		props.setLook(wlContentField);
+		fdlContentField = new FormData();
+		fdlContentField.left = new FormAttachment( 0, 0 );
+		fdlContentField.top = new FormAttachment( wStepname, margin );
+		fdlContentField.right = new FormAttachment( middle, -margin );
+		wlContentField.setLayoutData(fdlContentField);
+		wContentField = new CCombo(shell, SWT.BORDER | SWT.READ_ONLY );
+		wContentField.setEditable( true );
+		props.setLook(wContentField);
+		wContentField.addModifyListener( lsMod );
+		fdContentField = new FormData();
+		fdContentField.left = new FormAttachment( middle, 0 );
+		fdContentField.top = new FormAttachment( wStepname, margin );
+		fdContentField.right = new FormAttachment( 100, 0 );
+		wContentField.setLayoutData(fdContentField);
+		wContentField.addFocusListener(new FocusListener() {
 			public void focusLost( org.eclipse.swt.events.FocusEvent e ) {
 			}
 			public void focusGained( org.eclipse.swt.events.FocusEvent e ) {
@@ -159,41 +158,151 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 			}
 		} );
 
-		//Extract Type
-		wlExtractType = new Label( shell, SWT.RIGHT );
-		wlExtractType.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Label" ) );
-		props.setLook(wlExtractType);
-		fdlExtractType = new FormData();
-		fdlExtractType.left = new FormAttachment( 0, 0 );
-		fdlExtractType.top = new FormAttachment(wFromField, margin );
-		fdlExtractType.right = new FormAttachment( middle, -margin );
-		wlExtractType.setLayoutData(fdlExtractType);
 
-		wExtractByKeyword = new Button( shell, SWT.RADIO );
-		props.setLook(wExtractByKeyword);
-		wExtractByKeyword.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Keyword" )  );
-		wExtractByKeyword.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Keyword.Tooltip" ) );
-		fdExtractType = new FormData();
-		fdExtractType.left = new FormAttachment( middle, 0 );
-		fdExtractType.top = new FormAttachment(wFromField, margin );
-		wExtractByKeyword.setLayoutData(fdExtractType);
-		wExtractByKeyword.addSelectionListener(new SelectionAdapter() {
+		group0 = new Group(shell, SWT.NONE);
+		group0.setText(BaseMessages.getString( PKG, "InfoExtractorDialog.Group.PreProcess" ));
+		props.setLook(group0);
+		FormLayout group0Layout = new FormLayout();
+		group0Layout.marginWidth = 10;
+		group0Layout.marginHeight = 10;
+		group0.setLayout( group0Layout );
+
+		FormData fd0 = new FormData();
+		fd0.left = new FormAttachment( 0, margin );
+		fd0.top = new FormAttachment(wContentField, margin );
+		fd0.right = new FormAttachment( 100, -margin );
+		group0.setLayoutData(fd0);
+
+		//Data PreProcess Type
+		wlPreProcessType = new Label( group0, SWT.RIGHT );
+		wlPreProcessType.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.Label" ) );
+		props.setLook(wlPreProcessType);
+		fdlPreProcessType = new FormData();
+		fdlPreProcessType.left = new FormAttachment( 0, 0 );
+		fdlPreProcessType.top = new FormAttachment(wContentField, margin );
+		fdlPreProcessType.right = new FormAttachment( middle, -margin );
+		wlPreProcessType.setLayoutData(fdlPreProcessType);
+
+		wPreProcessRemoveHtml = new Button( group0, SWT.CHECK );
+		props.setLook(wPreProcessRemoveHtml);
+		wPreProcessRemoveHtml.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeHtml" )  );
+		wPreProcessRemoveHtml.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeHtml.Tooltip" ) );
+		fdPreProcessType = new FormData();
+		fdPreProcessType.left = new FormAttachment( middle, 0 );
+		fdPreProcessType.top = new FormAttachment(wContentField, margin );
+		wPreProcessRemoveHtml.setLayoutData(fdPreProcessType);
+		wPreProcessRemoveHtml.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected( SelectionEvent e ) {
 				input.setChanged();
 			}
 		} );
 
-		wExtractByRExp = new Button( shell, SWT.RADIO );
+		wPreProcessRemoveBlank = new Button( group0, SWT.CHECK );
+		props.setLook(wPreProcessRemoveBlank);
+		wPreProcessRemoveBlank.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeBlank" ) );
+		wPreProcessRemoveBlank.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeBlank.Tooltip" ) );
+		fdPreProcessType = new FormData();
+		fdPreProcessType.left = new FormAttachment(wPreProcessRemoveHtml, 0 );
+		fdPreProcessType.top = new FormAttachment(wContentField, margin );
+		wPreProcessRemoveBlank.setLayoutData(fdPreProcessType);
+		wPreProcessRemoveBlank.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected( SelectionEvent e ) {
+				input.setChanged();
+				}
+		} );
+
+
+		wPreProcessRemoveControlChar = new Button( group0, SWT.CHECK );
+		props.setLook(wPreProcessRemoveControlChar);
+		wPreProcessRemoveControlChar.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeContralChar" ) );
+		wPreProcessRemoveControlChar.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeContralChar.Tooltip" ) );
+		fdPreProcessType = new FormData();
+		fdPreProcessType.left = new FormAttachment(wPreProcessRemoveBlank, 0 );
+		fdPreProcessType.top = new FormAttachment(wContentField, margin );
+		wPreProcessRemoveControlChar.setLayoutData(fdPreProcessType);
+		wPreProcessRemoveControlChar.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected( SelectionEvent e ) {
+				input.setChanged();
+			}
+		} );
+
+		wPreProcessRemoveCRLF = new Button( group0, SWT.CHECK );
+		props.setLook(wPreProcessRemoveCRLF);
+		wPreProcessRemoveCRLF.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeCRLFChar" ) );
+		wPreProcessRemoveCRLF.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ProcessType.removeCRLFChar.Tooltip" ) );
+		fdPreProcessType = new FormData();
+		fdPreProcessType.left = new FormAttachment(wPreProcessRemoveControlChar, 0 );
+		fdPreProcessType.top = new FormAttachment(wContentField, margin );
+		wPreProcessRemoveCRLF.setLayoutData(fdPreProcessType);
+		wPreProcessRemoveCRLF.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected( SelectionEvent e ) {
+				input.setChanged();
+			}
+		} );
+
+
+		group1 = new Group(shell, SWT.NONE);
+		group1.setText("信息提取方式");
+		props.setLook(group1);
+		FormLayout groupLayout = new FormLayout();
+		groupLayout.marginWidth = 10;
+		groupLayout.marginHeight = 10;
+		group1.setLayout( groupLayout );
+
+		FormData fd = new FormData();
+		fd.left = new FormAttachment( 0, margin );
+		fd.top = new FormAttachment(group0, margin );
+		fd.right = new FormAttachment( 100, -margin );
+		group1.setLayoutData(fd);
+
+		//Extract Type
+		wlExtractType = new Label( group1, SWT.RIGHT );
+		wlExtractType.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Label" ) );
+		props.setLook(wlExtractType);
+		fdlExtractType = new FormData();
+		fdlExtractType.left = new FormAttachment( 0, 0 );
+		fdlExtractType.top = new FormAttachment(group0, margin );
+		fdlExtractType.right = new FormAttachment( middle, -margin );
+		wlExtractType.setLayoutData(fdlExtractType);
+
+		wExtractByKeyword = new Button( group1, SWT.RADIO );
+		props.setLook(wExtractByKeyword);
+		wExtractByKeyword.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Keyword" )  );
+		wExtractByKeyword.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.Keyword.Tooltip" ) );
+		fdExtractType = new FormData();
+		fdExtractType.left = new FormAttachment( middle, 0 );
+		fdExtractType.top = new FormAttachment(group0, margin );
+		wExtractByKeyword.setLayoutData(fdExtractType);
+		wExtractByKeyword.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected( SelectionEvent e ) {
+				input.setChanged();
+				group2.setEnabled(true);
+				wInfoTypeText.setEnabled(wExtractByKeyword.getSelection());
+				wInfoTypeNumber.setEnabled(wExtractByKeyword.getSelection());
+				wInfoTypeDate.setEnabled(wExtractByKeyword.getSelection());
+				wlInfoType.setEnabled(wExtractByKeyword.getSelection());
+				wlKeyword.setText(wExtractByKeyword.getSelection()?BaseMessages.getString(PKG,"InfoExtractorDialog.ExtractType.Keyword.Keyword"):BaseMessages.getString(PKG,"InfoExtractorDialog.ExtractType.RegExp.RegExp"));
+				if(!wInfoTypeText.getSelection() && !wInfoTypeNumber.getSelection() && !wInfoTypeDate.getSelection())
+					wInfoTypeText.setSelection(true);
+			}
+		} );
+
+		wExtractByRExp = new Button( group1, SWT.RADIO );
 		props.setLook(wExtractByRExp);
 		wExtractByRExp.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.RegExp" ) );
 		wExtractByRExp.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.ExtractType.RegExp.Tooltip" ) );
 		fdExtractType = new FormData();
 		fdExtractType.left = new FormAttachment(wExtractByKeyword, 0 );
-		fdExtractType.top = new FormAttachment(wFromField, margin );
+		fdExtractType.top = new FormAttachment(wContentField, margin );
 		wExtractByRExp.setLayoutData(fdExtractType);
 		wExtractByRExp.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected( SelectionEvent e ) {
 				input.setChanged();
+				wInfoTypeText.setEnabled(wExtractByKeyword.getSelection());
+				wInfoTypeNumber.setEnabled(wExtractByKeyword.getSelection());
+				wInfoTypeDate.setEnabled(wExtractByKeyword.getSelection());
+				wlInfoType.setEnabled(wExtractByKeyword.getSelection());
+				wlKeyword.setText(wExtractByRExp.getSelection()?BaseMessages.getString(PKG,"InfoExtractorDialog.ExtractType.RegExp.RegExp"):BaseMessages.getString(PKG,"InfoExtractorDialog.ExtractType.Keyword.Keyword"));
 			}
 		} );
 
@@ -219,7 +328,8 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		props.setLook(wlKeyword);
 		fdlKeyword=new FormData();
 		fdlKeyword.left = new FormAttachment(0, 0);
-		fdlKeyword.top  = new FormAttachment(wExtractByRExp, margin);
+		//fdlKeyword.top  = new FormAttachment(wExtractByRExp, margin);
+		fdlKeyword.top  = new FormAttachment(group1, margin);
 		fdlKeyword.right= new FormAttachment(middle, -margin);
 		wlKeyword.setLayoutData(fdlKeyword);
 		wKeyword=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
@@ -227,12 +337,27 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		wKeyword.addModifyListener(lsMod);
 		fdKeyword=new FormData();
 		fdKeyword.left = new FormAttachment(middle, 0);
-		fdKeyword.top  = new FormAttachment(wExtractByRExp, margin);
+		//fdKeyword.top  = new FormAttachment(wExtractByRExp, margin);
+		fdKeyword.top  = new FormAttachment(group1, margin);
 		fdKeyword.right= new FormAttachment(100, 0);
 		wKeyword.setLayoutData(fdKeyword);
 
+		group2 = new Group(shell, SWT.NONE);
+		group2.setText("信息类型");
+		props.setLook(group2);
+		FormLayout groupLayout2 = new FormLayout();
+		groupLayout2.marginWidth = 10;
+		groupLayout2.marginHeight = 10;
+		group2.setLayout( groupLayout2 );
+
+		FormData fd2 = new FormData();
+		fd2.left = new FormAttachment( 0, margin );
+		fd2.top = new FormAttachment(wKeyword, margin );
+		fd2.right = new FormAttachment( 100, -margin );
+		group2.setLayoutData(fd2);
+
 		//Info type line
-		wlInfoType = new Label( shell, SWT.RIGHT );
+		wlInfoType = new Label( group2, SWT.RIGHT );
 		wlInfoType.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Label" ) );
 		props.setLook(wlInfoType);
 		fdlInfoType = new FormData();
@@ -241,7 +366,7 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		fdlInfoType.right = new FormAttachment( middle, -margin );
 		wlInfoType.setLayoutData(fdlInfoType);
 
-		wInfoTypeText = new Button( shell, SWT.RADIO );
+		wInfoTypeText = new Button( group2, SWT.RADIO );
 		props.setLook(wInfoTypeText);
 		wInfoTypeText.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Text" ) );
 		wInfoTypeText.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Text.Tooltip" ) );
@@ -255,7 +380,7 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 			}
 		} );
 
-		wInfoTypeNumber = new Button( shell, SWT.RADIO );
+		wInfoTypeNumber = new Button( group2, SWT.RADIO );
 		props.setLook(wInfoTypeNumber);
 		wInfoTypeNumber.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Number" ) );
 		wInfoTypeNumber.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Number.Tooltip" ) );
@@ -269,7 +394,7 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 			}
 		} );
 
-		wInfoTypeDate = new Button( shell, SWT.RADIO );
+		wInfoTypeDate = new Button( group2, SWT.RADIO );
 		props.setLook(wInfoTypeDate);
 		wInfoTypeDate.setText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Date" ) );
 		wInfoTypeDate.setToolTipText( BaseMessages.getString( PKG, "InfoExtractorDialog.InfoType.Date.Tooltip" ) );
@@ -284,15 +409,13 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		} );
 		//End Keyword line group
 
-
-
 		wlResultField =new Label(shell, SWT.RIGHT);
 		wlResultField.setText(BaseMessages.getString( PKG, "InfoExtractorDialog.Result.Field" ));
  		props.setLook(wlResultField);
 		fdlResultField =new FormData();
 		fdlResultField.left = new FormAttachment(0, 0);
 		fdlResultField.right= new FormAttachment(middle, -margin);
-		fdlResultField.top  = new FormAttachment(wInfoTypeDate, margin);
+		fdlResultField.top  = new FormAttachment(group2, margin);
 		wlResultField.setLayoutData(fdlResultField);
 		wResultField =new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
  		props.setLook(wResultField);
@@ -300,7 +423,7 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		wResultField.setText(input.getResultField()==null?"result":input.getResultField());
 		fdResultField =new FormData();
 		fdResultField.left = new FormAttachment(middle, 0);
-		fdResultField.top  = new FormAttachment(wInfoTypeDate, margin);
+		fdResultField.top  = new FormAttachment(group2, margin);
 		fdResultField.right= new FormAttachment(100, 0);
 		wResultField.setLayoutData(fdResultField);
 //
@@ -320,44 +443,7 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 //		fdContentMark.top  = new FormAttachment(wResultField, margin);
 //		fdContentMark.right= new FormAttachment(100, 0);
 //		wContentMark.setLayoutData(fdContentMark);
-//
-//
-//
-//		wlFields=new Label(shell, SWT.NONE);
-//		wlFields.setText(BaseMessages.getString(PKG,"InfoExtractorDialog.Fields.Label"));
-// 		props.setLook(wlFields);
-//		fdlFields=new FormData();
-//		fdlFields.left = new FormAttachment(0, 0);
-//		fdlFields.top  = new FormAttachment(wContentMark, margin);
-//		wlFields.setLayoutData(fdlFields);
-//
-//		final int FieldsCols=8;
-//		final int FieldsRows=input.getFieldName().length;
-//
-//		ColumnInfo[] colinf=new ColumnInfo[FieldsCols];
-//		colinf[0]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.FieldName.Column"),       ColumnInfo.COLUMN_TYPE_TEXT,   false);
-//		colinf[1]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.ContentMode.Column"),       ColumnInfo.COLUMN_TYPE_CCOMBO,   Rule.getContentModes());
-//		colinf[2]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.KeyWord.Column"),       ColumnInfo.COLUMN_TYPE_TEXT,   false);
-//		colinf[3]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.Before/After.Column"),       ColumnInfo.COLUMN_TYPE_CCOMBO, Rule.getPosiitons() );
-//		colinf[4]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.Order.Column"),     ColumnInfo.COLUMN_TYPE_TEXT,false);
-//		colinf[5]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.MinDigitals.Column"),     ColumnInfo.COLUMN_TYPE_TEXT,   false);
-//		colinf[6]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.MaxDigitals.Column"),     ColumnInfo.COLUMN_TYPE_TEXT,   false);
-//		colinf[7]=new ColumnInfo(BaseMessages.getString(PKG,"InfoExtractorDialog.DefineDigitals.Column"),     ColumnInfo.COLUMN_TYPE_TEXT,   false);
-//
-//		wFields=new TableView(transMeta, shell,
-//						      SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI,
-//						      colinf,
-//						      FieldsRows,
-//						      lsMod,
-//							  props
-//						      );
-//
-//		fdFields=new FormData();
-//		fdFields.left  = new FormAttachment(0, 0);
-//		fdFields.top   = new FormAttachment(wlFields, margin);
-//		fdFields.right = new FormAttachment(100, 0);
-//		fdFields.bottom= new FormAttachment(100, -50);
-//		wFields.setLayoutData(fdFields);
+
 
 		wOK=new Button(shell, SWT.PUSH);
 		wOK.setText(BaseMessages.getString("System.Button.OK"));
@@ -379,7 +465,6 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 		
 		// Detect X or ALT-F4 or something that kills this window...
 		shell.addShellListener(	new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
-
 
 //		lsResize = new Listener()
 //		{
@@ -413,39 +498,36 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 	public void getData()
 	{
 		int i;
-		//System.out.println("t");
-		//log.logDebug(toString(), "getting fields info...");
-		this.wResultField.setText(input.getResultField()==null?"":input.getResultField());
-//		this.wContentMark.setText(input.getContentMark()==null?"":input.getContentMark());
-		
-//		for (i=0;i<input.getFieldName().length;i++)
-//		{
-//			if (input.getFieldName()[i]!=null)
-//			{
-//				TableItem item = wFields.table.getItem(i);
-//				item.setText(1, input.getFieldName()[i]);
-//
-//				String contentMode = input.getContentMode()[i];
-//				String keyword   = input.getKeyWord()[i];
-//				String position = input.getPosition()[i];
-//                String order = new Integer(input.getOrder()[i]).toString();
-//                String minDigitals   = input.getMinLength()[i]<0?"":(""+input.getMinLength()[i]);
-//                String maxDigitals   = input.getMaxLength()[i]<0?"":(""+input.getMaxLength()[i]);
-//				String definedDigitals   = input.getDefinedDigitals()[i];
-//
-//				if (contentMode  !=null) item.setText(2, contentMode  ); else item.setText(2, "");
-//				if (keyword  !=null) item.setText(3, keyword  ); else item.setText(3, "");
-//				if (position!=null) item.setText(4, position); else item.setText(4, "");
-//				if (order!=null) item.setText(5, order); else item.setText(5, "");
-//				if (minDigitals  !=null) item.setText(6, minDigitals  ); else item.setText(6, "");
-//				if (maxDigitals  !=null) item.setText(7, maxDigitals  ); else item.setText(7, "");
-//				if (definedDigitals  !=null) item.setText(8, definedDigitals  ); else item.setText(8, "");
-//			}
-//		}
-//
-//        wFields.setRowNums();
-//        wFields.optWidth(true);
-		
+		if(input.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_KEYWORD) {
+			wKeyword.setText(input.getKeyWord());
+			wExtractByKeyword.setSelection(true);
+			if (input.getInfoType() == InfoExtractorMeta.INFO_TYPE_TEXT)
+				this.wInfoTypeText.setSelection(true);
+			else if (input.getInfoType() == InfoExtractorMeta.INFO_TYPE_NUMBER)
+				this.wInfoTypeNumber.setSelection(true);
+			else if (input.getInfoType() == InfoExtractorMeta.INFO_TYPE_DATE)
+				this.wInfoTypeDate.setSelection(true);
+		}else if(input.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_REGEXP) {
+				wKeyword.setText(input.getRegularExpression());
+				wExtractByRExp.setSelection(true);
+				wInfoTypeText.setEnabled(false);
+				wInfoTypeNumber.setEnabled(false);
+				wInfoTypeDate.setEnabled(false);
+				wlInfoType.setEnabled(false);
+				wlKeyword.setText(BaseMessages.getString(PKG,"InfoExtractorDialog.ExtractType.RegExp.RegExp"));
+				group2.setEnabled(false);
+		}else {
+			wKeyword.setText("");
+			wExtractByKeyword.setSelection(true);
+			wInfoTypeText.setSelection(true);
+		}
+		this.wContentField.setText(input.getContentField()==null?"":input.getContentField());
+		this.wPreProcessRemoveControlChar.setSelection(input.isRemoveControlChars());
+		this.wPreProcessRemoveBlank.setSelection(input.isRemoveBlank());
+		this.wPreProcessRemoveCRLF.setSelection(input.isRemoveCRLF());
+		this.wPreProcessRemoveHtml.setSelection(input.isRemoveHtml());
+		this.wResultField.setText(input.getResultField()==null?"result":input.getResultField());
+
 		wStepname.selectAll();
 	}
 	
@@ -459,39 +541,28 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 	private void ok()
 	{
 		if (Const.isEmpty(wStepname.getText())) return;
-
 		stepname = wStepname.getText(); // return value
-        input.setResultField(this.wResultField.getText());
+		input.setContentField(wContentField.getText());
+		input.setRemoveControlChars(wPreProcessRemoveControlChar.getSelection());
+		input.setRemoveHtml(wPreProcessRemoveHtml.getSelection());
+		input.setRemoveCRLF(wPreProcessRemoveCRLF.getSelection());
+		input.setRemoveBlank(wPreProcessRemoveBlank.getSelection());
+		if(wExtractByKeyword.getSelection()) {
+			input.setExtractType(InfoExtractorMeta.EXTRACT_TYPE_KEYWORD);
+			input.setKeyWord(wKeyword.getText());
+			if(wInfoTypeText.getSelection())
+				input.setInfoType(InfoExtractorMeta.INFO_TYPE_TEXT);
+			else if(wInfoTypeNumber.getSelection())
+				input.setInfoType(InfoExtractorMeta.INFO_TYPE_NUMBER);
+			else if(wInfoTypeDate.getSelection())
+				input.setInfoType(InfoExtractorMeta.INFO_TYPE_DATE);
+		}
+		else {
+			input.setExtractType(InfoExtractorMeta.EXTRACT_TYPE_REGEXP);
+			input.setRegularExpression(wKeyword.getText());
+		}
        // input.setContentMark(this.wContentMark.getText());
-        
-		int i;
-		//Table table = wFields.table;
-		
-//		int nrfields = wFields.nrNonEmpty();
-//
-//		input.allocate(nrfields);
-//
-//		for (i=0;i<nrfields;i++)
-//		{
-//			TableItem item = wFields.getNonEmpty(i);
-//			input.getFieldName()[i]   = item.getText(1);
-//			input.getContentMode()[i] = item.getText(2);
-//			input.getKeyWord()[i]   = item.getText(4);
-//			input.getPosition()[i] = item.getText(5);
-//			String order = item.getText(6);
-//			String minLength   = item.getText(7);
-//			String maxLength   = item.getText(8);
-//			input.getDefinedDigitals()[i] = item.getText(9);
-//
-//			try { input.getOrder()[i]    = Integer.parseInt(order); }
-//			  catch(Exception e) { input.getOrder()[i]    = -1; }
-//			try { input.getMinLength()[i] = Integer.parseInt(minLength  ); }
-//			  catch(Exception e) { input.getMinLength()[i] = -1; }
-//			try { input.getMaxLength()[i] = Integer.parseInt(maxLength  ); }
-//			  catch(Exception e) { input.getMaxLength()[i] = -1; }
-//
-//		}
-		
+		input.setResultField(this.wResultField.getText());
 		dispose();
 	}
 	
@@ -502,14 +573,14 @@ public class InfoExtractorDialog extends BaseStepDialog implements StepDialogInt
 	private void setDynamicFilenameField() {
 		if ( !gotPreviousFields ) {
 			try {
-				String field = wFromField.getText();
-				wFromField.removeAll();
+				String field = wContentField.getText();
+				wContentField.removeAll();
 				RowMetaInterface r = transMeta.getPrevStepFields( stepname );
 				if ( r != null ) {
-					wFromField.setItems( r.getFieldNames() );
+					wContentField.setItems( r.getFieldNames() );
 				}
 				if ( field != null ) {
-					wFromField.setText( field );
+					wContentField.setText( field );
 				}
 			} catch ( KettleException ke ) {
 				new ErrorDialog(
