@@ -24,17 +24,7 @@ package org.pentaho.di.ui.core;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -1201,6 +1191,13 @@ public class PropsUI extends Props {
     properties.setProperty( SHOW_HELP_TOOL_TIPS, show ? YES : NO );
   }
 
+  public void setDateYYYY()
+  {
+    properties.put("YYYY", new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMM", new SimpleDateFormat("yyyyMM").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMMDD", new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMMDDHH", new SimpleDateFormat("yyyyMMddHH").format(Calendar.getInstance().getTime()));
+  }
   /**
    * @return the openTabFiles
    */

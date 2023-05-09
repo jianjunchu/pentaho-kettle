@@ -30,6 +30,8 @@ import org.pentaho.di.core.row.value.ValueMetaBase;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.di.version.BuildVersion;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -71,6 +73,10 @@ public class Variables implements VariableSpace {
       buildDate = "";
     }
     properties.put( Const.INTERNAL_VARIABLE_KETTLE_BUILD_DATE, buildDate );
+    properties.put("YYYY", new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMM", new SimpleDateFormat("yyyyMM").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMMDD", new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
+    properties.put("YYYYMMDDHH", new SimpleDateFormat("yyyyMMddHH").format(Calendar.getInstance().getTime()));
   }
 
   @Override

@@ -1659,7 +1659,7 @@ public class EnterOptionsDialog extends Dialog {
     props.setIndicateSlowTransStepsEnabled( wIndicateSlowSteps.getSelection() );
     props.setAutoCollapseCoreObjectsTree( autoCollapseBtn.getSelection() );
     props.setShowingHelpToolTips( helptipBtn.getSelection() );
-
+    props.setDateYYYY();
     int defaultLocaleIndex = wDefaultLocale.getSelectionIndex();
     if ( defaultLocaleIndex < 0 || defaultLocaleIndex >= GlobalMessages.localeCodes.length ) {
       // Code hardening, when the combo-box ever gets in a strange state,
