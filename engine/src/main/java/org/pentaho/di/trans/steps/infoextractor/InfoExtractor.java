@@ -36,7 +36,7 @@ import org.pentaho.di.trans.step.StepMetaInterface;
 
 
 public class InfoExtractor extends BaseStep implements StepInterface {
-	
+
 	private InfoExtractorMeta meta;
 	private InfoExtractorData data;
 	String[] defaultDigitals = {"0","1","2","3","4","5","6","7","8","9","%",".",","};
