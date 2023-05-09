@@ -371,10 +371,10 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 		{
 			resultField =       rep.getStepAttributeString (id_step, "result_field");
 			contentField =       rep.getStepAttributeString (id_step,  "content_field");
-			extractType =       new Integer(rep.getStepAttributeString (id_step,  "extract_type")).intValue();
+			extractType = (int) rep.getStepAttributeInteger (id_step,  "extract_type");
 			keyWord     =       rep.getStepAttributeString (id_step,  "key_word");
 			regularExpression     =       rep.getStepAttributeString (id_step,  "regular_xpression");
-			infoType      =       new Integer(rep.getStepAttributeString (id_step,  "info_type")).intValue();
+			infoType      = (int) rep.getStepAttributeInteger (id_step,  "info_type");
 			isRemoveHtml = rep.getStepAttributeBoolean( id_step, "remove_html" );
 			isRemoveBlank = rep.getStepAttributeBoolean( id_step, "remove_blank" );
 			isRemoveCRLF = rep.getStepAttributeBoolean( id_step, "remove_crlf" );
@@ -402,7 +402,7 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 		{
 			rep.saveStepAttribute(id_transformation, id_step, "result_field", resultField);
 			rep.saveStepAttribute(id_transformation, id_step, "content_field", contentField);
-			rep.saveStepAttribute(id_transformation, id_step, "extractType",    extractType);
+			rep.saveStepAttribute(id_transformation, id_step, "extract_type",    extractType);
 			rep.saveStepAttribute(id_transformation, id_step,  "key_word",      keyWord);
 			rep.saveStepAttribute(id_transformation, id_step,  "regular_xpression",      regularExpression);
 			rep.saveStepAttribute(id_transformation, id_step,  "info_type",    infoType);
