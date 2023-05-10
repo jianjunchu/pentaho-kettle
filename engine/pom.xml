@@ -145,7 +145,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-       <classifier>auphi</classifier>
+       <classifier>auphi</classifier> 
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
@@ -1057,6 +1057,12 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
+      <version>1.8.17</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>fontbox</artifactId>
       <version>1.8.17</version>
     </dependency>
 
