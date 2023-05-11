@@ -19,11 +19,14 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.Counter;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.exception.KettlePluginException;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMeta;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.row.value.ValueMetaFactory;
+import org.pentaho.di.core.row.value.ValueMetaNone;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
@@ -36,6 +39,7 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
 
@@ -330,11 +334,16 @@ public class InfoExtractorMeta extends BaseStepMeta implements StepMetaInterface
 
 	}
 	
-	public void getFields(RowMetaInterface rowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space) throws KettleStepException
+	public void getFields(RowMetaInterface rowMeta, String name, RowMetaInterface[] info, StepMeta nextStep, VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException
 	{
-		int type=ValueMeta.getType(keyWord);
-		if (type==ValueMetaInterface.TYPE_NONE) type=ValueMetaInterface.TYPE_STRING;
-		ValueMetaInterface v=new ValueMeta(contentField, type);
+		int type=ValueMetaInterface.TYPE_STRING;
+		ValueMetaInterface v= null ;
+		try {
+		v = ValueMetaFactory.createValueMeta( resultField, type );
+	} catch (KettlePluginException e) {
+			v = new ValueMetaNone( resultField );
+	}
+		//ValueMetaInterface v=new ValueMeta(resultField, type);
 		v.setOrigin(name);
 		rowMeta.addValueMeta(v);
 	}
