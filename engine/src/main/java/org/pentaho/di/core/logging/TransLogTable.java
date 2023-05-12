@@ -134,13 +134,17 @@ public class TransLogTable extends BaseLogTable implements Cloneable, LogTableIn
       Node fieldNode = XMLHandler.getSubNodeByNr( node, BaseLogTable.XML_TAG, i );
       String id = XMLHandler.getTagValue( fieldNode, "id" );
       LogTableField field = findField( id );
-      if ( field == null ) {
-        field = fields.get( i );
-      }
+//      if ( field == null ) {
+//        field = fields.get( i );
+//      }
       if ( field != null ) {
         field.setFieldName( XMLHandler.getTagValue( fieldNode, "name" ) );
         field.setEnabled( "Y".equalsIgnoreCase( XMLHandler.getTagValue( fieldNode, "enabled" ) ) );
         field.setSubject( StepMeta.findStep( steps, XMLHandler.getTagValue( fieldNode, "subject" ) ) );
+      }else{
+        field=new LogTableField(id, XMLHandler.getTagValue( fieldNode, "name" ), StepMeta.findStep( steps, XMLHandler.getTagValue( fieldNode, "subject" ) ) );
+        field.setEnabled( "Y".equalsIgnoreCase( XMLHandler.getTagValue( fieldNode, "enabled" ) ) );
+        fields.add(field);
       }
     }
   }
@@ -321,7 +325,6 @@ public class TransLogTable extends BaseLogTable implements Cloneable, LogTableIn
    * Get the logging interval in seconds. Disabled if the logging interval is <=0. A value higher than 0 means that the
    * log table is updated every 'logInterval' seconds.
    *
-   * @param logInterval
    *          The log interval,
    */
   public String getLogInterval() {
@@ -346,8 +349,6 @@ public class TransLogTable extends BaseLogTable implements Cloneable, LogTableIn
   /**
    * This method calculates all the values that are required
    *
-   * @param id
-   *          the id to use or -1 if no id is needed
    * @param status
    *          the log status to use
    * @param subject
