@@ -99,8 +99,8 @@
 
   public void setDefault()
   {
-   startPageURL = "2000";
-   listPageURLPattern = "5000";
+   startPageURL = "";
+   listPageURLPattern = "";
    rowLimit = -1;
   }
 

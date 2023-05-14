@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2007 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the GNU Lesser General Public License, Version 2.1. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.gnu.org/licenses/lgpl-2.1.txt. The Original Code is Pentaho 
+ * Copyright (c) 2007 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the GNU Lesser General Public License, Version 2.1. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.gnu.org/licenses/lgpl-2.1.txt. The Original Code is Pentaho
  * Data Integration.  The Initial Developer is Samatarn.
  *
- * Software distributed under the GNU Lesser Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the GNU Lesser Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
-*/
+ */
 
 /*
  * Created on 18-mei-2003
@@ -28,15 +28,10 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.trans.TransMeta;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.di.trans.step.BaseStepMeta;
 import org.pentaho.di.trans.step.StepDialogInterface;
@@ -71,9 +66,22 @@ public class CrawlerInputDialog extends BaseStepDialog implements StepDialogInte
 	private static Class<?> PKG = CrawlerInputMeta.class; // for i18n purposes, needed by Translator2!!   $NON-NLS-1$
 
 	private CrawlerInputMeta input;
-	private TextVar wContentPageURLPattern;
 	private TextVar wStartPageURL;
+
+	private Group wListPageGroup;
+
+	protected Label wlListPageURL;
+	protected Text wListPageURL;
+	protected  Button wListPageButton;
 	private TextVar wListPageURLPattern;
+
+
+	private Group wContentPageGroup;
+	protected Label wlContentPageURL;
+	protected Text wContentPageURL;
+	protected  Button wContentPageButton;
+	private TextVar wContentPageURLPattern;
+
 	private TextVar wRowLimit;
 	private TextVar wQueueSize;
 	public CrawlerInputDialog(Shell parent, Object in, TransMeta tr, String sname)
@@ -131,7 +139,8 @@ public class CrawlerInputDialog extends BaseStepDialog implements StepDialogInte
 
 		// Start Page URL
 		Label wlStartPageURL = new Label(shell, SWT.RIGHT);
-		wlStartPageURL.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.StartPage.Label")); //$NON-NLS-1$
+		wlStartPageURL.setText("* "+BaseMessages.getString(PKG, "CrawlerInputDialog.StartPage.Label")); //$NON-NLS-1$
+		wlStartPageURL.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.StartPage.Label.ToolTip"));
 		props.setLook(wlStartPageURL);
 		FormData fdlStartPageURL = new FormData();
 		fdlStartPageURL.left = new FormAttachment(0, 0);
@@ -148,58 +157,177 @@ public class CrawlerInputDialog extends BaseStepDialog implements StepDialogInte
 		fdStartPageURL.right= new FormAttachment(100, 0);
 		wStartPageURL.setLayoutData(fdStartPageURL);
 
-		// Content Page URL Pattern
-		Label wlContentPageURLPattern = new Label(shell, SWT.RIGHT);
-		wlContentPageURLPattern.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageURLPattern.Label")); //$NON-NLS-1$
+		wListPageGroup = new Group(shell, SWT.SHADOW_NONE);
+		props.setLook(wListPageGroup);
+		wListPageGroup.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageGroup.Label"));
+		FormLayout groupLayout = new FormLayout();
+		groupLayout.marginWidth = 10;
+		groupLayout.marginHeight = 10;
+		wListPageGroup.setLayout(groupLayout);
+		FormData fdListPageGroup = new FormData();
+		fdListPageGroup.left = new FormAttachment(0, margin);
+		fdListPageGroup.top = new FormAttachment(wStartPageURL, margin);
+		fdListPageGroup.right = new FormAttachment(100, -margin);
+		wListPageGroup.setLayoutData(fdListPageGroup);
+
+		//ListPageURL
+		Label wlListPageURL = new Label(wListPageGroup, SWT.RIGHT);
+		wlListPageURL.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageURL.Label")); //$NON-NLS-1$
+		wlListPageURL.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageURL.Label.ToolTip"));
+		props.setLook(wlListPageURL);
+		FormData fdlListPageURL = new FormData();
+		fdlListPageURL.left = new FormAttachment(0, 0);
+		fdlListPageURL.right= new FormAttachment(middle, -margin);
+		fdlListPageURL.top  = new FormAttachment(wStartPageURL, margin);
+		wlListPageURL.setLayoutData(fdlListPageURL);
+		wListPageURL =new Text(wListPageGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+		wListPageURL.setText("");
+		wListPageURL.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageURL.Label.ToolTip"));
+		props.setLook(wListPageURL);
+		wListPageURL.addModifyListener(lsMod);
+		FormData fdListPageURL = new FormData();
+		fdListPageURL.left = new FormAttachment(middle, 0);
+		fdListPageURL.top  = new FormAttachment(wStartPageURL, margin);
+		fdListPageURL.right= new FormAttachment(80, 0);
+		wListPageURL.setLayoutData(fdListPageURL);
+
+		wListPageButton=new Button(wListPageGroup, SWT.NONE );
+		wListPageButton.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.Button.GenerateRegExp"));
+		props.setLook(wListPageButton);
+		FormData fdPageButton=new FormData();
+		fdPageButton.left = new FormAttachment(wListPageURL, 0);
+		fdPageButton.top  = new FormAttachment(wStartPageURL, 0);
+		fdPageButton.right= new FormAttachment(100, 0);
+
+		wListPageButton.setLayoutData(fdPageButton);
+		wListPageButton.addSelectionListener(new SelectionAdapter()
+											 {
+												 public void widgetSelected(SelectionEvent e)
+												 {
+													 String str = wListPageURL.getText();
+													 try {
+														 wListPageURLPattern.setText(getPatternStr(str));
+													 } catch (Exception ex) {
+														 new ErrorDialog(shell, BaseMessages.getString(PKG, "CrawlerInputDialog.ErrorDialog.UnableToGeneratePattern.Title"), BaseMessages.getString(PKG, "CrawlerInputDialog.ErrorDialog.UnableToGeneratePattern.Message"), ex);
+													 }
+												 }
+											 }
+		);
+
+		// ListPageURLPattern
+		Label wlListPageURLPattern = new Label(wListPageGroup, SWT.RIGHT);
+		wlListPageURLPattern.setText("* "+BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageURLPattern.Label")); //$NON-NLS-1$
+		props.setLook(wlListPageURLPattern);
+		FormData fdlListPageURLPattern = new FormData();
+		fdlListPageURLPattern.left = new FormAttachment(0, 0);
+		fdlListPageURLPattern.right= new FormAttachment(middle, -margin);
+		fdlListPageURLPattern.top  = new FormAttachment(wListPageURL, margin);
+		wlListPageURLPattern.setLayoutData(fdlListPageURLPattern);
+		wListPageURLPattern =new TextVar(transMeta, wListPageGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+		wListPageURLPattern.setText("");
+		props.setLook(wListPageURLPattern);
+		wListPageURLPattern.addModifyListener(lsMod);
+		FormData fdListPageURLPattern = new FormData();
+		fdListPageURLPattern.left = new FormAttachment(middle, 0);
+		fdListPageURLPattern.top  = new FormAttachment(wListPageURL, margin);
+		fdListPageURLPattern.right= new FormAttachment(100, 0);
+		wListPageURLPattern.setLayoutData(fdListPageURLPattern);
+
+
+		wContentPageGroup = new Group(shell, SWT.SHADOW_NONE);
+		props.setLook(wContentPageGroup);
+		wContentPageGroup.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageGroup.Label"));
+		FormLayout groupLayout2 = new FormLayout();
+		groupLayout2.marginWidth = 10;
+		groupLayout2.marginHeight = 10;
+		wContentPageGroup.setLayout(groupLayout2);
+		FormData fdContentPageGroup = new FormData();
+		fdContentPageGroup.left = new FormAttachment(0, margin);
+		fdContentPageGroup.top = new FormAttachment(wListPageGroup, margin);
+		fdContentPageGroup.right = new FormAttachment(100, -margin);
+		wContentPageGroup.setLayoutData(fdContentPageGroup);
+
+		//ContentPageURL
+		Label wlContentPageURL = new Label(wContentPageGroup, SWT.RIGHT);
+		wlContentPageURL.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageURL.Label")); //$NON-NLS-1$
+		wlContentPageURL.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageURL.Label.ToolTip"));
+		props.setLook(wlContentPageURL);
+		FormData fdlContentPageURL = new FormData();
+		fdlContentPageURL.left = new FormAttachment(0, 0);
+		fdlContentPageURL.right= new FormAttachment(middle, -margin);
+		fdlContentPageURL.top  = new FormAttachment(wListPageURLPattern, margin);
+		wlContentPageURL.setLayoutData(fdlContentPageURL);
+		wContentPageURL =new Text(wContentPageGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+		wContentPageURL.setText("");
+		wContentPageURL.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageURL.Label.ToolTip"));
+		props.setLook(wContentPageURL);
+		wContentPageURL.addModifyListener(lsMod);
+		FormData fdContentPageURL = new FormData();
+		fdContentPageURL.left = new FormAttachment(middle, 0);
+		fdContentPageURL.top  = new FormAttachment(wListPageGroup, margin);
+		fdContentPageURL.right= new FormAttachment(80, 0);
+		wContentPageURL.setLayoutData(fdContentPageURL);
+
+		wContentPageButton=new Button(wContentPageGroup, SWT.NONE );
+		wContentPageButton.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.Button.GenerateRegExp"));
+		wContentPageButton.setToolTipText(BaseMessages.getString(PKG, "CrawlerInputDialog.Button.GenerateRegExp.ToolTip"));
+		props.setLook(wContentPageButton);
+		FormData fdContentPageButton=new FormData();
+		fdContentPageButton.left = new FormAttachment(wContentPageURL, 0);
+		fdContentPageButton.top  = new FormAttachment(wListPageGroup, 0);
+		fdContentPageButton.right= new FormAttachment(100, 0);
+
+		wContentPageButton.setLayoutData(fdContentPageButton);
+		wContentPageButton.addSelectionListener(new SelectionAdapter()
+												{
+													public void widgetSelected(SelectionEvent e)
+													{
+														String str = wContentPageURL.getText();
+														try {
+															wContentPageURLPattern.setText(getPatternStr(str));
+														} catch (Exception ex) {
+															new ErrorDialog(shell, BaseMessages.getString(PKG, "CrawlerInputDialog.ErrorDialog.UnableToGeneratePattern.Title"), BaseMessages.getString(PKG, "CrawlerInputDialog.ErrorDialog.UnableToGeneratePattern.Message"), ex);
+														}
+													}
+												}
+		);
+
+
+
+//		// Content Page URL Pattern
+		Label wlContentPageURLPattern = new Label(wContentPageGroup, SWT.RIGHT);
+		wlContentPageURLPattern.setText("* "+BaseMessages.getString(PKG, "CrawlerInputDialog.ContentPageURLPattern.Label")); //$NON-NLS-1$
 		props.setLook(wlContentPageURLPattern);
 		FormData fdlContentPageURLPattern = new FormData();
 		fdlContentPageURLPattern.left = new FormAttachment(0, 0);
 		fdlContentPageURLPattern.right= new FormAttachment(middle, -margin);
-		fdlContentPageURLPattern.top  = new FormAttachment(wStartPageURL, margin);
+		fdlContentPageURLPattern.top  = new FormAttachment(wContentPageURL, margin);
 		wlContentPageURLPattern.setLayoutData(fdlContentPageURLPattern);
-		wContentPageURLPattern =new TextVar(transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+		wContentPageURLPattern =new TextVar(transMeta, wContentPageGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
 		wContentPageURLPattern.setText(stepname);
 		props.setLook(wContentPageURLPattern);
 		wContentPageURLPattern.addModifyListener(lsMod);
 		FormData fdContentPageURLPattern = new FormData();
 		fdContentPageURLPattern.left = new FormAttachment(middle, 0);
-		fdContentPageURLPattern.top  = new FormAttachment(wStartPageURL, margin);
+		fdContentPageURLPattern.top  = new FormAttachment(wContentPageURL, margin);
 		fdContentPageURLPattern.right= new FormAttachment(100, 0);
 		wContentPageURLPattern.setLayoutData(fdContentPageURLPattern);
+//
 
-
-		// ListPageURLPattern
-		Label wlListPageURLPattern = new Label(shell, SWT.RIGHT);
-		wlListPageURLPattern.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.ListPageURLPattern.Label")); //$NON-NLS-1$
-		props.setLook(wlListPageURLPattern);
-		FormData fdlListPageURLPattern = new FormData();
-		fdlListPageURLPattern.left = new FormAttachment(0, 0);
-		fdlListPageURLPattern.right= new FormAttachment(middle, -margin);
-		fdlListPageURLPattern.top  = new FormAttachment(wContentPageURLPattern, margin);
-		wlListPageURLPattern.setLayoutData(fdlListPageURLPattern);
-		wListPageURLPattern =new TextVar(transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wListPageURLPattern.setText(stepname);
-		props.setLook(wListPageURLPattern);
-		wListPageURLPattern.addModifyListener(lsMod);
-		FormData fdListPageURLPattern = new FormData();
-		fdListPageURLPattern.left = new FormAttachment(middle, 0);
-		fdListPageURLPattern.top  = new FormAttachment(wContentPageURLPattern, margin);
-		fdListPageURLPattern.right= new FormAttachment(100, 0);
-		wListPageURLPattern.setLayoutData(fdListPageURLPattern);
 
 		// row limit
 		Label wlRowLimit = new Label(shell, SWT.RIGHT);
 		props.setLook(wlRowLimit);
-		wlRowLimit.setText(BaseMessages.getString(PKG, "CrawlerInputDialog.Rowlimit.Label"));
+		wlRowLimit.setText("* "+BaseMessages.getString(PKG, "CrawlerInputDialog.Rowlimit.Label"));
 		FormData fdlRowLimit = new FormData();
-		fdlRowLimit.top   = new FormAttachment(wListPageURLPattern, margin);
+		fdlRowLimit.top   = new FormAttachment(wContentPageGroup, margin);
 		fdlRowLimit.left  = new FormAttachment(0, 0);  // First one in the left top corner
 		fdlRowLimit.right = new FormAttachment(middle, 0);
 		wlRowLimit.setLayoutData(fdlRowLimit);
 		wRowLimit = new TextVar(transMeta, shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
 		props.setLook(wRowLimit);
 		FormData fdRowLimit = new FormData();
-		fdRowLimit.top  = new FormAttachment(wListPageURLPattern, margin);
+		fdRowLimit.top  = new FormAttachment(wContentPageGroup, margin);
 		fdRowLimit.left = new FormAttachment(middle, margin); // To the right of the label
 		fdRowLimit.right= new FormAttachment(95, 0);
 		wRowLimit.setLayoutData(fdRowLimit);
@@ -258,6 +386,42 @@ public class CrawlerInputDialog extends BaseStepDialog implements StepDialogInte
 			if (!display.readAndDispatch()) display.sleep();
 		}
 		return stepname;
+	}
+
+	private String getPatternStr(String str) throws Exception {
+		String result="";
+		str = str.toLowerCase();
+		if(!str.startsWith("http://") && !str.startsWith("https://"))
+			throw new Exception("网址应该以http或https开头");
+		int domainStartIndex = str.indexOf("//")+2;
+		int domainEndIndex = str.indexOf("/",domainStartIndex);
+		if(domainEndIndex==-1)
+		{
+			throw new Exception("不是页面 URL");
+		}
+		int fileNameStartIndex= str.lastIndexOf("/",domainEndIndex+1);
+		String fileName = str.substring(fileNameStartIndex);
+		return str.substring(0,fileNameStartIndex)+replaceDigitalWithPattern(fileName);
+	}
+	public String replaceDigitalWithPattern(String str)
+	{
+		String result="";
+		char[] chars = str.toCharArray();
+		boolean firstDig=true;
+		for (int i = 0; i < chars.length; i++) {
+			if( 48 <= chars[i] && chars[i]<= 57 ) {
+				if (firstDig) {
+					result+="\\d+";
+					firstDig=false;
+				}
+				continue;
+			}
+			else {
+				result += chars[i];
+				firstDig = true;
+			}
+		}
+		return result;
 	}
 
 	/**
