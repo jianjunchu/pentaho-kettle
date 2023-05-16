@@ -176,7 +176,7 @@ public class HTTP extends BaseStep implements StepInterface {
           logDebug( BaseMessages.getString( PKG, "HTTP.Log.ResponseStatusCode", "" + statusCode ) );
         }
 
-        Object body = "";//body is a binary array for "binary mode" , a String for "not binary mode"
+        Object body ;//body is a binary array for "binary mode" , a String for "not binary mode"
         switch ( statusCode ) {
           case HttpURLConnection.HTTP_UNAUTHORIZED:
             throw new KettleStepException( BaseMessages
@@ -185,7 +185,10 @@ public class HTTP extends BaseStep implements StepInterface {
             throw new KettleStepException( BaseMessages
               .getString( PKG, "HTTP.Exception.IllegalStatusCode", data.realUrl ) );
           case HttpURLConnection.HTTP_NO_CONTENT:
-            body = "";
+            if(meta.isBinaryMode()) {
+              body = null;
+            }else
+              body = "";
             break;
           default:
             HttpEntity entity = httpResponse.getEntity();
@@ -201,6 +204,7 @@ public class HTTP extends BaseStep implements StepInterface {
               }
               buffer.flush();
               byte[] byteArray = buffer.toByteArray();
+              body = byteArray;
               if(meta.isSaveFile())//save to file
               {
                 if(rowData[data.indexOfFileField]==null)
@@ -218,8 +222,6 @@ public class HTTP extends BaseStep implements StepInterface {
                   fos.write(byteArray);
                   fos.flush();
                 }
-              }else {//not save to file
-                body = byteArray;
               }
             }else {
               if (entity != null) {
