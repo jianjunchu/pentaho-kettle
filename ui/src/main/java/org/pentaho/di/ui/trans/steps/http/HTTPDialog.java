@@ -97,11 +97,23 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
   private Button wUrlInField;
   private FormData fdlUrlInField, fdUrlInField;
 
+  private Label        wlBinaryMode;
+  private Button       wBinaryMode;
+  private FormData     fdlBinaryMode, fdBinaryMode;
+
   private Label wlUrlField;
   private ComboVar wUrlField;
   private FormData fdlUrlField, fdUrlField;
 
   private ComboVar wEncoding;
+
+  private Label        wlSaveFile;
+  private Button       wSaveFile;
+  private FormData     fdlSaveFile, fdSaveFile;
+
+  private Label        wlFileNameField;
+  private ComboVar     wFileNameField;
+  private FormData     fdlFileNameField, fdFileNameField;
 
   private Button wGet, wGetHeaders;
   private Listener lsGet, lsGetHeaders;
@@ -317,6 +329,100 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
       }
     } );
     lastControl = wUrlField;
+
+
+    //Binary Mode
+    //
+    wlBinaryMode=new Label(gSettings, SWT.RIGHT);
+    wlBinaryMode.setText(BaseMessages.getString(PKG, "HTTPDialog.BinaryMode.Label"));
+    props.setLook(wlBinaryMode);
+    fdlBinaryMode=new FormData();
+    fdlBinaryMode.left = new FormAttachment(0, 0);
+    fdlBinaryMode.top  = new FormAttachment(lastControl, margin);
+    fdlBinaryMode.right= new FormAttachment(middle, -margin);
+    wlBinaryMode.setLayoutData(fdlBinaryMode);
+    wBinaryMode=new Button(gSettings, SWT.CHECK );
+    props.setLook(wBinaryMode);
+    fdBinaryMode=new FormData();
+    fdBinaryMode.left = new FormAttachment(middle, 0);
+    fdBinaryMode.top  = new FormAttachment(lastControl, margin);
+    fdBinaryMode.right= new FormAttachment(100, 0);
+    wBinaryMode.setLayoutData(fdBinaryMode);
+    wBinaryMode.addSelectionListener(new SelectionAdapter()
+                                     {
+                                       public void widgetSelected(SelectionEvent e)
+                                       {
+                                         input.setChanged();
+                                         activeUrlInfield();
+                                       }
+                                     }
+    );
+    lastControl = wBinaryMode;
+//save to file
+    //
+    wlSaveFile=new Label(gSettings, SWT.RIGHT);
+    wlSaveFile.setText(BaseMessages.getString(PKG, "HTTPDialog.SaveFile.Label"));
+    props.setLook(wlSaveFile);
+    fdlSaveFile=new FormData();
+    fdlSaveFile.left = new FormAttachment(0, 0);
+    fdlSaveFile.top  = new FormAttachment(lastControl, margin);
+    fdlSaveFile.right= new FormAttachment(middle, -margin);
+    wlSaveFile.setLayoutData(fdlSaveFile);
+    wSaveFile=new Button(gSettings, SWT.CHECK );
+    props.setLook(wSaveFile);
+    fdSaveFile=new FormData();
+    fdSaveFile.left = new FormAttachment(middle, 0);
+    fdSaveFile.top  = new FormAttachment(lastControl, margin);
+    fdSaveFile.right= new FormAttachment(100, 0);
+    wSaveFile.setLayoutData(fdSaveFile);
+    wSaveFile.addSelectionListener(new SelectionAdapter()
+                                   {
+                                     public void widgetSelected(SelectionEvent e)
+                                     {
+                                       input.setChanged();
+                                       activeUrlInfield();
+                                     }
+                                   }
+    );
+    lastControl = wSaveFile;
+
+    // Filename Line
+    //
+    wlFileNameField=new Label(gSettings, SWT.RIGHT);
+    wlFileNameField.setText(BaseMessages.getString(PKG, "HTTPDialog.FileNameField.Label")); //$NON-NLS-1$
+    props.setLook(wlFileNameField);
+    fdlFileNameField=new FormData();
+    fdlFileNameField.left = new FormAttachment(0, 0);
+    fdlFileNameField.right= new FormAttachment(middle, -margin);
+    fdlFileNameField.top  = new FormAttachment(lastControl, margin);
+    wlFileNameField.setLayoutData(fdlFileNameField);
+
+    wFileNameField=new ComboVar(transMeta, gSettings, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+    wFileNameField.setToolTipText(BaseMessages.getString(PKG, "HTTPDialog.FileNameField.Tooltip"));
+    props.setLook(wFileNameField);
+    wFileNameField.addModifyListener(lsMod);
+    fdFileNameField=new FormData();
+    fdFileNameField.left = new FormAttachment(middle, 0);
+    fdFileNameField.top  = new FormAttachment(lastControl, margin);
+    fdFileNameField.right= new FormAttachment(100, 0);
+    wFileNameField.setLayoutData(fdFileNameField);
+    wFileNameField.setEnabled(false);
+    wFileNameField.addFocusListener(new FocusListener()
+                                    {
+                                      public void focusLost(org.eclipse.swt.events.FocusEvent e)
+                                      {
+                                      }
+                                      public void focusGained(org.eclipse.swt.events.FocusEvent e)
+                                      {
+                                        Cursor busy = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
+                                        shell.setCursor(busy);
+                                        BaseStepDialog.getFieldsFromPrevious(wFileNameField, transMeta, stepMeta);
+                                        shell.setCursor(null);
+                                        busy.dispose();
+                                      }
+                                    }
+    );
+    lastControl = wFileNameField;
 
     // Encoding
     //
@@ -892,6 +998,7 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
   private void activeUrlInfield() {
     wlUrlField.setEnabled( wUrlInField.getSelection() );
     wUrlField.setEnabled( wUrlInField.getSelection() );
+    wFileNameField.setEnabled(wSaveFile.getSelection());
     wlUrl.setEnabled( !wUrlInField.getSelection() );
     wUrl.setEnabled( !wUrlInField.getSelection() );
   }
@@ -931,6 +1038,9 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
     wUrlInField.setSelection( input.isUrlInField() );
     wUrlField.setText( Const.NVL( input.getUrlField(), "" ) );
     wEncoding.setText( Const.NVL( input.getEncoding(), "" ) );
+    wBinaryMode.setSelection(input.isBinaryMode());
+    wSaveFile.setSelection(input.isSaveFile());
+    wFileNameField.setText(Const.NVL(input.getFileName(), ""));
 
     wResult.setText( Const.NVL( input.getFieldName(), "" ) );
     if ( input.getHttpLogin() != null ) {
@@ -1004,6 +1114,9 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
     input.setUrlField( wUrlField.getText() );
     input.setUrlInField( wUrlInField.getSelection() );
     input.setFieldName( wResult.getText() );
+    input.setBinaryMode(wBinaryMode.getSelection() );
+    input.setSaveFile(wSaveFile.getSelection() );
+    input.setFileName( wFileNameField.getText() );
     input.setEncoding( wEncoding.getText() );
     input.setHttpLogin( wHttpLogin.getText() );
     input.setHttpPassword( wHttpPassword.getText() );
