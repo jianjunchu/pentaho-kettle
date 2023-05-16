@@ -145,7 +145,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-       <classifier>auphi</classifier> 
+       <!-- <classifier>auphi</classifier> -->
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
@@ -1065,7 +1065,11 @@
       <artifactId>fontbox</artifactId>
       <version>1.8.17</version>
     </dependency>
-
+    <dependency>
+      <groupId>net.matuschek</groupId>
+      <artifactId>http</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 
 
@@ -1074,7 +1078,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <classifier>auphi</classifier>
+          <!-- <classifier>auphi</classifier> -->
         </configuration>
         <executions>
           <execution>
