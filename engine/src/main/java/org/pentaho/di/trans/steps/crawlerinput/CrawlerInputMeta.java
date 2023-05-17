@@ -109,8 +109,8 @@
    contentPageURLPattern = rep.getStepAttributeString (id_step, "content_page_url_pattern");
    startPageURL = rep.getStepAttributeString (id_step, "start_page_url");
    listPageURLPattern = rep.getStepAttributeString (id_step, "list_page_url_pattern");
-   rowLimit    = new Integer(rep.getStepAttributeString(id_step, "row_limit")).intValue();
-   contentQueueBufferSize    = new Integer(rep.getStepAttributeString(id_step, "queue_size")).intValue();
+   rowLimit    = (int) rep.getStepAttributeInteger(id_step, "row_limit");
+   contentQueueBufferSize    = (int) rep.getStepAttributeInteger(id_step, "queue_size");
   }
 
   public void saveRep(Repository rep, ObjectId id_transformation, ObjectId id_step) throws KettleException
@@ -235,7 +235,7 @@
   }
 
 
-  public String getPatternStr(String str) throws Exception {
+  public static String getPatternStr(String str) throws Exception {
    String result="";
    str = str.toLowerCase();
    if(!str.startsWith("http://") && !str.startsWith("https://"))
@@ -250,7 +250,7 @@
    String fileName = str.substring(fileNameStartIndex);
    return str.substring(0,fileNameStartIndex)+replaceDigitalWithPattern(fileName);
   }
-  public String replaceDigitalWithPattern(String str)
+  public static String replaceDigitalWithPattern(String str)
   {
    String result="";
    char[] chars = str.toCharArray();
