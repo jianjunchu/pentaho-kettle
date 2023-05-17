@@ -27,6 +27,7 @@ import java.util.List;
 import org.pentaho.di.core.CheckResult;
 import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
+import org.pentaho.di.core.row.value.ValueMetaBinary;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.encryption.Encr;
@@ -91,6 +92,9 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
   private boolean urlInField;
 
   private String urlField;
+  private boolean binaryMode;
+  private boolean saveFile;
+  private String fileName;
 
   private String proxyHost;
 
@@ -275,6 +279,52 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
     this.urlField = urlField;
   }
 
+
+  /**
+   * @return Is save to a file?
+   */
+  public boolean isSaveFile() {
+    return saveFile;
+  }
+
+  /**
+   * @param b Is save file.
+   */
+  public void setSaveFile(boolean b) {
+    this.saveFile = b;
+  }
+
+
+
+  /**
+   * @return Is read as binary?
+   */
+  public boolean isBinaryMode() {
+    return binaryMode;
+  }
+
+  /**
+   * @param b Is the flag of binary mode.
+   */
+  public void setBinaryMode(boolean b) {
+    this.binaryMode = b;
+  }
+
+  /**
+   * @return The field name that to save.
+   */
+  public String getFileName() {
+    return fileName;
+  }
+
+  /**
+   * @param fileName name of the file
+   */
+  public void setFileName ( String fileName) {
+    this.fileName = fileName;
+  }
+
+
   public void loadXML( Node stepnode, List<DatabaseMeta> databases, IMetaStore metaStore ) throws KettleXMLException {
     readData( stepnode, databases );
   }
@@ -333,9 +383,17 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
   public void getFields( RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep,
     VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException {
     if ( !Utils.isEmpty( fieldName ) ) {
-      ValueMetaInterface v = new ValueMetaString( fieldName );
-      v.setOrigin( name );
-      inputRowMeta.addValueMeta( v );
+      if(isBinaryMode())
+      {
+        ValueMetaInterface v = new ValueMetaBinary(fieldName);
+        v.setOrigin(name);
+        inputRowMeta.addValueMeta(v);
+      }
+      else{
+        ValueMetaInterface v = new ValueMetaString(fieldName);
+        v.setOrigin(name);
+        inputRowMeta.addValueMeta(v);
+      }
     }
     if ( !Utils.isEmpty( resultCodeFieldName ) ) {
       ValueMetaInterface v =
@@ -365,6 +423,11 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
     retval.append( "    " + XMLHandler.addTagValue( "urlInField", urlInField ) );
     retval.append( "    " + XMLHandler.addTagValue( "urlField", urlField ) );
     retval.append( "    " + XMLHandler.addTagValue( "encoding", encoding ) );
+
+    retval.append("    "+XMLHandler.addTagValue("binaryMode",  binaryMode));
+    retval.append("    "+XMLHandler.addTagValue("saveFile",  saveFile));
+    retval.append("    " + XMLHandler.addTagValue("fileName", fileName));
+
     retval.append( "    " + XMLHandler.addTagValue( "httpLogin", httpLogin ) );
     retval.append( "    "
       + XMLHandler.addTagValue( "httpPassword", Encr.encryptPasswordIfNotUsingVariables( httpPassword ) ) );
@@ -409,6 +472,9 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       urlInField = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "urlInField" ) );
       urlField = XMLHandler.getTagValue( stepnode, "urlField" );
       encoding = XMLHandler.getTagValue( stepnode, "encoding" );
+      binaryMode="Y".equalsIgnoreCase(XMLHandler.getTagValue(stepnode, "binaryMode"));
+      saveFile="Y".equalsIgnoreCase(XMLHandler.getTagValue(stepnode, "saveFile"));
+      fileName = XMLHandler.getTagValue(stepnode, "fileName");
       httpLogin = XMLHandler.getTagValue( stepnode, "httpLogin" );
       httpPassword = Encr.decryptPasswordOptionallyEncrypted( XMLHandler.getTagValue( stepnode, "httpPassword" ) );
       proxyHost = XMLHandler.getTagValue( stepnode, "proxyHost" );
@@ -452,6 +518,9 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       urlInField = rep.getStepAttributeBoolean( id_step, "urlInField" );
       urlField = rep.getStepAttributeString( id_step, "urlField" );
       encoding = rep.getStepAttributeString( id_step, "encoding" );
+      binaryMode=rep.getStepAttributeBoolean (id_step, "binaryMode");
+      saveFile=rep.getStepAttributeBoolean (id_step, "saveFile");
+      fileName = rep.getStepAttributeString(id_step, "fileName");
       httpLogin = rep.getStepAttributeString( id_step, "httpLogin" );
       httpPassword =
         Encr.decryptPasswordOptionallyEncrypted( rep.getStepAttributeString( id_step, "httpPassword" ) );
@@ -491,6 +560,9 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       rep.saveStepAttribute( id_transformation, id_step, "urlInField", urlInField );
       rep.saveStepAttribute( id_transformation, id_step, "urlField", urlField );
       rep.saveStepAttribute( id_transformation, id_step, "encoding", encoding );
+      rep.saveStepAttribute(id_transformation, id_step, "binaryMode",   binaryMode);
+      rep.saveStepAttribute(id_transformation, id_step, "saveFile",   saveFile);
+      rep.saveStepAttribute(id_transformation, id_step, "fileName",   fileName);
       rep.saveStepAttribute( id_transformation, id_step, "httpLogin", httpLogin );
       rep.saveStepAttribute( id_transformation, id_step, "httpPassword", Encr
         .encryptPasswordIfNotUsingVariables( httpPassword ) );

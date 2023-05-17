@@ -34,6 +34,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,6 +58,7 @@ import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
 
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -174,7 +176,7 @@ public class HTTP extends BaseStep implements StepInterface {
           logDebug( BaseMessages.getString( PKG, "HTTP.Log.ResponseStatusCode", "" + statusCode ) );
         }
 
-        String body;
+        Object body ;//body is a binary array for "binary mode" , a String for "not binary mode"
         switch ( statusCode ) {
           case HttpURLConnection.HTTP_UNAUTHORIZED:
             throw new KettleStepException( BaseMessages
@@ -183,14 +185,63 @@ public class HTTP extends BaseStep implements StepInterface {
             throw new KettleStepException( BaseMessages
               .getString( PKG, "HTTP.Exception.IllegalStatusCode", data.realUrl ) );
           case HttpURLConnection.HTTP_NO_CONTENT:
-            body = "";
+            if(meta.isBinaryMode()) {
+              body = null;
+            }else
+              body = "";
             break;
           default:
             HttpEntity entity = httpResponse.getEntity();
-            if ( entity != null ) {
-              body = StringUtils.isEmpty( meta.getEncoding() ) ? EntityUtils.toString( entity ) : EntityUtils.toString( entity, meta.getEncoding() );
-            } else {
-              body = "";
+            ContentType responseContentType = ContentType.get(httpResponse.getEntity());
+            if(meta.isBinaryMode()) {
+              //read as binary
+              InputStream is = httpResponse.getEntity().getContent();
+              ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+              int nRead;
+              byte[] byteData = new byte[1024];
+              while ((nRead = is.read(byteData, 0, byteData.length)) != -1) {
+                buffer.write(byteData, 0, nRead);
+              }
+              buffer.flush();
+              byte[] byteArray = buffer.toByteArray();
+              body = byteArray;
+              if(meta.isSaveFile())//save to file
+              {
+                if(rowData[data.indexOfFileField]==null)
+                {
+                  logError(BaseMessages.getString(PKG, "HTTP.Log.FileNameIsNull"));
+                }else{
+                  String fileName =rowData[data.indexOfFileField].toString();
+                  File file = new File(fileName);
+                  if(!file.exists()) {
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                    //createFile(file);
+                  }
+                  FileOutputStream fos = new FileOutputStream(file);
+                  fos.write(byteArray);
+                  fos.flush();
+                }
+              }
+            }else {
+              if (entity != null) {
+                body = StringUtils.isEmpty(meta.getEncoding()) ? EntityUtils.toString(entity) : EntityUtils.toString(entity, meta.getEncoding());
+              } else {
+                body = "";
+              }
+              if(meta.isSaveFile())//save to txt file
+              {
+                if(rowData[data.indexOfFileField]==null)
+                {
+                  logError(BaseMessages.getString(PKG, "HTTP.Log.FileNameIsNull"));
+                }else {
+                  String fileName =rowData[data.indexOfFileField].toString();
+                  File file = new File(fileName);
+                  FileWriter fos = new FileWriter(file);
+                  fos.write((String)body);
+                  fos.flush();
+                }
+              }
             }
             break;
         }
@@ -321,6 +372,28 @@ public class HTTP extends BaseStep implements StepInterface {
         }
       } else {
         data.realUrl = environmentSubstitute( meta.getUrl() );
+      }
+
+      if(meta.isSaveFile())
+      {
+        if(Const.isEmpty(meta.getFieldName()))
+        {
+          logError(BaseMessages.getString(PKG, "HTTP.Log.NoField"));
+          throw new KettleException(BaseMessages.getString(PKG, "HTTP.Log.NoField"));
+        }
+
+        // cache the position of the field
+        if (data.indexOfFileField<0)
+        {
+          String fieldName=environmentSubstitute(meta.getFileName());
+          data.indexOfFileField =getInputRowMeta().indexOfValue(fieldName);
+          if (data.indexOfFileField<0)
+          {
+            // The field is unreachable !
+            logError(BaseMessages.getString(PKG, "HTTP.Log.ErrorFindingField",fieldName));
+            throw new KettleException(BaseMessages.getString(PKG, "HTTP.Exception.ErrorFindingField",fieldName));
+          }
+        }
       }
 
       // check for headers
