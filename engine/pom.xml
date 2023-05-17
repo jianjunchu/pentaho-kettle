@@ -145,7 +145,7 @@
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
       <version>${project.version}</version>
-       <!-- <classifier>auphi</classifier> -->
+        <classifier>auphi</classifier>
     </dependency>
     <dependency>
       <groupId>org.pentaho</groupId>
@@ -1078,7 +1078,7 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <!-- <classifier>auphi</classifier> -->
+          <classifier>auphi</classifier>
         </configuration>
         <executions>
           <execution>

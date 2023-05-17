@@ -233,4 +233,41 @@
   public void setContentQueueBufferSize(int contentQueueBufferSize) {
    this.contentQueueBufferSize = contentQueueBufferSize;
   }
+
+
+  public String getPatternStr(String str) throws Exception {
+   String result="";
+   str = str.toLowerCase();
+   if(!str.startsWith("http://") && !str.startsWith("https://"))
+    throw new Exception("网址应该以http或https开头");
+   int domainStartIndex = str.indexOf("//")+2;
+   int domainEndIndex = str.indexOf("/",domainStartIndex);
+   if(domainEndIndex==-1)
+   {
+    throw new Exception("不是页面 URL");
+   }
+   int fileNameStartIndex= str.lastIndexOf("/",domainEndIndex+1);
+   String fileName = str.substring(fileNameStartIndex);
+   return str.substring(0,fileNameStartIndex)+replaceDigitalWithPattern(fileName);
+  }
+  public String replaceDigitalWithPattern(String str)
+  {
+   String result="";
+   char[] chars = str.toCharArray();
+   boolean firstDig=true;
+   for (int i = 0; i < chars.length; i++) {
+    if( 48 <= chars[i] && chars[i]<= 57 ) {
+     if (firstDig) {
+      result+="\\d+";
+      firstDig=false;
+     }
+     continue;
+    }
+    else {
+     result += chars[i];
+     firstDig = true;
+    }
+   }
+   return result;
+  }
  }
