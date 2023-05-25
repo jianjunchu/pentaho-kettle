@@ -109,8 +109,8 @@
    contentPageURLPattern = rep.getStepAttributeString (id_step, "content_page_url_pattern");
    startPageURL = rep.getStepAttributeString (id_step, "start_page_url");
    listPageURLPattern = rep.getStepAttributeString (id_step, "list_page_url_pattern");
-   rowLimit    = new Integer(rep.getStepAttributeString(id_step, "row_limit")).intValue();
-   contentQueueBufferSize    = new Integer(rep.getStepAttributeString(id_step, "queue_size")).intValue();
+   rowLimit    = (int) rep.getStepAttributeInteger(id_step, "row_limit");
+   contentQueueBufferSize    = (int) rep.getStepAttributeInteger(id_step, "queue_size");
   }
 
   public void saveRep(Repository rep, ObjectId id_transformation, ObjectId id_step) throws KettleException
@@ -232,5 +232,42 @@
 
   public void setContentQueueBufferSize(int contentQueueBufferSize) {
    this.contentQueueBufferSize = contentQueueBufferSize;
+  }
+
+
+  public static String getPatternStr(String str) throws Exception {
+   String result="";
+   str = str.toLowerCase();
+   if(!str.startsWith("http://") && !str.startsWith("https://"))
+    throw new Exception("网址应该以http或https开头");
+   int domainStartIndex = str.indexOf("//")+2;
+   int domainEndIndex = str.indexOf("/",domainStartIndex);
+   if(domainEndIndex==-1)
+   {
+    throw new Exception("不是页面 URL");
+   }
+   int fileNameStartIndex= str.lastIndexOf("/",domainEndIndex+1);
+   String fileName = str.substring(fileNameStartIndex);
+   return str.substring(0,fileNameStartIndex)+replaceDigitalWithPattern(fileName);
+  }
+  public static String replaceDigitalWithPattern(String str)
+  {
+   String result="";
+   char[] chars = str.toCharArray();
+   boolean firstDig=true;
+   for (int i = 0; i < chars.length; i++) {
+    if( 48 <= chars[i] && chars[i]<= 57 ) {
+     if (firstDig) {
+      result+="\\d+";
+      firstDig=false;
+     }
+     continue;
+    }
+    else {
+     result += chars[i];
+     firstDig = true;
+    }
+   }
+   return result;
   }
  }
