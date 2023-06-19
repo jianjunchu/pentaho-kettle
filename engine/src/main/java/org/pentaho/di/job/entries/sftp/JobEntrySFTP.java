@@ -95,7 +95,35 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
   private String proxyPort;
   private String proxyUsername;
   private String proxyPassword;
+  private boolean isLoop;
+  private long loopInterval;
+  private long loopTimeout;
+  private long totalTime;
 
+  public boolean isLoop() {
+    return isLoop;
+  }
+
+  public long getLoopInterval()
+  {
+    return loopInterval;
+  }
+  public long getLoopTimeout()
+  {
+    return loopTimeout;
+  }
+  public void setLoopInterval(long i)
+  {
+     loopInterval=i;
+  }
+  public void setLoop(boolean b)
+  {
+    isLoop = b;
+  }
+  public void setLoopTimeout(long i)
+  {
+    loopTimeout=i;
+  }
   public JobEntrySFTP( String n ) {
     super( n, "" );
     serverName = null;
@@ -153,6 +181,11 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
     retval.append( "      " ).append( XMLHandler.addTagValue( "proxyUsername", proxyUsername ) );
     retval.append( "      " ).append(
       XMLHandler.addTagValue( "proxyPassword", Encr.encryptPasswordIfNotUsingVariables( proxyPassword ) ) );
+
+    retval.append( "      " ).append( XMLHandler.addTagValue( "isloop", isLoop) );
+    retval.append( "      " ).append( XMLHandler.addTagValue( "loop_interval", loopInterval ) );
+    retval.append( "      " ).append( XMLHandler.addTagValue( "loop_timeout", loopTimeout ) );
+
     if ( parentJobMeta != null ) {
       parentJobMeta.getNamedClusterEmbedManager().registerUrl( targetDirectory );
     }
@@ -194,6 +227,11 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
       proxyUsername = XMLHandler.getTagValue( entrynode, "proxyUsername" );
       proxyPassword =
         Encr.decryptPasswordOptionallyEncrypted( XMLHandler.getTagValue( entrynode, "proxyPassword" ) );
+
+      isLoop = "Y".equalsIgnoreCase( XMLHandler.getTagValue( entrynode, "isloop" ) );
+      loopInterval = new Long(XMLHandler.getTagValue( entrynode, "loop_interval" ));
+      loopTimeout = new Long(XMLHandler.getTagValue( entrynode, "loop_timeout" ));
+
     } catch ( KettleXMLException xe ) {
       throw new KettleXMLException( "Unable to load job entry of type 'SFTP' from XML node", xe );
     }
@@ -237,6 +275,9 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
       proxyPassword =
         Encr.decryptPasswordOptionallyEncrypted( rep.getJobEntryAttributeString( id_jobentry, "proxyPassword" ) );
 
+      isLoop = rep.getJobEntryAttributeBoolean( id_jobentry, "isloop" );
+      loopInterval = rep.getJobEntryAttributeInteger( id_jobentry, "loop_interval" );
+      loopTimeout = rep.getJobEntryAttributeInteger( id_jobentry, "loop_timeout" );
     } catch ( KettleException dbe ) {
       throw new KettleException( "Unable to load job entry of type 'SFTP' from the repository for id_jobentry="
         + id_jobentry, dbe );
@@ -270,6 +311,10 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
       rep.saveJobEntryAttribute( id_job, getObjectId(), "proxyUsername", proxyUsername );
       rep.saveJobEntryAttribute( id_job, getObjectId(), "proxyPassword", Encr
         .encryptPasswordIfNotUsingVariables( proxyPassword ) );
+
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "isloop", isLoop);
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "loop_interval", loopInterval );
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "loop_timeout", loopTimeout );
     } catch ( KettleDatabaseException dbe ) {
       throw new KettleException(
         "Unable to save job entry of type 'SFTP' to the repository for id_job=" + id_job, dbe );
@@ -620,119 +665,139 @@ public class JobEntrySFTP extends JobEntryBase implements Cloneable, JobEntryInt
         TargetFolder = null;
       }
 
+    while(true) {
       // Create sftp client to host ...
       sftpclient =
-        new SFTPClient(
-          InetAddress.getByName( realServerName ), Const.toInt( realServerPort, DEFAULT_PORT ), realUsername,
-          realKeyFilename, realPassPhrase );
-      if ( log.isDetailed() ) {
-        logDetailed( BaseMessages.getString(
-          PKG, "JobSFTP.Log.OpenedConnection", realServerName, realServerPort, realUsername ) );
+              new SFTPClient(
+                      InetAddress.getByName(realServerName), Const.toInt(realServerPort, DEFAULT_PORT), realUsername,
+                      realKeyFilename, realPassPhrase);
+      if (log.isDetailed()) {
+        logDetailed(BaseMessages.getString(
+                PKG, "JobSFTP.Log.OpenedConnection", realServerName, realServerPort, realUsername));
       }
 
       // Set compression
-      sftpclient.setCompression( getCompression() );
+      sftpclient.setCompression(getCompression());
 
       // Set proxy?
-      String realProxyHost = environmentSubstitute( getProxyHost() );
-      if ( !Utils.isEmpty( realProxyHost ) ) {
+      String realProxyHost = environmentSubstitute(getProxyHost());
+      if (!Utils.isEmpty(realProxyHost)) {
         // Set proxy
-        String password = getRealPassword( getProxyPassword() );
+        String password = getRealPassword(getProxyPassword());
         sftpclient.setProxy(
-          realProxyHost, environmentSubstitute( getProxyPort() ), environmentSubstitute( getProxyUsername() ),
-            password, getProxyType() );
+                realProxyHost, environmentSubstitute(getProxyPort()), environmentSubstitute(getProxyUsername()),
+                password, getProxyType());
       }
 
       // login to ftp host ...
-      sftpclient.login( realPassword );
+      sftpclient.login(realPassword);
       // Passwords should not appear in log files.
       // logDetailed("logged in using password "+realPassword); // Logging this seems a bad idea! Oh well.
 
       // move to spool dir ...
-      if ( !Utils.isEmpty( realSftpDirString ) ) {
+      if (!Utils.isEmpty(realSftpDirString)) {
         try {
-          sftpclient.chdir( realSftpDirString );
-        } catch ( Exception e ) {
-          logError( BaseMessages.getString( PKG, "JobSFTP.Error.CanNotFindRemoteFolder", realSftpDirString ) );
-          throw new Exception( e );
+          sftpclient.chdir(realSftpDirString);
+        } catch (Exception e) {
+          logError(BaseMessages.getString(PKG, "JobSFTP.Error.CanNotFindRemoteFolder", realSftpDirString));
+          throw new Exception(e);
         }
-        if ( log.isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.ChangedDirectory", realSftpDirString ) );
+        if (log.isDetailed()) {
+          logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.ChangedDirectory", realSftpDirString));
         }
       }
       Pattern pattern = null;
       // Get all the files in the current directory...
       String[] filelist = sftpclient.dir();
-      if ( filelist == null ) {
-        // Nothing was found !!! exit
-        result.setResult( true );
-        if ( log.isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.Found", "" + 0 ) );
+      if (filelist == null) {
+        // Nothing was found !!! , do nothing
+        //result.setResult(true);
+        if (log.isDetailed()) {
+          logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.Found", "" + 0));
         }
-        return result;
-      }
-      if ( log.isDetailed() ) {
-        logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.Found", "" + filelist.length ) );
+        //return result;
+      }else {
+        // if found, clear total sleep time. start from begin.
+        totalTime=0;
       }
 
-      if ( !copyprevious ) {
-        if ( !Utils.isEmpty( realWildcard ) ) {
-          pattern = Pattern.compile( realWildcard );
+      if (log.isDetailed()) {
+        logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.Found", "" + filelist.length));
+      }
+
+      if (!copyprevious) {
+        if (!Utils.isEmpty(realWildcard)) {
+          pattern = Pattern.compile(realWildcard);
         }
       }
 
       // Get the files in the list...
-      for ( int i = 0; i < filelist.length && !parentJob.isStopped(); i++ ) {
+      for (int i = 0; i < filelist.length && !parentJob.isStopped(); i++) {
         boolean getIt = true;
 
-        if ( copyprevious ) {
+        if (copyprevious) {
           // filenames list is send by previous job entry
           // download if the current file is in this list
-          getIt = list_previous_filenames.contains( filelist[i] );
+          getIt = list_previous_filenames.contains(filelist[i]);
         } else {
           // download files
           // but before see if the file matches the regular expression!
-          if ( pattern != null ) {
-            Matcher matcher = pattern.matcher( filelist[i] );
+          if (pattern != null) {
+            Matcher matcher = pattern.matcher(filelist[i]);
             getIt = matcher.matches();
           }
         }
 
-        if ( getIt ) {
-          if ( log.isDebug() ) {
-            logDebug( BaseMessages.getString( PKG, "JobSFTP.Log.GettingFiles", filelist[i], realTargetDirectory ) );
+        if (getIt) {
+          if (log.isDebug()) {
+            logDebug(BaseMessages.getString(PKG, "JobSFTP.Log.GettingFiles", filelist[i], realTargetDirectory));
           }
 
           FileObject targetFile = KettleVFS.getFileObject(
-            realTargetDirectory + Const.FILE_SEPARATOR + filelist[i], this );
-          sftpclient.get( targetFile, filelist[i] );
+                  realTargetDirectory + Const.FILE_SEPARATOR + filelist[i], this);
+          sftpclient.get(targetFile, filelist[i]);
           filesRetrieved++;
 
-          if ( isaddresult ) {
+          if (isaddresult) {
             // Add to the result files...
             ResultFile resultFile =
-              new ResultFile(
-                ResultFile.FILE_TYPE_GENERAL, targetFile, parentJob
-                  .getJobname(), toString() );
-            result.getResultFiles().put( resultFile.getFile().toString(), resultFile );
-            if ( log.isDetailed() ) {
-              logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.FilenameAddedToResultFilenames", filelist[i] ) );
+                    new ResultFile(
+                            ResultFile.FILE_TYPE_GENERAL, targetFile, parentJob
+                            .getJobname(), toString());
+            result.getResultFiles().put(resultFile.getFile().toString(), resultFile);
+            if (log.isDetailed()) {
+              logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.FilenameAddedToResultFilenames", filelist[i]));
             }
           }
-          if ( log.isDetailed() ) {
-            logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.TransferedFile", filelist[i] ) );
+          if (log.isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.TransferedFile", filelist[i]));
           }
 
           // Delete the file if this is needed!
-          if ( remove ) {
-            sftpclient.delete( filelist[i] );
-            if ( log.isDetailed() ) {
-              logDetailed( BaseMessages.getString( PKG, "JobSFTP.Log.DeletedFile", filelist[i] ) );
+          if (remove) {
+            sftpclient.delete(filelist[i]);
+            if (log.isDetailed()) {
+              logDetailed(BaseMessages.getString(PKG, "JobSFTP.Log.DeletedFile", filelist[i]));
             }
           }
+
         }
       }
 
+        //check loop or not
+        if(!isLoop)
+        {
+          break;
+        }
+        else if(totalTime>getLoopTimeout())
+        {
+          break;
+        }
+        else {
+          Thread.sleep(getLoopInterval()*1000);
+          totalTime+=getLoopInterval();
+        }
+    }
       result.setResult( true );
       result.setNrFilesRetrieved( filesRetrieved );
     } catch ( Exception e ) {

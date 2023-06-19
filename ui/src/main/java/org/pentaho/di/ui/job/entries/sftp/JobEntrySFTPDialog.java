@@ -175,13 +175,37 @@ public class JobEntrySFTPDialog extends JobEntryDialog implements JobEntryDialog
 
   private FormData fdTargetFiles;
 
+
+  private Label wlCreateTargetFolder;
+
+
+  private Group wLoopDownloadGroup;
+  private FormData fdLoopDownloadGroup;
+
+
   private Label wlAddFilenameToResult;
 
   private Button wAddFilenameToResult;
 
   private FormData fdlAddFilenameToResult, fdAddFilenameToResult;
 
-  private Label wlCreateTargetFolder;
+
+  private Label wlIsLoop;
+
+  private Button wIsLoop;
+
+  private FormData fdlIsLoop, fdIsLoop;
+
+  private Label wlLoopInterval;
+  private TextVar wLoopInterval;
+  private FormData fdlLoopInterval, fdLoopInterval;
+
+
+  private Label wlLoopTimeout;
+  private TextVar wLoopTimeout;
+  private FormData fdlLoopTimeout, fdLoopTimeout;
+
+
 
   private Button wCreateTargetFolder;
 
@@ -836,6 +860,90 @@ public class JobEntrySFTPDialog extends JobEntryDialog implements JobEntryDialog
     // / END OF Target files GROUP
     // ///////////////////////////////////////////////////////////
 
+
+
+    // ////////////////////////
+    // START OF Loop Download GROUP///
+    // ////////////////////////
+    wLoopDownloadGroup = new Group( wFilesComp, SWT.SHADOW_NONE );
+    props.setLook(wLoopDownloadGroup);
+    wLoopDownloadGroup.setText( BaseMessages.getString( PKG, "JobSFTP.LoopDownload.Group.Label" ) );
+
+    FormLayout loopDownloadLayout = new FormLayout();
+    loopDownloadLayout.marginWidth = 10;
+    loopDownloadLayout.marginHeight = 10;
+    wLoopDownloadGroup.setLayout( loopDownloadLayout );
+
+
+    // is loop download...
+    wlIsLoop = new Label( wLoopDownloadGroup, SWT.RIGHT );
+    wlIsLoop.setText( BaseMessages.getString( PKG, "JobSFTP.IsLoopDownload.Label" ) );
+    props.setLook(wlIsLoop);
+    fdlIsLoop = new FormData();
+    fdlIsLoop.left = new FormAttachment( 0, 0 );
+    fdlIsLoop.top = new FormAttachment( wCreateTargetFolder, margin );
+    fdlIsLoop.right = new FormAttachment( middle, -margin );
+    wlIsLoop.setLayoutData(fdlIsLoop);
+    wIsLoop = new Button( wLoopDownloadGroup, SWT.CHECK );
+    wIsLoop.setToolTipText( BaseMessages.getString( PKG, "JobSFTP.IsLoopDownload.Tooltip" ) );
+    props.setLook(wIsLoop);
+    fdIsLoop = new FormData();
+    fdIsLoop.left = new FormAttachment( middle, 0 );
+    fdIsLoop.top = new FormAttachment( wCreateTargetFolder, margin );
+    fdIsLoop.right = new FormAttachment( 100, 0 );
+    wIsLoop.setLayoutData(fdIsLoop);
+
+    // LoopInterval
+    wlLoopInterval = new Label(wLoopDownloadGroup, SWT.RIGHT );
+    wlLoopInterval.setText( BaseMessages.getString( PKG, "JobSFTP.LoopInterval.Label" ) + " " );
+    props.setLook( wlLoopInterval );
+    fdlLoopInterval = new FormData();
+    fdlLoopInterval.left = new FormAttachment( 0, 0 );
+    fdlLoopInterval.top = new FormAttachment(wIsLoop, margin );
+    fdlLoopInterval.right = new FormAttachment( middle, -margin );
+    wlLoopInterval.setLayoutData( fdlLoopInterval );
+    wLoopInterval =
+            new TextVar( jobMeta, wLoopDownloadGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER, BaseMessages.getString(
+                    PKG, "JobSFTP.LoopInterval.Tooltip" ) );
+    props.setLook( wLoopInterval );
+    wLoopInterval.addModifyListener( lsMod );
+    fdLoopInterval = new FormData();
+    fdLoopInterval.left = new FormAttachment( middle, 0 );
+    fdLoopInterval.top = new FormAttachment(wIsLoop, margin );
+    fdLoopInterval.right = new FormAttachment( 100, -margin );
+    wLoopInterval.setLayoutData( fdLoopInterval );
+
+
+    // LoopTimeout
+    wlLoopTimeout = new Label(wLoopDownloadGroup, SWT.RIGHT );
+    wlLoopTimeout.setText( BaseMessages.getString( PKG, "JobSFTP.LoopTimeout.Label" ) + " " );
+    props.setLook( wlLoopTimeout );
+    fdlLoopTimeout = new FormData();
+    fdlLoopTimeout.left = new FormAttachment( 0, 0 );
+    fdlLoopTimeout.top = new FormAttachment( wLoopInterval, margin );
+    fdlLoopTimeout.right = new FormAttachment( middle, -margin );
+    wlLoopTimeout.setLayoutData( fdlLoopTimeout );
+    wLoopTimeout =
+            new TextVar( jobMeta, wLoopDownloadGroup, SWT.SINGLE | SWT.LEFT | SWT.BORDER, BaseMessages.getString(
+                    PKG, "JobSFTP.LoopTimeout.Tooltip" ) );
+    props.setLook( wLoopTimeout );
+    wLoopTimeout.addModifyListener( lsMod );
+    fdLoopTimeout = new FormData();
+    fdLoopTimeout.left = new FormAttachment( middle, 0 );
+    fdLoopTimeout.top = new FormAttachment( wLoopInterval, margin );
+    fdLoopTimeout.right = new FormAttachment( 100, -margin );
+    wLoopTimeout.setLayoutData( fdLoopTimeout );
+
+    fdLoopDownloadGroup = new FormData();
+    fdLoopDownloadGroup.left = new FormAttachment( 0, margin );
+    fdLoopDownloadGroup.top = new FormAttachment( wTargetFiles, margin );
+    fdLoopDownloadGroup.right = new FormAttachment( 100, -margin );
+    wLoopDownloadGroup.setLayoutData(fdLoopDownloadGroup);
+    // ///////////////////////////////////////////////////////////
+    // / END OF Loop Download GROUP
+    // ///////////////////////////////////////////////////////////
+
+
     fdFilesComp = new FormData();
     fdFilesComp.left = new FormAttachment( 0, 0 );
     fdFilesComp.top = new FormAttachment( 0, 0 );
@@ -1052,6 +1160,9 @@ public class JobEntrySFTPDialog extends JobEntryDialog implements JobEntryDialog
     wProxyPort.setText( Const.NVL( jobEntry.getProxyPort(), "" ) );
     wProxyUsername.setText( Const.NVL( jobEntry.getProxyUsername(), "" ) );
     wProxyPassword.setText( Const.NVL( jobEntry.getProxyPassword(), "" ) );
+    wIsLoop.setSelection(jobEntry.isLoop());
+    wLoopInterval.setText(Const.NVL( new Long(jobEntry.getLoopInterval()).toString(), "120" ));
+    wLoopTimeout.setText(Const.NVL( new Long(jobEntry.getLoopTimeout()).toString(), "1800" ));
 
     wName.selectAll();
     wName.setFocus();
@@ -1093,6 +1204,10 @@ public class JobEntrySFTPDialog extends JobEntryDialog implements JobEntryDialog
     jobEntry.setProxyPort( wProxyPort.getText() );
     jobEntry.setProxyUsername( wProxyUsername.getText() );
     jobEntry.setProxyPassword( wProxyPassword.getText() );
+
+    jobEntry.setLoop(wIsLoop.getSelection());
+    jobEntry.setLoopInterval(new Long(wLoopInterval.getText()));
+    jobEntry.setLoopTimeout(new Long(wLoopTimeout.getText()));
     dispose();
   }
 

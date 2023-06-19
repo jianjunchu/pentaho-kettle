@@ -192,6 +192,35 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
 
   static String FILE_SEPARATOR = "/";
 
+  private boolean isLoop;
+  private long loopInterval;
+  private long loopTimeout;
+
+  public boolean isLoop() {
+    return isLoop;
+  }
+
+  public long getLoopInterval()
+  {
+    return loopInterval;
+  }
+  public long getLoopTimeout()
+  {
+    return loopTimeout;
+  }
+  public void setLoop(boolean b)
+  {
+    isLoop = b;
+  }
+  public void setLoopInterval(long i)
+  {
+    loopInterval=i;
+  }
+  public void setLoopTimeout(long i)
+  {
+    loopTimeout=i;
+  }
+
   public JobEntryFTP( String n ) {
     super( n, "" );
     nr_limit = "10";
@@ -269,6 +298,10 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
     retval.append( "      " ).append( XMLHandler.addTagValue( "nr_limit", nr_limit ) );
     retval.append( "      " ).append( XMLHandler.addTagValue( "success_condition", success_condition ) );
 
+    retval.append( "      " ).append( XMLHandler.addTagValue( "isloop", isLoop) );
+    retval.append( "      " ).append( XMLHandler.addTagValue( "loop_interval", loopInterval ) );
+    retval.append( "      " ).append( XMLHandler.addTagValue( "loop_timeout", loopTimeout ) );
+
     return retval.toString();
   }
 
@@ -341,6 +374,9 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
       success_condition =
         Const.NVL( XMLHandler.getTagValue( entrynode, "success_condition" ), SUCCESS_IF_NO_ERRORS );
 
+      isLoop = "Y".equalsIgnoreCase( XMLHandler.getTagValue( entrynode, "isloop" ) );
+      loopInterval = new Long(XMLHandler.getTagValue( entrynode, "loop_interval" ));
+      loopTimeout = new Long(XMLHandler.getTagValue( entrynode, "loop_timeout" ));
     } catch ( KettleXMLException xe ) {
       throw new KettleXMLException( "Unable to load job entry of type 'ftp' from XML node", xe );
     }
@@ -415,6 +451,11 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
       success_condition =
         Const.NVL( rep.getJobEntryAttributeString( id_jobentry, "success_condition" ), SUCCESS_IF_NO_ERRORS );
 
+      isLoop = rep.getJobEntryAttributeBoolean( id_jobentry, "isloop" );
+      loopInterval = rep.getJobEntryAttributeInteger( id_jobentry, "loop_interval" );
+      loopTimeout = rep.getJobEntryAttributeInteger( id_jobentry, "loop_timeout" );
+
+
     } catch ( KettleException dbe ) {
       throw new KettleException( "Unable to load job entry of type 'ftp' from the repository for id_jobentry="
         + id_jobentry, dbe );
@@ -464,6 +505,10 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
 
       rep.saveJobEntryAttribute( id_job, getObjectId(), "nr_limit", nr_limit );
       rep.saveJobEntryAttribute( id_job, getObjectId(), "success_condition", success_condition );
+
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "isloop", isLoop);
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "loop_interval", loopInterval );
+      rep.saveJobEntryAttribute( id_job, getObjectId(), "loop_timeout", loopTimeout );
     } catch ( KettleDatabaseException dbe ) {
       throw new KettleException(
         "Unable to save job entry of type 'ftp' to the repository for id_job=" + id_job, dbe );
@@ -730,7 +775,7 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   }
 
   /**
-   * @param onlyGettingNewFiles
+   * @param onlyGettingNewFilesin
    *          The onlyGettingNewFiles to set.
    */
   public void setOnlyGettingNewFiles( boolean onlyGettingNewFilesin ) {
@@ -788,7 +833,7 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   }
 
   /**
-   * @param proxyPassword
+   * @param socksProxyPassword
    *          The password which is used to authenticate at the proxy.
    */
   public void setSocksProxyPassword( String socksProxyPassword ) {
@@ -840,7 +885,7 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   }
 
   /**
-   * @param proxyUsername
+   * @param socksPoxyUsername
    *          The username which is used to authenticate at the socks proxy.
    */
   public void setSocksProxyUsername( String socksPoxyUsername ) {
@@ -1309,7 +1354,7 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   }
 
   /**
-   * @param string
+   * @param filename
    *          the filename from the FTP server
    *
    * @return the calculated target filename
@@ -1375,8 +1420,6 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
    *
    * @param filename
    *          The local filename to check
-   * @param remoteFileSize
-   *          The size of the remote file
    * @return true if the file needs downloading
    */
   protected boolean needsDownload( String filename ) {
@@ -1432,7 +1475,7 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   }
 
   /**
-   * @param activeConnection
+   * @param passive
    *          the activeConnection to set
    */
   public void setActiveConnection( boolean passive ) {
