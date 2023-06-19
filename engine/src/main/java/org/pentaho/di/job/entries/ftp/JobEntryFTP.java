@@ -196,6 +196,8 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
   private long loopInterval;
   private long loopTimeout;
 
+  private long totalTime;
+
   public boolean isLoop() {
     return isLoop;
   }
@@ -956,263 +958,285 @@ public class JobEntryFTP extends JobEntryBase implements Cloneable, JobEntryInte
       logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.Start" ) );
     }
 
-    FTPClient ftpclient = null;
-    String realMoveToFolder = null;
 
-    try {
-      // Create ftp client to host:port ...
-      ftpclient = initFTPClient();
-      String realServername = environmentSubstitute( serverName );
-      String realServerPort = environmentSubstitute( port );
-      ftpclient.setRemoteAddr( getInetAddress( realServername ) );
-      if ( !Utils.isEmpty( realServerPort ) ) {
-        ftpclient.setRemotePort( Const.toInt( realServerPort, 21 ) );
-      }
+    while(true) {
+      FTPClient ftpclient = null;
+      String realMoveToFolder = null;
 
-      if ( !Utils.isEmpty( proxyHost ) ) {
-        String realProxy_host = environmentSubstitute( proxyHost );
-        ftpclient.setRemoteAddr( InetAddress.getByName( realProxy_host ) );
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.OpenedProxyConnectionOn", realProxy_host ) );
+      try {
+        // Create ftp client to host:port ...
+        ftpclient = initFTPClient();
+        String realServername = environmentSubstitute(serverName);
+        String realServerPort = environmentSubstitute(port);
+        ftpclient.setRemoteAddr(getInetAddress(realServername));
+        if (!Utils.isEmpty(realServerPort)) {
+          ftpclient.setRemotePort(Const.toInt(realServerPort, 21));
         }
 
-        // FIXME: Proper default port for proxy
-        int port = Const.toInt( environmentSubstitute( proxyPort ), 21 );
-        if ( port != 0 ) {
-          ftpclient.setRemotePort( port );
-        }
-      } else {
-        ftpclient.setRemoteAddr( getInetAddress( realServername ) );
-
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.OpenedConnectionTo", realServername ) );
-        }
-      }
-
-      // set activeConnection connectmode ...
-      if ( activeConnection ) {
-        ftpclient.setConnectMode( FTPConnectMode.ACTIVE );
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetActive" ) );
-        }
-      } else {
-        ftpclient.setConnectMode( FTPConnectMode.PASV );
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetPassive" ) );
-        }
-      }
-
-      // Set the timeout
-      ftpclient.setTimeout( timeout );
-      if ( isDetailed() ) {
-        logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetTimeout", String.valueOf( timeout ) ) );
-      }
-
-      ftpclient.setControlEncoding( controlEncoding );
-      if ( isDetailed() ) {
-        logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetEncoding", controlEncoding ) );
-      }
-
-      // If socks proxy server was provided
-      if ( !Utils.isEmpty( socksProxyHost ) ) {
-        if ( !Utils.isEmpty( socksProxyPort ) ) {
-          FTPClient.initSOCKS( environmentSubstitute( socksProxyPort ), environmentSubstitute( socksProxyHost ) );
-        } else {
-          throw new FTPException( BaseMessages.getString(
-            PKG, "JobEntryFTP.SocksProxy.PortMissingException", environmentSubstitute( socksProxyHost ),
-            getName() ) );
-        }
-        // then if we have authentication information
-        if ( !Utils.isEmpty( socksProxyUsername ) && !Utils.isEmpty( socksProxyPassword ) ) {
-          FTPClient.initSOCKSAuthentication(
-            environmentSubstitute( socksProxyUsername ), Utils.resolvePassword( this, socksProxyPassword ) );
-        } else if ( !Utils.isEmpty( socksProxyUsername )
-          && Utils.isEmpty( socksProxyPassword ) || Utils.isEmpty( socksProxyUsername )
-          && !Utils.isEmpty( socksProxyPassword ) ) {
-          // we have a username without a password or vica versa
-          throw new FTPException( BaseMessages.getString(
-            PKG, "JobEntryFTP.SocksProxy.IncompleteCredentials", environmentSubstitute( socksProxyHost ),
-            getName() ) );
-        }
-      }
-
-      // login to ftp host ...
-      ftpclient.connect();
-
-      String realUsername =
-        environmentSubstitute( userName )
-          + ( !Utils.isEmpty( proxyHost ) ? "@" + realServername : "" )
-          + ( !Utils.isEmpty( proxyUsername ) ? " " + environmentSubstitute( proxyUsername ) : "" );
-
-      String realPassword =
-              Utils.resolvePassword( this, password )
-          + ( !Utils.isEmpty( proxyPassword ) ? " "
-            + Utils.resolvePassword( this, proxyPassword ) : "" );
-
-      ftpclient.login( realUsername, realPassword );
-      // Remove password from logging, you don't know where it ends up.
-      if ( isDetailed() ) {
-        logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.LoggedIn", realUsername ) );
-      }
-
-      // Fix for PDI-2534 - add auxilliary FTP File List parsers to the ftpclient object.
-      this.hookInOtherParsers( ftpclient );
-
-      // move to spool dir ...
-      if ( !Utils.isEmpty( ftpDirectory ) ) {
-        String realFtpDirectory = environmentSubstitute( ftpDirectory );
-        realFtpDirectory = normalizePath( realFtpDirectory );
-        ftpclient.chdir( realFtpDirectory );
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.ChangedDir", realFtpDirectory ) );
-        }
-      }
-
-      // Create move to folder if necessary
-      if ( movefiles && !Utils.isEmpty( movetodirectory ) ) {
-        realMoveToFolder = environmentSubstitute( movetodirectory );
-        realMoveToFolder = normalizePath( realMoveToFolder );
-        // Folder exists?
-        boolean folderExist = true;
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.CheckMoveToFolder", realMoveToFolder ) );
-        }
-        String originalLocation = ftpclient.pwd();
-        try {
-          // does not work for folders, see PDI-2567: folderExist=ftpclient.exists(realMoveToFolder);
-          // try switching to the 'move to' folder.
-          ftpclient.chdir( realMoveToFolder );
-          // Switch back to the previous location.
-          if ( isDetailed() ) {
-            logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.CheckMoveToFolderSwitchBack", originalLocation ) );
+        if (!Utils.isEmpty(proxyHost)) {
+          String realProxy_host = environmentSubstitute(proxyHost);
+          ftpclient.setRemoteAddr(InetAddress.getByName(realProxy_host));
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.OpenedProxyConnectionOn", realProxy_host));
           }
-          ftpclient.chdir( originalLocation );
-        } catch ( Exception e ) {
-          folderExist = false;
-          // Assume folder does not exist !!
+
+          // FIXME: Proper default port for proxy
+          int port = Const.toInt(environmentSubstitute(proxyPort), 21);
+          if (port != 0) {
+            ftpclient.setRemotePort(port);
+          }
+        } else {
+          ftpclient.setRemoteAddr(getInetAddress(realServername));
+
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.OpenedConnectionTo", realServername));
+          }
         }
 
-        if ( !folderExist ) {
-          if ( createmovefolder ) {
-            ftpclient.mkdir( realMoveToFolder );
-            if ( isDetailed() ) {
-              logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.MoveToFolderCreated", realMoveToFolder ) );
+        // set activeConnection connectmode ...
+        if (activeConnection) {
+          ftpclient.setConnectMode(FTPConnectMode.ACTIVE);
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetActive"));
+          }
+        } else {
+          ftpclient.setConnectMode(FTPConnectMode.PASV);
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetPassive"));
+          }
+        }
+
+        // Set the timeout
+        ftpclient.setTimeout(timeout);
+        if (isDetailed()) {
+          logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetTimeout", String.valueOf(timeout)));
+        }
+
+        ftpclient.setControlEncoding(controlEncoding);
+        if (isDetailed()) {
+          logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetEncoding", controlEncoding));
+        }
+
+        // If socks proxy server was provided
+        if (!Utils.isEmpty(socksProxyHost)) {
+          if (!Utils.isEmpty(socksProxyPort)) {
+            FTPClient.initSOCKS(environmentSubstitute(socksProxyPort), environmentSubstitute(socksProxyHost));
+          } else {
+            throw new FTPException(BaseMessages.getString(
+                    PKG, "JobEntryFTP.SocksProxy.PortMissingException", environmentSubstitute(socksProxyHost),
+                    getName()));
+          }
+          // then if we have authentication information
+          if (!Utils.isEmpty(socksProxyUsername) && !Utils.isEmpty(socksProxyPassword)) {
+            FTPClient.initSOCKSAuthentication(
+                    environmentSubstitute(socksProxyUsername), Utils.resolvePassword(this, socksProxyPassword));
+          } else if (!Utils.isEmpty(socksProxyUsername)
+                  && Utils.isEmpty(socksProxyPassword) || Utils.isEmpty(socksProxyUsername)
+                  && !Utils.isEmpty(socksProxyPassword)) {
+            // we have a username without a password or vica versa
+            throw new FTPException(BaseMessages.getString(
+                    PKG, "JobEntryFTP.SocksProxy.IncompleteCredentials", environmentSubstitute(socksProxyHost),
+                    getName()));
+          }
+        }
+
+        // login to ftp host ...
+        ftpclient.connect();
+
+        String realUsername =
+                environmentSubstitute(userName)
+                        + (!Utils.isEmpty(proxyHost) ? "@" + realServername : "")
+                        + (!Utils.isEmpty(proxyUsername) ? " " + environmentSubstitute(proxyUsername) : "");
+
+        String realPassword =
+                Utils.resolvePassword(this, password)
+                        + (!Utils.isEmpty(proxyPassword) ? " "
+                        + Utils.resolvePassword(this, proxyPassword) : "");
+
+        ftpclient.login(realUsername, realPassword);
+        // Remove password from logging, you don't know where it ends up.
+        if (isDetailed()) {
+          logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.LoggedIn", realUsername));
+        }
+
+        // Fix for PDI-2534 - add auxilliary FTP File List parsers to the ftpclient object.
+        this.hookInOtherParsers(ftpclient);
+
+        // move to spool dir ...
+        if (!Utils.isEmpty(ftpDirectory)) {
+          String realFtpDirectory = environmentSubstitute(ftpDirectory);
+          realFtpDirectory = normalizePath(realFtpDirectory);
+          ftpclient.chdir(realFtpDirectory);
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.ChangedDir", realFtpDirectory));
+          }
+        }
+
+        // Create move to folder if necessary
+        if (movefiles && !Utils.isEmpty(movetodirectory)) {
+          realMoveToFolder = environmentSubstitute(movetodirectory);
+          realMoveToFolder = normalizePath(realMoveToFolder);
+          // Folder exists?
+          boolean folderExist = true;
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.CheckMoveToFolder", realMoveToFolder));
+          }
+          String originalLocation = ftpclient.pwd();
+          try {
+            // does not work for folders, see PDI-2567: folderExist=ftpclient.exists(realMoveToFolder);
+            // try switching to the 'move to' folder.
+            ftpclient.chdir(realMoveToFolder);
+            // Switch back to the previous location.
+            if (isDetailed()) {
+              logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.CheckMoveToFolderSwitchBack", originalLocation));
+            }
+            ftpclient.chdir(originalLocation);
+          } catch (Exception e) {
+            folderExist = false;
+            // Assume folder does not exist !!
+          }
+
+          if (!folderExist) {
+            if (createmovefolder) {
+              ftpclient.mkdir(realMoveToFolder);
+              if (isDetailed()) {
+                logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.MoveToFolderCreated", realMoveToFolder));
+              }
+            } else {
+              logError(BaseMessages.getString(PKG, "JobEntryFTP.MoveToFolderNotExist"));
+              exitjobentry = true;
+              NrErrors++;
+            }
+          }
+        }
+
+        if (!exitjobentry) {
+          // Get all the files in the current directory...
+          FTPFile[] ftpFiles = ftpclient.dirDetails(null);
+
+          if (isDetailed()) {
+            logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.FoundNFiles", String.valueOf(ftpFiles.length)));
+          }
+
+          // set transfertype ...
+          if (binaryMode) {
+            ftpclient.setType(FTPTransferType.BINARY);
+            if (isDetailed()) {
+              logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetBinary"));
             }
           } else {
-            logError( BaseMessages.getString( PKG, "JobEntryFTP.MoveToFolderNotExist" ) );
-            exitjobentry = true;
-            NrErrors++;
-          }
-        }
-      }
-
-      if ( !exitjobentry ) {
-        // Get all the files in the current directory...
-        FTPFile[] ftpFiles = ftpclient.dirDetails( null );
-
-        if ( isDetailed() ) {
-          logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.FoundNFiles", String.valueOf( ftpFiles.length ) ) );
-        }
-
-        // set transfertype ...
-        if ( binaryMode ) {
-          ftpclient.setType( FTPTransferType.BINARY );
-          if ( isDetailed() ) {
-            logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetBinary" ) );
-          }
-        } else {
-          ftpclient.setType( FTPTransferType.ASCII );
-          if ( isDetailed() ) {
-            logDetailed( BaseMessages.getString( PKG, "JobEntryFTP.SetAscii" ) );
-          }
-        }
-
-        // Some FTP servers return a message saying no files found as a string in the filenlist
-        // e.g. Solaris 8
-        // CHECK THIS !!!
-
-        if ( ftpFiles.length == 1 ) {
-          String translatedWildcard = environmentSubstitute( wildcard );
-          if ( !Utils.isEmpty( translatedWildcard ) ) {
-            if ( ftpFiles[0].getName().startsWith( translatedWildcard ) ) {
-              throw new FTPException( ftpFiles[0].getName() );
+            ftpclient.setType(FTPTransferType.ASCII);
+            if (isDetailed()) {
+              logDetailed(BaseMessages.getString(PKG, "JobEntryFTP.SetAscii"));
             }
           }
-        }
 
-        Pattern pattern = null;
-        if ( !Utils.isEmpty( wildcard ) ) {
-          String realWildcard = environmentSubstitute( wildcard );
-          pattern = Pattern.compile( realWildcard );
-        }
+          // Some FTP servers return a message saying no files found as a string in the filenlist
+          // e.g. Solaris 8
+          // CHECK THIS !!!
 
-        if ( !getSuccessCondition().equals( SUCCESS_IF_NO_ERRORS ) ) {
-          limitFiles = Const.toInt( environmentSubstitute( getLimit() ), 10 );
-        }
-
-        // Get the files in the list...
-        for ( FTPFile ftpFile : ftpFiles ) {
-
-          if ( parentJob.isStopped() ) {
-            exitjobentry = true;
-            throw new Exception( BaseMessages.getString( PKG, "JobEntryFTP.JobStopped" ) );
-          }
-
-          if ( successConditionBroken ) {
-            throw new Exception( BaseMessages.getString( PKG, "JobEntryFTP.SuccesConditionBroken", "" + NrErrors ) );
-          }
-
-          boolean getIt = true;
-
-          String filename = ftpFile.getName();
-          if ( isDebug() ) {
-            logDebug( BaseMessages.getString( PKG, "JobEntryFTP.AnalysingFile", filename ) );
-          }
-
-          // We get only files
-          if ( ftpFile.isDir() ) {
-            // not a file..so let's skip it!
-            getIt = false;
-            if ( isDebug() ) {
-              logDebug( BaseMessages.getString( PKG, "JobEntryFTP.SkippingNotAFile", filename ) );
-            }
-          }
-          if ( getIt ) {
-            try {
-              // See if the file matches the regular expression!
-              if ( pattern != null ) {
-                Matcher matcher = pattern.matcher( filename );
-                getIt = matcher.matches();
+          if (ftpFiles.length == 1) {
+            String translatedWildcard = environmentSubstitute(wildcard);
+            if (!Utils.isEmpty(translatedWildcard)) {
+              if (ftpFiles[0].getName().startsWith(translatedWildcard)) {
+                throw new FTPException(ftpFiles[0].getName());
               }
-              if ( getIt ) {
-                downloadFile( ftpclient, filename, realMoveToFolder, parentJob, result );
-              }
-            } catch ( Exception e ) {
-              // Update errors number
-              updateErrors();
-              logError( BaseMessages.getString( PKG, "JobFTP.UnexpectedError", e.toString() ) );
             }
           }
-        } // end for
+
+          Pattern pattern = null;
+          if (!Utils.isEmpty(wildcard)) {
+            String realWildcard = environmentSubstitute(wildcard);
+            pattern = Pattern.compile(realWildcard);
+          }
+
+          if (!getSuccessCondition().equals(SUCCESS_IF_NO_ERRORS)) {
+            limitFiles = Const.toInt(environmentSubstitute(getLimit()), 10);
+          }
+
+          // Get the files in the list...
+          for (FTPFile ftpFile : ftpFiles) {
+
+            if (parentJob.isStopped()) {
+              exitjobentry = true;
+              throw new Exception(BaseMessages.getString(PKG, "JobEntryFTP.JobStopped"));
+            }
+
+            if (successConditionBroken) {
+              throw new Exception(BaseMessages.getString(PKG, "JobEntryFTP.SuccesConditionBroken", "" + NrErrors));
+            }
+
+            boolean getIt = true;
+
+            String filename = ftpFile.getName();
+            if (isDebug()) {
+              logDebug(BaseMessages.getString(PKG, "JobEntryFTP.AnalysingFile", filename));
+            }
+
+            // We get only files
+            if (ftpFile.isDir()) {
+              // not a file..so let's skip it!
+              getIt = false;
+              if (isDebug()) {
+                logDebug(BaseMessages.getString(PKG, "JobEntryFTP.SkippingNotAFile", filename));
+              }
+            }
+            if (getIt) {
+              try {
+                // See if the file matches the regular expression!
+                if (pattern != null) {
+                  Matcher matcher = pattern.matcher(filename);
+                  getIt = matcher.matches();
+                }
+                if (getIt) {
+                  downloadFile(ftpclient, filename, realMoveToFolder, parentJob, result);
+                }
+              } catch (Exception e) {
+                // Update errors number
+                updateErrors();
+                logError(BaseMessages.getString(PKG, "JobFTP.UnexpectedError", e.toString()));
+              }
+            }
+          } // end for
+        }
+      } catch (Exception e) {
+        if (!successConditionBroken && !exitjobentry) {
+          updateErrors();
+        }
+        logError(BaseMessages.getString(PKG, "JobEntryFTP.ErrorGetting", e.getMessage()));
+      } finally {
+        if (ftpclient != null) {
+          try {
+            ftpclient.quit();
+          } catch (Exception e) {
+            logError(BaseMessages.getString(PKG, "JobEntryFTP.ErrorQuitting", e.getMessage()));
+          }
+        }
+        FTPClient.clearSOCKS();
       }
-    } catch ( Exception e ) {
-      if ( !successConditionBroken && !exitjobentry ) {
-        updateErrors();
+
+      //check loop or not
+      if(!isLoop)
+      {
+        break;
       }
-      logError( BaseMessages.getString( PKG, "JobEntryFTP.ErrorGetting", e.getMessage() ) );
-    } finally {
-      if ( ftpclient != null ) {
+      else if(totalTime>getLoopTimeout())
+      {
+        break;
+      }
+      else {
         try {
-          ftpclient.quit();
-        } catch ( Exception e ) {
-          logError( BaseMessages.getString( PKG, "JobEntryFTP.ErrorQuitting", e.getMessage() ) );
+          Thread.sleep(getLoopInterval()*1000);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
         }
+        totalTime+=getLoopInterval();
       }
-      FTPClient.clearSOCKS();
     }
 
     result.setNrErrors( NrErrors );
     result.setNrFilesRetrieved( NrfilesRetrieved );
+
     if ( getSuccessStatus() ) {
       result.setResult( true );
     }
