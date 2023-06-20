@@ -22,11 +22,16 @@
 
 package org.pentaho.di.trans.steps.file;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
+import org.apache.poi.util.StringUtil;
 import org.pentaho.di.core.fileinput.FileInputList;
 import org.pentaho.di.core.injection.InjectionDeep;
+import org.pentaho.di.core.util.FileUtil;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.resource.ResourceReference;
@@ -115,6 +120,24 @@ public abstract class BaseFileInputMeta<A extends BaseFileInputAdditionalField, 
     inputFiles.normalizeAllocation( inputFiles.fileName.length );
     return FileInputList.createFileList( space, inputFiles.fileName, inputFiles.fileMask, inputFiles.excludeFileMask,
         inputFiles.fileRequired, inputFiles.includeSubFolderBoolean() );
+  }
+
+  public FileInputList getFileInputList( VariableSpace space ,List<String> list) {
+    List<String> excludeFileMask = new ArrayList<>();
+    if(list !=null){
+      for(int i = 0; i < list.size();i++){
+       File file = new File(list.get(i));
+        excludeFileMask.add(file.getName());
+      }
+    }
+    String str =  StringUtil.join(excludeFileMask.toArray(),"|");
+    for(int i= 0;i< inputFiles.excludeFileMask.length;i++){
+      inputFiles.excludeFileMask[i] = inputFiles.excludeFileMask[i]+"|"+str;
+    }
+
+    inputFiles.normalizeAllocation( inputFiles.fileName.length );
+    return FileInputList.createFileList( space, inputFiles.fileName, inputFiles.fileMask, inputFiles.excludeFileMask,
+            inputFiles.fileRequired, inputFiles.includeSubFolderBoolean() );
   }
 
   @Override

@@ -129,22 +129,27 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
   private CTabItem wErrorTab;
   private CTabItem wFilterTab;
   private CTabItem wFieldsTab;
+  private CTabItem wMonitorTab;
+
 
   private ScrolledComposite wFileSComp;
   private ScrolledComposite wContentSComp;
   private ScrolledComposite wErrorSComp;
+  private ScrolledComposite wMonitorSComp;
 
   private Composite wFileComp;
   private Composite wContentComp;
   private Composite wErrorComp;
   private Composite wFilterComp;
   private Composite wFieldsComp;
+  private Composite wMonitorComp;
 
   private FormData fdFileComp;
   private FormData fdContentComp;
   private FormData fdErrorComp;
   private FormData fdFilterComp;
   private FormData fdFieldsComp;
+  private FormData fdMonitorComp;
 
   private Group gAccepting;
   private FormData fdAccepting;
@@ -446,6 +451,32 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
 
   private FormData fdBadFileMessageField;
 
+
+
+  // ERROR HANDLING...
+  private Label wlIsLoop;
+  private Button wIsLoop;
+  private FormData fdlIsLoop, fdIsLoop;
+
+  private Label wlLoopInterval;
+  private TextVar wLoopInterval;
+  private FormData fdlLoopInterval, fdLoopInterval;
+
+
+  private Label wlLoopTimeout;
+  private TextVar wLoopTimeout;
+  private FormData fdlLoopTimeout, fdLoopTimeout;
+
+
+  private Label wlIsBackup;
+  private Button wIsBackup;
+  private FormData fdlIsBackup, fdIsBackup;
+
+  private Label wlBackupPath;
+  private TextVar wBackupPath;
+  private FormData fdlBackupPath, fdBackupPath;
+
+
   public TextFileInputDialog( Shell parent, Object in, TransMeta transMeta, String sname ) {
     super( parent, (BaseStepMeta) in, transMeta, sname );
     input = (TextFileInputMeta) in;
@@ -506,6 +537,8 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
     addFiltersTabs();
     addFieldsTabs();
     addAdditionalFieldsTab();
+    addMonitorTab();
+
 
     fdTabFolder = new FormData();
     fdTabFolder.left = new FormAttachment( 0, 0 );
@@ -1648,6 +1681,150 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
     }
   }
 
+  /**
+   * 文件夹监听
+   */
+  private void addMonitorTab() {
+    // ////////////////////////
+    // START OF ERROR TAB ///
+    // /
+    wMonitorTab = new CTabItem( wTabFolder, SWT.NONE );
+    wMonitorTab.setText( BaseMessages.getString( PKG, "TextFileInputDialog.MonitorTab.TabTitle" ) );
+
+    wMonitorSComp = new ScrolledComposite( wTabFolder, SWT.V_SCROLL | SWT.H_SCROLL );
+    wMonitorSComp.setLayout( new FillLayout() );
+
+    FormLayout errorLayout = new FormLayout();
+    errorLayout.marginWidth = 3;
+    errorLayout.marginHeight = 3;
+
+    wMonitorComp = new Composite( wMonitorSComp, SWT.NONE );
+    props.setLook( wMonitorComp );
+    wMonitorComp.setLayout( errorLayout );
+
+
+    // ERROR HANDLING...
+    // IsLoop?
+    wlIsLoop = new Label( wMonitorComp, SWT.RIGHT );
+    wlIsLoop.setText( BaseMessages.getString( PKG, "TextFileInputDialog.IsLoop.Label" ) );
+    props.setLook( wlIsLoop );
+    fdlIsLoop = new FormData();
+    fdlIsLoop.left = new FormAttachment( 0, 0 );
+    fdlIsLoop.top = new FormAttachment( 0, margin );
+    fdlIsLoop.right = new FormAttachment( middle, -margin );
+    wlIsLoop.setLayoutData( fdlIsLoop );
+    wIsLoop = new Button( wMonitorComp, SWT.CHECK );
+    props.setLook( wIsLoop );
+    wIsLoop.setToolTipText( BaseMessages.getString( PKG, "TextFileInputDialog.IsLoop.Tooltip" ) );
+    fdIsLoop = new FormData();
+    fdIsLoop.left = new FormAttachment( middle, 0 );
+    fdIsLoop.top = new FormAttachment( 0, margin );
+    wIsLoop.setLayoutData( fdIsLoop );
+
+
+    wlLoopInterval = new Label( wMonitorComp, SWT.RIGHT );
+    wlLoopInterval.setText( BaseMessages.getString( PKG, "TextFileInputDialog.LoopInterval.Label" ) );
+    props.setLook( wlLoopInterval );
+    fdlLoopInterval = new FormData();
+    fdlLoopInterval.left = new FormAttachment( 0, 0 );
+    fdlLoopInterval.top = new FormAttachment( wIsLoop, margin );
+    fdlLoopInterval.right = new FormAttachment( middle, -margin );
+    wlLoopInterval.setLayoutData( fdlLoopInterval );
+    wLoopInterval = new TextVar( transMeta, wMonitorComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+
+
+    props.setLook( wLoopInterval );
+    fdLoopInterval = new FormData();
+    fdLoopInterval.left = new FormAttachment( middle, 0 );
+    fdLoopInterval.top = new FormAttachment( wIsLoop, margin );
+    fdLoopInterval.right = new FormAttachment( 100, 0 );
+    wLoopInterval.setLayoutData( fdLoopInterval );
+
+
+    // LoopTimeout
+    wlLoopTimeout = new Label(wMonitorComp, SWT.RIGHT );
+    wlLoopTimeout.setText( BaseMessages.getString( PKG, "TextFileInputDialog.LoopTimeout.Label" ) + " " );
+    props.setLook( wlLoopTimeout );
+    fdlLoopTimeout = new FormData();
+    fdlLoopTimeout.left = new FormAttachment( 0, 0 );
+    fdlLoopTimeout.top = new FormAttachment( wLoopInterval, margin );
+    fdlLoopTimeout.right = new FormAttachment( middle, -margin );
+    wlLoopTimeout.setLayoutData( fdlLoopTimeout );
+    wLoopTimeout = new TextVar( transMeta, wMonitorComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+
+    props.setLook( wLoopTimeout );
+    wLoopTimeout.addModifyListener( lsMod );
+    fdLoopTimeout = new FormData();
+    fdLoopTimeout.left = new FormAttachment( middle, 0 );
+    fdLoopTimeout.top = new FormAttachment( wLoopInterval, margin );
+    fdLoopTimeout.right = new FormAttachment( 100, -margin );
+    wLoopTimeout.setLayoutData( fdLoopTimeout );
+
+
+
+    // IsBackup?
+    wlIsBackup = new Label( wMonitorComp, SWT.RIGHT );
+    wlIsBackup.setText( BaseMessages.getString( PKG, "TextFileInputDialog.IsBackup.Label" ) );
+    props.setLook( wlIsBackup );
+    fdlIsBackup = new FormData();
+    fdlIsBackup.left = new FormAttachment( 0, 0 );
+    fdlIsBackup.top = new FormAttachment( wLoopTimeout, margin );
+    fdlIsBackup.right = new FormAttachment( middle, -margin );
+    wlIsBackup.setLayoutData( fdlIsBackup );
+    wIsBackup = new Button( wMonitorComp, SWT.CHECK );
+    props.setLook( wIsBackup );
+    wIsBackup.setToolTipText( BaseMessages.getString( PKG, "TextFileInputDialog.IsBackup.Tooltip" ) );
+    fdIsBackup = new FormData();
+    fdIsBackup.left = new FormAttachment( middle, 0 );
+    fdIsBackup.top = new FormAttachment( wLoopTimeout, margin );
+    wIsBackup.setLayoutData( fdIsBackup );
+
+    // BackupPath
+    wlBackupPath = new Label(wMonitorComp, SWT.RIGHT );
+    wlBackupPath.setText( BaseMessages.getString( PKG, "TextFileInputDialog.BackupPath.Label" ) + " " );
+    props.setLook( wlBackupPath );
+    fdlBackupPath = new FormData();
+    fdlBackupPath.left = new FormAttachment( 0, 0 );
+    fdlBackupPath.top = new FormAttachment( wlIsBackup, margin );
+    fdlBackupPath.right = new FormAttachment( middle, -margin );
+    wlBackupPath.setLayoutData( fdlBackupPath );
+    wBackupPath = new TextVar( transMeta, wMonitorComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+
+    props.setLook( wBackupPath );
+    wBackupPath.addModifyListener( lsMod );
+    fdBackupPath = new FormData();
+    fdBackupPath.left = new FormAttachment( middle, 0 );
+    fdBackupPath.top = new FormAttachment( wlIsBackup, margin );
+    fdBackupPath.right = new FormAttachment( 100, -margin );
+    wBackupPath.setLayoutData( fdBackupPath );
+
+
+
+    fdMonitorComp = new FormData();
+    fdMonitorComp.left = new FormAttachment( 0, 0 );
+    fdMonitorComp.top = new FormAttachment( 0, 0 );
+    fdMonitorComp.right = new FormAttachment( 100, 0 );
+    fdMonitorComp.bottom = new FormAttachment( 100, 0 );
+    wMonitorComp.setLayoutData( fdMonitorComp );
+
+    wMonitorComp.pack();
+    // What's the size:
+    Rectangle bounds = wMonitorComp.getBounds();
+
+    wMonitorSComp.setContent( wMonitorComp );
+    wMonitorSComp.setExpandHorizontal( true );
+    wMonitorSComp.setExpandVertical( true );
+    wMonitorSComp.setMinWidth( bounds.width );
+    wMonitorSComp.setMinHeight( bounds.height );
+
+    wMonitorTab.setControl( wMonitorSComp );
+
+    // ///////////////////////////////////////////////////////////
+    // / END OF CONTENT TAB
+    // ///////////////////////////////////////////////////////////
+
+  }
+
   private void addErrorTab() {
     // ////////////////////////
     // START OF ERROR TAB ///
@@ -1995,6 +2172,8 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
 
   }
 
+
+
   private void addFiltersTabs() {
     // Filters tab...
     //
@@ -2120,6 +2299,8 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
     wFieldsComp.layout();
     wFieldsTab.setControl( wFieldsComp );
   }
+
+
 
   public void setFlags() {
     boolean accept = wAccFilenames.getSelection();
@@ -2390,6 +2571,13 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
       wSizeFieldName.setText( meta.additionalOutputFields.sizeField );
     }
 
+
+    wIsLoop.setSelection(meta.isLoop());
+    wLoopInterval.setText(Const.NVL( meta.getLoopInterval()+"" , "120" ));
+    wLoopTimeout.setText(Const.NVL( meta.getLoopTimeout()+"", "1800" ));
+    wIsBackup.setSelection(meta.isBackupFile());
+    wBackupPath.setText(meta.getBackupPath());
+
     setFlags();
 
     wStepname.selectAll();
@@ -2636,6 +2824,29 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
     meta.additionalOutputFields.rootUriField = wRootUriName.getText();
     meta.additionalOutputFields.extensionField = wExtensionFieldName.getText();
     meta.additionalOutputFields.sizeField = wSizeFieldName.getText();
+
+    meta.setLoop(wIsLoop.getSelection());
+    try {
+      meta.setLoopInterval(Long.valueOf(wLoopInterval.getText()));
+    }catch (Exception e){
+      MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_INFORMATION );
+      mb.setMessage( BaseMessages.getString( PKG, "TextFileInputDialog.Dialog.LoopIntervalError.Message" ) );
+      mb.setText( BaseMessages.getString( PKG, "TextFileInputDialog.ErrorText.Title" ) );
+      mb.open();
+      return;
+    }
+    try {
+      meta.setLoopTimeout(Long.valueOf(wLoopTimeout.getText()));
+    }catch (Exception e){
+      MessageBox mb = new MessageBox( shell, SWT.OK | SWT.ICON_INFORMATION );
+      mb.setMessage( BaseMessages.getString( PKG, "TextFileInputDialog.Dialog.LoopTimeoutError.Message" ) );
+      mb.setText( BaseMessages.getString( PKG, "TextFileInputDialog.ErrorText.Title" ) );
+      mb.open();
+      return;
+    }
+
+    meta.setBackupFile(wIsBackup.getSelection());
+    meta.setBackupPath(wBackupPath.getText());
   }
 
   private void get() {

@@ -22,15 +22,20 @@
 
 package org.pentaho.di.trans.steps.file;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.ResultFile;
 import org.pentaho.di.core.RowSet;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleFileException;
+import org.pentaho.di.core.fileinput.FileInputList;
+import org.pentaho.di.core.injection.Injection;
 import org.pentaho.di.core.row.RowDataUtil;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -48,7 +53,9 @@ import org.pentaho.di.trans.step.errorhandling.CompositeFileErrorHandler;
 import org.pentaho.di.trans.step.errorhandling.FileErrorHandler;
 import org.pentaho.di.trans.step.errorhandling.FileErrorHandlerContentLineNumber;
 import org.pentaho.di.trans.step.errorhandling.FileErrorHandlerMissingFiles;
+import org.pentaho.di.trans.steps.fileinput.text.TextFileInputMeta;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +74,14 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   protected M meta;
 
   protected D data;
+  /** Flag indicating that the file contains one header line that should be skipped. */
+  public boolean header;
+
+  /** The number of header lines, defaults to 1 */
+  public int nrHeaderLines = -1;
+
+
+  List<String> processedFile = new ArrayList<>();
 
   /**
    * Content-dependent initialization.
@@ -90,11 +105,18 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   public boolean init( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (M) smi;
     data = (D) sdi;
+    if(meta instanceof TextFileInputMeta){
+
+      TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
+      header = fileInputMeta.content.header;
+      nrHeaderLines = fileInputMeta.content.nrHeaderLines;
+    }
+
 
     if ( !super.init( smi, sdi ) ) {
       return false;
     }
-
+    processedFile = new ArrayList<>();
     //Set Embedded NamedCluter MetatStore Provider Key so that it can be passed to VFS
     if ( getTransMeta().getNamedClusterEmbedManager() != null ) {
       getTransMeta().getNamedClusterEmbedManager()
@@ -132,6 +154,8 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
     return init();
   }
 
+
+
   /**
    * Open next VFS file for processing.
    *
@@ -140,9 +164,73 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   protected boolean openNextFile() {
     try {
       if ( data.currentFileIndex >= data.files.nrOfFiles() ) {
-        // all files already processed
-        return false;
+
+        //文件已经读完了 判断下是否开启循环
+        if(meta instanceof TextFileInputMeta){
+
+          TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
+
+          FileInputList files = null;
+
+          while (fileInputMeta.isLoop()){
+
+            logBasic("正在循环获取文件夹....");
+
+            if(getTrans().getErrors() > 0){
+              return false;
+            }
+
+            files = meta.getFileInputList( this,processedFile );
+
+            if(fileInputMeta.getTotalTime() > fileInputMeta.getLoopTimeout() ) {
+              logBasic("循环获取文件已超时....");
+              if(fileInputMeta.isBackupFile() && getTrans().getErrors() ==0){
+                logBasic("开始备份文件....");
+
+                for(String path : processedFile){
+                  logBasic("备份目录:"+environmentSubstitute(fileInputMeta.getBackupPath()));
+                  File srcFile = new File(path);
+                  File destFile = new File(environmentSubstitute(fileInputMeta.getBackupPath()) ,srcFile.getName());
+                  if(srcFile.exists()){
+                    if(destFile.exists()){
+                      FileUtils.deleteQuietly(destFile);
+                    }
+                    FileUtils.moveFileToDirectory(srcFile,destFile,true);
+                  }
+
+                  srcFile = new File(path+".conf");
+                  destFile = new File(environmentSubstitute(fileInputMeta.getBackupPath()) ,srcFile.getName());
+                  if(srcFile.exists()){
+                    if(destFile.exists()){
+                      FileUtils.deleteQuietly(destFile);
+                    }
+                    FileUtils.moveFileToDirectory(srcFile,destFile,true);
+                  }
+
+                }
+              }
+              return false;
+
+            }else if(files ==null || files.nrOfFiles() ==0){
+              logBasic("未获取到新文件,等待继续....");
+              Thread.sleep(fileInputMeta.getLoopInterval()*1000);
+              fileInputMeta.setTotalTime(fileInputMeta.getTotalTime()+fileInputMeta.getLoopInterval());
+              continue;
+            }else{
+              data.files = files;
+              //有新的文件加入
+              logBasic("获取到新文件,开始继续处理....");
+              data.currentFileIndex = 0;
+              fileInputMeta.setTotalTime(0L);
+              break;
+
+
+            }
+
+          }
+        }
       }
+
 
       // Is this the last file?
       data.file = data.files.getFile( data.currentFileIndex );
@@ -163,14 +251,40 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
         resultFile.setComment( "File was read by an Text File input step" );
         addResultFile( resultFile );
       }
+
+
+
       if ( log.isBasic() ) {
-        logBasic( "Opening file: " + data.file.getName().getFriendlyURI() );
+        logBasic( "Opening file: " + data.file.getName().getPath() );
       }
+
+
+      if(meta instanceof TextFileInputMeta){
+        File file = new File(data.file.getName().getPath()+".conf");
+        TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
+        if(file.exists()){
+          String json = FileUtils.readFileToString(file);
+
+          JSONObject jsonObject = (JSONObject)JSONValue.parse(json);
+
+          fileInputMeta.content.header = true;
+          fileInputMeta.content.nrHeaderLines = ((Long) jsonObject.get("file_input_read_line")).intValue();
+        }else{
+          fileInputMeta.content.header = header;
+          fileInputMeta.content.nrHeaderLines = nrHeaderLines;
+        }
+      }
+
+
 
       data.dataErrorLineHandler.handleFile( data.file );
 
       data.reader = createReader( meta, data, data.file );
+
+
+
     } catch ( Exception e ) {
+      e.printStackTrace();
       if ( !handleOpenFileException( e ) ) {
         return false;
       }
@@ -194,6 +308,8 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
     return false;
   }
 
+
+
   /**
    * Process next row. This methods opens next file automatically.
    */
@@ -214,12 +330,20 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
     }
 
     while ( true ) {
+      //文件已经处理过 直接跳过
+      if(processedFile.contains(data.file.getName().getPath())){
+          continue;
+      }
+
       if ( data.reader != null && data.reader.readRow() ) {
         // row processed
         return true;
       }
+
+      processedFile.add(data.file.getName().getPath());
       // end of current file
       closeLastFile();
+
 
       if ( !openNextFile() ) {
         // there are no more files

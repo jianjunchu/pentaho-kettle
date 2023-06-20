@@ -460,7 +460,8 @@ public class KettleDatabaseRepositoryTransDelegate extends KettleDatabaseReposit
 
         transMeta.setName( transname );
         transMeta.setRepositoryDirectory( repdir );
-
+        log.logBasic( BaseMessages.getString(
+                PKG, "TransMeta.Log.LookingForTransformation", transname, repdir.getPath() ) );
         // Get the transformation id
         if ( log.isDetailed() ) {
           log.logDetailed( BaseMessages.getString(

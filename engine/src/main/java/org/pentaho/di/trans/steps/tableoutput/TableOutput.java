@@ -22,20 +22,21 @@
 
 package org.pentaho.di.trans.steps.tableoutput;
 
+import org.apache.commons.compress.compressors.FileNameUtil;
+import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.RowMetaAndData;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.PartitionDatabaseMeta;
-import org.pentaho.di.core.exception.KettleDatabaseBatchException;
-import org.pentaho.di.core.exception.KettleDatabaseException;
-import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.di.core.exception.KettleStepException;
+import org.pentaho.di.core.exception.*;
 import org.pentaho.di.core.row.RowDataUtil;
 import org.pentaho.di.core.row.RowMeta;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.di.core.util.FileUtil;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.trans.Trans;
@@ -46,11 +47,12 @@ import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Writes rows to a database table.
@@ -128,6 +130,7 @@ public class TableOutput extends BaseStep implements StepInterface {
       if ( outputRowData != null ) {
         putRow( data.outputRowMeta, outputRowData ); // in case we want it go further...
         incrementLinesOutput();
+
       }
 
       if ( checkFeedback( getLinesRead() ) ) {
@@ -146,6 +149,8 @@ public class TableOutput extends BaseStep implements StepInterface {
     return true;
   }
 
+  private Object[] lastLine;
+
   protected Object[] writeToTable( RowMetaInterface rowMeta, Object[] r ) throws KettleException {
 
     if ( r == null ) { // Stop: last line or error encountered
@@ -154,6 +159,8 @@ public class TableOutput extends BaseStep implements StepInterface {
       }
       return null;
     }
+    lastLine  = r;
+    saveFileLast(getInputRowMeta(),lastLine);
 
     PreparedStatement insertStatement = null;
     Object[] insertRowData;
@@ -319,6 +326,10 @@ public class TableOutput extends BaseStep implements StepInterface {
             insertStatement.executeBatch();
             data.db.commit();
             insertStatement.clearBatch();
+
+            saveFileInputConf();
+
+
           } catch ( SQLException ex ) {
             throw Database.createKettleDatabaseBatchException( "Error updating batch", ex );
           } catch ( Exception ex ) {
@@ -327,11 +338,15 @@ public class TableOutput extends BaseStep implements StepInterface {
         } else {
           // insertRow normal commit
           data.db.commit();
+
         }
+
+
         // Clear the batch/commit counter...
         //
         data.commitCounterMap.put( tableName, Integer.valueOf( 0 ) );
         rowIsSafe = true;
+
       } else {
         rowIsSafe = false;
       }
@@ -473,6 +488,9 @@ public class TableOutput extends BaseStep implements StepInterface {
         outputRowData = null;
 
         if ( rowIsSafe ) { // A commit was done and the rows are all safe (no error)
+
+
+
           for ( int i = 0; i < data.batchBuffer.size(); i++ ) {
             Object[] row = data.batchBuffer.get( i );
             putRow( data.outputRowMeta, row );
@@ -489,7 +507,55 @@ public class TableOutput extends BaseStep implements StepInterface {
       }
     }
 
+
+
     return outputRowData;
+  }
+
+  Map<String, String> filelastLineNumber = new HashMap<>();
+
+  /**
+   * 保存每个文件最后一行到内存
+   * @param rowMeta
+   * @param r
+   */
+  private void saveFileLast(RowMetaInterface rowMeta, Object[] r){
+//记录文本文件输入读的文件名和已读行数
+    int file_input_read_line_index = rowMeta.indexOfValue("FILE_INPUT_READ_LINE");
+    int file_input_file_name_index = rowMeta.indexOfValue("FILE_INPUT_FILE_NAME");
+    int file_input_file_path_index = rowMeta.indexOfValue("FILE_INPUT_FILE_PATH");
+    if(file_input_read_line_index > 0 && file_input_file_name_index > 0 && file_input_file_path_index > 0){
+
+      Object file_input_read_line = r[file_input_read_line_index];
+      String file_input_file_name = String.valueOf(r[file_input_file_name_index]) ;
+      Object file_input_file_path = r[file_input_file_path_index];
+
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.put("file_input_read_line",file_input_read_line);
+      jsonObject.put("file_input_file_name",file_input_file_name);
+      jsonObject.put("file_input_file_path",file_input_file_path);
+
+      File data = FileUtils.getFile(String.valueOf(file_input_file_path),file_input_file_name);
+      filelastLineNumber.put(data.getAbsolutePath(),jsonObject.toJSONString());
+
+    }
+  }
+
+  private void saveFileInputConf()  {
+
+    try {
+      Set<String> set = filelastLineNumber.keySet();
+      for (String key : set) {
+        String json = filelastLineNumber.get(key);
+        File data = FileUtils.getFile(key+".conf");
+        FileUtils.write(data,json);
+
+      }
+    }catch (Exception e){
+      logError( "记录文件行数失败: "
+               + Const.CR + e.getMessage() );
+    }
+
   }
 
   public boolean isRowLevel() {
@@ -681,6 +747,9 @@ public class TableOutput extends BaseStep implements StepInterface {
     }
   }
 
+
+
+
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (TableOutputMeta) smi;
     data = (TableOutputData) sdi;
@@ -698,11 +767,17 @@ public class TableOutput extends BaseStep implements StepInterface {
           PreparedStatement insertStatement = data.preparedStatements.get( schemaTable );
 
           data.db.emptyAndCommit( insertStatement, data.batchMode, batchCounter );
+
+          saveFileInputConf();
         }
+
+
+
         for ( int i = 0; i < data.batchBuffer.size(); i++ ) {
           Object[] row = data.batchBuffer.get( i );
           putRow( data.outputRowMeta, row );
           incrementLinesOutput();
+
         }
         // Clear the buffer
         data.batchBuffer.clear();

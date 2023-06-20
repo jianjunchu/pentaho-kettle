@@ -159,7 +159,7 @@ public class FileInputList {
     for ( int i = 0; i < realfile.length; i++ ) {
       final String onefile = realfile[ i ];
       final String onemask = realmask[ i ];
-      final String excludeonemask = realExcludeMask[ i ];
+      final String excludeonemask = realExcludeMask[i];
       final boolean onerequired = YES.equalsIgnoreCase( fileRequired[ i ] );
       final boolean subdirs = includeSubdirs[ i ];
       final FileTypeFilter filter =

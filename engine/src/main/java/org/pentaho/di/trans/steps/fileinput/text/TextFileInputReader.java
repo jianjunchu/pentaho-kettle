@@ -53,6 +53,8 @@ public class TextFileInputReader implements IBaseFileInputReader {
 
   private final CompressionInputStream in;
 
+  private long lineStart;
+
   private final InputStreamReader isr;
 
   protected long lineInFile;
@@ -110,6 +112,9 @@ public class TextFileInputReader implements IBaseFileInputReader {
     /*
      * OK, read a number of lines in the buffer: The header rows The nr rows in the page : optional The footer rows
      */
+
+
+
     int bufferSize = 1;
     bufferSize += meta.content.header ? meta.content.nrHeaderLines : 0;
     bufferSize +=
@@ -470,5 +475,13 @@ public class TextFileInputReader implements IBaseFileInputReader {
     }
 
     return filterOK;
+  }
+
+  public long getLineStart() {
+    return lineStart;
+  }
+
+  public void setLineStart(long lineStart) {
+    this.lineStart = lineStart;
   }
 }

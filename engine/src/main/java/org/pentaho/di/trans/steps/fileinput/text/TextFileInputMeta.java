@@ -171,11 +171,11 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
 
     /** Flag indicating that a row number field should be included in the output */
     @Injection( name = "INCLUDE_ROW_NUMBER" )
-    public boolean includeRowNumber;
+    public boolean includeRowNumber = true;
 
     /** The name of the field in the output containing the row number */
     @Injection( name = "ROW_NUMBER_FIELD" )
-    public String rowNumberField;
+    public String rowNumberField = "file_input_read_line";
 
     /** Flag indicating row number is per file */
     @Injection( name = "ROW_NUMBER_BY_FILE" )
@@ -209,6 +209,8 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
     @Injection( name = "LENGTH" )
     public String length;
 
+
+
   }
 
   /** The filters to use... */
@@ -231,8 +233,27 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
   @Injection( name = "ERROR_LINES_SKIPPED" )
   public boolean errorLineSkipped;
 
+  @Injection( name = "IS_LOOP" )
+  private boolean loop = false;
+
+  @Injection( name = "LOOP_INTERVAL" )
+  private long loopInterval = 120;
+
+  @Injection( name = "LOOP_TIMEOUT" )
+  private long loopTimeout = 1800;
+
+  private long totalTime = 0;
+
+  @Injection( name = "BACKUP_FILE" )
+  private boolean backupFile = false;
+
+  @Injection( name = "BACKUP_PATH" )
+  public String backupPath = "";
+
   /** The step to accept filenames from */
   private StepMeta acceptingStep;
+
+
 
   public TextFileInputMeta() {
     additionalOutputFields = new BaseFileInputAdditionalField();
@@ -431,6 +452,21 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
       additionalOutputFields.rootUriField = XMLHandler.getTagValue( stepnode, "rootUriNameFieldName" );
       additionalOutputFields.extensionField = XMLHandler.getTagValue( stepnode, "extensionFieldName" );
       additionalOutputFields.sizeField = XMLHandler.getTagValue( stepnode, "sizeFieldName" );
+
+      loop = YES.equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "isLoop" ) )  ;
+
+      String loopIntervalStr = XMLHandler.getTagValue( stepnode, "loopInterval" );
+      loopInterval = new Long(Const.NVL(loopIntervalStr,"120"));
+      String loopTimeoutStr = XMLHandler.getTagValue( stepnode, "loopTimeout" );
+
+      loopTimeout  = new Long(Const.NVL(loopTimeoutStr,"1800"));
+
+      backupFile = YES.equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "isBackupFile" ) )  ;
+      backupPath = Const.NVL(XMLHandler.getTagValue( stepnode, "backupPath" ),"");
+
+
+
+
     } catch ( Exception e ) {
       throw new KettleXMLException( "Unable to load step info from XML", e );
     }
@@ -816,6 +852,13 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
         additionalOutputFields.extensionField ) );
     retval.append( "    " ).append( XMLHandler.addTagValue( "sizeFieldName", additionalOutputFields.sizeField ) );
 
+    retval.append( "    " ).append( XMLHandler.addTagValue( "isLoop", isLoop() ) );
+    retval.append( "    " ).append( XMLHandler.addTagValue( "loopInterval", getLoopInterval() ) );
+    retval.append( "    " ).append( XMLHandler.addTagValue( "loopTimeout", getLoopTimeout() ) );
+    retval.append( "    " ).append( XMLHandler.addTagValue( "isBackupFile", isBackupFile() ) );
+    retval.append( "    " ).append( XMLHandler.addTagValue( "backupPath", getBackupPath() ) );
+
+
     return retval.toString();
   }
 
@@ -975,6 +1018,13 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
       additionalOutputFields.rootUriField = rep.getStepAttributeString( id_step, "rootUriNameFieldName" );
       additionalOutputFields.extensionField = rep.getStepAttributeString( id_step, "extensionFieldName" );
       additionalOutputFields.sizeField = rep.getStepAttributeString( id_step, "sizeFieldName" );
+
+      loop = rep.getStepAttributeBoolean( id_step, "isLoop" );
+      loopInterval = rep.getStepAttributeInteger(id_step,"loopInterval");
+      loopTimeout = rep.getStepAttributeInteger(id_step,"loopTimeout");
+      backupFile = rep.getStepAttributeBoolean(id_step,"isBackupFile");
+      backupPath = rep.getStepAttributeString(id_step,"backupPath");
+
     } catch ( Exception e ) {
       throw new KettleException( "Unexpected error reading step information from the repository", e );
     }
@@ -1093,6 +1143,16 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
       rep.saveStepAttribute( id_transformation, id_step, "rootUriNameFieldName", additionalOutputFields.rootUriField );
       rep.saveStepAttribute( id_transformation, id_step, "extensionFieldName", additionalOutputFields.extensionField );
       rep.saveStepAttribute( id_transformation, id_step, "sizeFieldName", additionalOutputFields.sizeField );
+
+
+
+      rep.saveStepAttribute( id_transformation, id_step, "isLoop", loop );
+      rep.saveStepAttribute( id_transformation, id_step, "loopInterval", loopInterval );
+      rep.saveStepAttribute( id_transformation, id_step, "loopTimeout", loopTimeout );
+      rep.saveStepAttribute( id_transformation, id_step, "isBackupFile", backupFile );
+      rep.saveStepAttribute( id_transformation, id_step, "backupPath", backupPath );
+
+
     } catch ( Exception e ) {
       throw new KettleException( "Unable to save step information to the repository for id_step=" + id_step, e );
     }
@@ -1405,5 +1465,53 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
   public FileObject getHeaderFileObject( final TransMeta transMeta ) {
     final FileInputList fileList = getFileInputList( transMeta );
     return fileList.nrOfFiles() == 0 ? null : fileList.getFile( 0 );
+  }
+
+  public boolean isLoop() {
+    return loop;
+  }
+
+  public void setLoop(boolean loop) {
+    this.loop = loop;
+  }
+
+  public long getLoopInterval() {
+    return loopInterval;
+  }
+
+  public void setLoopInterval(long loopInterval) {
+    this.loopInterval = loopInterval;
+  }
+
+  public long getLoopTimeout() {
+    return loopTimeout;
+  }
+
+  public void setLoopTimeout(long loopTimeout) {
+    this.loopTimeout = loopTimeout;
+  }
+
+  public long getTotalTime() {
+    return totalTime;
+  }
+
+  public void setTotalTime(long totalTime) {
+    this.totalTime = totalTime;
+  }
+
+  public boolean isBackupFile() {
+    return backupFile;
+  }
+
+  public void setBackupFile(boolean backupFile) {
+    this.backupFile = backupFile;
+  }
+
+  public String getBackupPath() {
+    return backupPath;
+  }
+
+  public void setBackupPath(String backupPath) {
+    this.backupPath = backupPath;
   }
 }
