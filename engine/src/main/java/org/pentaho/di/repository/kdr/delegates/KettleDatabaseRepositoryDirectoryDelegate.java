@@ -105,6 +105,7 @@ public class KettleDatabaseRepositoryDirectoryDelegate extends KettleDatabaseRep
 
       return root;
     } catch ( Exception e ) {
+      e.printStackTrace();
       throw new KettleException( "An error occured loading the directory tree from the repository", e );
     }
   }

@@ -24,6 +24,7 @@ package org.pentaho.di.trans.steps.tableoutput;
 
 import org.apache.commons.compress.compressors.FileNameUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.json.simple.JSONObject;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.RowMetaAndData;
@@ -46,6 +47,8 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.fileinput.text.TextFileInput;
+import org.pentaho.di.trans.steps.fileinput.text.TextFileInputMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,10 +80,19 @@ public class TableOutput extends BaseStep implements StepInterface {
 
     Object[] r = getRow(); // this also waits for a previous step to be finished.
     if ( r == null ) { // no more input to be expected...
+
+
       // truncate the table if there are no rows at all coming into this step
       if ( first && meta.truncateTable() ) {
         truncateTable();
       }
+
+      /*if(!first){
+        emptyAndCommit();
+        saveFileInputConf();
+      }
+*/
+
       return false;
     }
 
@@ -748,12 +760,7 @@ public class TableOutput extends BaseStep implements StepInterface {
   }
 
 
-
-
-  public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
-    meta = (TableOutputMeta) smi;
-    data = (TableOutputData) sdi;
-
+  private void  emptyAndCommit(){
     if ( data.db != null ) {
       try {
         for ( String schemaTable : data.preparedStatements.keySet() ) {
@@ -781,6 +788,91 @@ public class TableOutput extends BaseStep implements StepInterface {
         }
         // Clear the buffer
         data.batchBuffer.clear();
+      } catch ( KettleDatabaseBatchException be ) {
+        if ( getStepMeta().isDoingErrorHandling() ) {
+          // Right at the back we are experiencing a batch commit problem...
+          // OK, we have the numbers...
+          try {
+            processBatchException( be.toString(), be.getUpdateCounts(), be.getExceptionsList() );
+          } catch ( KettleException e ) {
+            logError( "Unexpected error processing batch error", e );
+            setErrors( 1 );
+            stopAll();
+          }
+        } else {
+          logError( "Unexpected batch update error committing the database connection.", be );
+          setErrors( 1 );
+          stopAll();
+        }
+      } catch ( Exception dbe ) {
+        logError( "Unexpected error committing the database connection.", dbe );
+        logError( Const.getStackTracker( dbe ) );
+        setErrors( 1 );
+        stopAll();
+      }
+
+    }
+  }
+
+  public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
+    meta = (TableOutputMeta) smi;
+    data = (TableOutputData) sdi;
+
+    if ( data.db != null ) {
+      try {
+        for ( String schemaTable : data.preparedStatements.keySet() ) {
+          // Get a commit counter per prepared statement to keep track of separate tables, etc.
+          //
+          Integer batchCounter = data.commitCounterMap.get( schemaTable );
+          if ( batchCounter == null ) {
+            batchCounter = 0;
+          }
+          PreparedStatement insertStatement = data.preparedStatements.get( schemaTable );
+          data.db.emptyAndCommit( insertStatement, data.batchMode, batchCounter );
+          saveFileInputConf();
+        }
+
+
+
+        for ( int i = 0; i < data.batchBuffer.size(); i++ ) {
+          Object[] row = data.batchBuffer.get( i );
+          putRow( data.outputRowMeta, row );
+          incrementLinesOutput();
+
+        }
+        // Clear the buffer
+        data.batchBuffer.clear();
+        StepMetaInterface sii = getTransMeta().getStep( 0 ).getStepMetaInterface();
+       if(sii instanceof TextFileInputMeta){
+         TextFileInputMeta textFileInputMeta = (TextFileInputMeta) sii;
+        String backupPath = environmentSubstitute(textFileInputMeta.getBackupPath());
+
+         if(textFileInputMeta.isBackupFile() && getTrans().getErrors() ==0 && !StringUtils.isEmpty(backupPath)){
+           logBasic("开始备份文件....");
+           FileUtils.forceMkdir(new File(backupPath));
+
+           for(String path : textFileInputMeta.getProcessedFile()){
+             logBasic("备份目录:"+ backupPath);
+             File srcFile = new File(path);
+             File destFile = new File(backupPath,srcFile.getName());
+
+             if(srcFile.exists()){
+               FileUtils.moveFile(srcFile,destFile);
+             }
+
+             srcFile = new File(path+".conf");
+             destFile = new File(backupPath ,srcFile.getName());
+             if(srcFile.exists()){
+               if(destFile.exists()){
+                 FileUtils.deleteQuietly(destFile);
+               }
+               FileUtils.moveFile(srcFile,destFile);
+             }
+
+           }
+         }
+       }
+
       } catch ( KettleDatabaseBatchException be ) {
         if ( getStepMeta().isDoingErrorHandling() ) {
           // Right at the back we are experiencing a batch commit problem...

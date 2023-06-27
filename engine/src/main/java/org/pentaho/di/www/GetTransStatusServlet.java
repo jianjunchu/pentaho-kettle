@@ -202,322 +202,331 @@ public class GetTransStatusServlet extends BaseHttpServlet implements CartePlugi
   public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
     IOException {
 
-    if ( isJettyMode() && !request.getContextPath().startsWith( CONTEXT_PATH ) ) {
-      return;
-    }
-
-    if ( log.isDebug() ) {
-      logDebug( BaseMessages.getString( PKG, "TransStatusServlet.Log.TransStatusRequested" ) );
-    }
-
-    String transName = request.getParameter( "name" );
-    String id = request.getParameter( "id" );
-    String root = request.getRequestURI() == null ? StatusServletUtils.PENTAHO_ROOT
-      : request.getRequestURI().substring( 0, request.getRequestURI().indexOf( CONTEXT_PATH ) );
-    String prefix = isJettyMode() ? StatusServletUtils.STATIC_PATH : root + StatusServletUtils.RESOURCES_PATH;
-    boolean useXML = "Y".equalsIgnoreCase( request.getParameter( "xml" ) );
-    int startLineNr = Const.toInt( request.getParameter( "from" ), 0 );
-
-    response.setStatus( HttpServletResponse.SC_OK );
-
-    if ( useXML ) {
-      response.setContentType( "text/xml" );
-      response.setCharacterEncoding( Const.XML_ENCODING );
-    } else {
-      response.setCharacterEncoding( "UTF-8" );
-      response.setContentType( "text/html;charset=UTF-8" );
-
-    }
-
-    // ID is optional...
-    //
-    Trans trans;
-    CarteObjectEntry entry;
-    if ( Utils.isEmpty( id ) ) {
-      // get the first transformation that matches...
-      //
-      entry = getTransformationMap().getFirstCarteObjectEntry( transName );
-      if ( entry == null ) {
-        trans = null;
-      } else {
-        id = entry.getId();
-        trans = getTransformationMap().getTransformation( entry );
+    try {
+      if ( isJettyMode() && !request.getContextPath().startsWith( CONTEXT_PATH ) ) {
+        return;
       }
-    } else {
-      // Take the ID into account!
-      //
-      entry = new CarteObjectEntry( transName, id );
-      trans = getTransformationMap().getTransformation( entry );
-    }
 
-    if ( trans != null ) {
+      if ( log.isDebug() ) {
+        logDebug( BaseMessages.getString( PKG, "TransStatusServlet.Log.TransStatusRequested" ) );
+      }
+
+      String transName = request.getParameter( "name" );
+
+      String id = request.getParameter( "id" );
+      String root = request.getRequestURI() == null ? StatusServletUtils.PENTAHO_ROOT
+              : request.getRequestURI().substring( 0, request.getRequestURI().indexOf( CONTEXT_PATH ) );
+      String prefix = isJettyMode() ? StatusServletUtils.STATIC_PATH : root + StatusServletUtils.RESOURCES_PATH;
+      boolean useXML = "Y".equalsIgnoreCase( request.getParameter( "xml" ) );
+      int startLineNr = Const.toInt( request.getParameter( "from" ), 0 );
+
+      response.setStatus( HttpServletResponse.SC_OK );
+
+
       if ( useXML ) {
-        try {
-          OutputStream out = null;
-          byte[] data = null;
-          String logId = trans.getLogChannelId();
-          boolean finishedOrStopped = trans.isFinishedOrStopped();
-          boolean sendResultXmlWithStatus = "Y".equalsIgnoreCase( request.getParameter( SEND_RESULT ) );
-          boolean dontUseCache = sendResultXmlWithStatus;
-          if ( finishedOrStopped && ( data = cache.get( logId, startLineNr ) ) != null && !dontUseCache ) {
-            response.setContentLength( XML_HEADER.length + data.length );
-            out = response.getOutputStream();
-            out.write( XML_HEADER );
-            out.write( data );
-            out.flush();
-          } else {
-            int lastLineNr = KettleLogStore.getLastBufferLineNr();
-
-            String logText = getLogText( trans, startLineNr, lastLineNr );
-
-            response.setContentType( "text/xml" );
-            response.setCharacterEncoding( Const.XML_ENCODING );
-
-            SlaveServerTransStatus transStatus =
-              new SlaveServerTransStatus( transName, entry.getId(), trans.getStatus() );
-            transStatus.setFirstLoggingLineNr( startLineNr );
-            transStatus.setLastLoggingLineNr( lastLineNr );
-            transStatus.setLogDate( trans.getLogDate() );
-
-            for ( int i = 0; i < trans.nrSteps(); i++ ) {
-              StepInterface baseStep = trans.getRunThread( i );
-              if ( ( baseStep.isRunning() ) || baseStep.getStatus() != StepExecutionStatus.STATUS_EMPTY ) {
-                StepStatus stepStatus = new StepStatus( baseStep );
-                transStatus.getStepStatusList().add( stepStatus );
-              }
-            }
-
-            // The log can be quite large at times, we are going to putIfAbsent a base64 encoding around a compressed
-            // stream
-            // of bytes to handle this one.
-            String loggingString = HttpUtil.encodeBase64ZippedString( logText );
-            transStatus.setLoggingString( loggingString );
-            //        transStatus.setLoggingUncompressedSize( logText.length() );
-
-            // Also set the result object...
-            //
-            transStatus.setResult( trans.getResult() );
-
-            // Is the transformation paused?
-            //
-            transStatus.setPaused( trans.isPaused() );
-
-            // Send the result back as XML
-            //
-            String xml = transStatus.getXML( sendResultXmlWithStatus );
-            data = xml.getBytes( Charset.forName( Const.XML_ENCODING ) );
-            out = response.getOutputStream();
-            response.setContentLength( XML_HEADER.length + data.length );
-            out.write( XML_HEADER );
-            out.write( data );
-            out.flush();
-            if ( finishedOrStopped && logId != null ) {
-              cache.put( logId, xml, startLineNr );
-            }
-          }
-          response.flushBuffer();
-        } catch ( KettleException e ) {
-          throw new ServletException( "Unable to get the transformation status in XML format", e );
-        }
-
+        response.setContentType( "text/xml" );
+        response.setCharacterEncoding( Const.XML_ENCODING );
       } else {
-        PrintWriter out = response.getWriter();
-
-        int lastLineNr = KettleLogStore.getLastBufferLineNr();
-        int tableBorder = 0;
-
+        response.setCharacterEncoding( "UTF-8" );
         response.setContentType( "text/html;charset=UTF-8" );
 
-        out.println( "<HTML>" );
-        out.println( "<HEAD>" );
-        out.println( "<TITLE>"
-          + BaseMessages.getString( PKG, "TransStatusServlet.KettleTransStatus" ) + "</TITLE>" );
-        if ( EnvUtil.getSystemProperty( Const.KETTLE_CARTE_REFRESH_STATUS, "N" ).equalsIgnoreCase( "Y" ) ) {
-          out.println( "<META http-equiv=\"Refresh\" content=\"10;url="
-            + convertContextPath( CONTEXT_PATH ) + "?name=" + URLEncoder.encode( transName, "UTF-8" ) + "&id="
-            + URLEncoder.encode( id, "UTF-8" ) + "\">" );
-        }
-        out.println( "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" );
+      }
 
-        if ( isJettyMode() ) {
-          out.println( "<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/carte.css\" />" );
+      // ID is optional...
+      //
+      Trans trans;
+      CarteObjectEntry entry;
+      if ( Utils.isEmpty( id ) ) {
+        // get the first transformation that matches...
+        //
+        entry = getTransformationMap().getFirstCarteObjectEntry( transName );
+        if ( entry == null ) {
+          trans = null;
         } else {
-          out.print( StatusServletUtils.getPentahoStyles() );
+          id = entry.getId();
+          trans = getTransformationMap().getTransformation( entry );
         }
+      } else {
+        // Take the ID into account!
+        //
+        entry = new CarteObjectEntry( transName, id );
+        trans = getTransformationMap().getTransformation( entry );
+      }
 
-        out.println( "</HEAD>" );
-        out.println( "<BODY style=\"overflow: auto;\">" );
-        out.println( "<div class=\"row\" id=\"pucHeader\">" );
-        out.println( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 0px 10px;\">"
-          + Encode.forHtml( BaseMessages.getString( PKG, "TransStatusServlet.TopTransStatus", transName ) )
-          + "</div>" );
-        out.println( "</div>" );
+      if ( trans != null ) {
+        if ( useXML ) {
+          try {
+            OutputStream out = null;
+            byte[] data = null;
+            String logId = trans.getLogChannelId();
+            boolean finishedOrStopped = trans.isFinishedOrStopped();
+            boolean sendResultXmlWithStatus = "Y".equalsIgnoreCase( request.getParameter( SEND_RESULT ) );
+            boolean dontUseCache = sendResultXmlWithStatus;
+            if ( finishedOrStopped && ( data = cache.get( logId, startLineNr ) ) != null && !dontUseCache ) {
+              response.setContentLength( XML_HEADER.length + data.length );
+              out = response.getOutputStream();
+              out.write( XML_HEADER );
+              out.write( data );
+              out.flush();
+            } else {
+              int lastLineNr = KettleLogStore.getLastBufferLineNr();
 
-        try {
-          out.println( "<div class=\"row\" style=\"padding: 0px 0px 0px 30px\">" );
-          out.println( "<div class=\"row\" style=\"padding-top: 30px;\">" );
-          out.print( "<a href=\"" + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">" );
-          out.print( "<img src=\"" + prefix + "/images/back.svg\" style=\"margin-right: 5px; width: 16px; height: 16px; vertical-align: middle;\">" );
-          out.print( BaseMessages.getString( PKG, "CarteStatusServlet.BackToCarteStatus" ) + "</a>" );
-          out.println( "</div>" );
-          out.println( "<div class=\"row\" style=\"padding: 30px 0px 75px 0px; display: table;\">" );
-          out.println( "<div style=\"display: table-row;\">" );
-          out.println( "<div style=\"padding: 0px 30px 0px 0px; width: 60px; display: table-cell; vertical-align: top;\">" );
-          out.println( "<img src=\"" + prefix + "/images/trans.svg\" style=\"width: 60px; height: 60px;\"></img>" );
-          out.println( "</div>" );
-          out.println( "<div style=\"vertical-align: top; display: table-cell;\">" );
-          out.println( "<table style=\"border-collapse: collapse;\" border=\"" + tableBorder + "\">" );
-          out.print( "<tr class=\"cellTableRow\" style=\"border: solid; border-width: 1px 0; border-top: none; border-color: #E3E3E3; font-size: 12; text-align: left;\"> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
-            + BaseMessages.getString( PKG, "TransStatusServlet.CarteObjectId" ) + "</th> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
-            + BaseMessages.getString( PKG, "TransStatusServlet.TransStatus" ) + "</th> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
-            + BaseMessages.getString( PKG, "TransStatusServlet.LastLogDate" ) + "</th> </tr>" );
-          out.print( "<tr class=\"cellTableRow\" style=\"border: solid; border-width: 1px 0; border-bottom: none; font-size: 12; text-align: left;\">" );
-          out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableFirstColumn\">" + Encode.forHtml( id ) + "</td>" );
-          out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell\" id=\"statusColor\" style=\"font-weight: bold;\">" + Encode.forHtml( trans.getStatus() ) + "</td>" );
-          String dateStr = XMLHandler.date2string( trans.getLogDate() );
-          out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableLastColumn\">" + dateStr.substring( 0, dateStr.indexOf( ' ' ) ) + "</td>" );
-          out.print( "</tr>" );
-          out.print( "</table>" );
-          out.print( "</div>" );
-          out.println( "<div style=\"padding: 0px 0px 0px 20px; width: 90px; display: table-cell; vertical-align: top;\">" );
-          out.print( "<div style=\"display: block; margin-left: auto; margin-right: auto; padding: 5px 0px;\">" );
-          out.print( "<a target=\"_blank\" href=\""
-            + convertContextPath( GetTransStatusServlet.CONTEXT_PATH ) + "?name="
-            + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "&xml=y\">"
-            + "<img src=\"" + prefix + "/images/view-as-xml.svg\" style=\"display: block; margin: auto; width: 22px; height: 22px;\"></a>" );
-          out.print( "</div>" );
-          out.println( "<div style=\"text-align: center; padding-top: 12px; font-size: 12px;\">" );
-          out.print( "<a target=\"_blank\" href=\""
-              + convertContextPath( GetTransStatusServlet.CONTEXT_PATH ) + "?name="
-              + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "&xml=y\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.ShowAsXml" ) + "</a>" );
-          out.print( "</div>" );
-          out.print( "</div>" );
-          out.print( "</div>" );
-          out.print( "</div>" );
+              String logText = getLogText( trans, startLineNr, lastLineNr );
 
-          out.print( "<div class=\"row\" style=\"padding: 0px 0px 75px 0px;\">" );
-          out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Step detail</div>" );
-          out.println( "<table class=\"pentaho-table\" border=\"" + tableBorder + "\">" );
-          out.print( "<tr class=\"cellTableRow\"> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Stepname" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.CopyNr" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Read" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Written" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Input" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Output" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Updated" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Rejected" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Errors" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Active" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Time" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.Speed" ) + "</th> <th class=\"cellTableHeader\">"
-              + BaseMessages.getString( PKG, "TransStatusServlet.prinout" ) + "</th> </tr>" );
+              response.setContentType( "text/xml" );
+              response.setCharacterEncoding( Const.XML_ENCODING );
 
-          boolean evenRow = true;
-          for ( int i = 0; i < trans.nrSteps(); i++ ) {
-            StepInterface step = trans.getRunThread( i );
-            if ( ( step.isRunning() ) || step.getStatus() != StepExecutionStatus.STATUS_EMPTY ) {
-              StepStatus stepStatus = new StepStatus( step );
-              boolean snif = false;
-              String htmlString = "";
-              if ( step.isRunning() && !step.isStopped() && !step.isPaused() ) {
-                snif = true;
-                String sniffLink =
-                    " <a href=\""
-                        + convertContextPath( SniffStepServlet.CONTEXT_PATH ) + "?trans="
-                        + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" )
-                        + "&lines=50" + "&copynr=" + step.getCopy() + "&type=" + SniffStepServlet.TYPE_OUTPUT
-                        + "&step=" + URLEncoder.encode( step.getStepname(), "UTF-8" ) + "\">"
-                        + Encode.forHtml( stepStatus.getStepname() ) + "</a>";
-                stepStatus.setStepname( sniffLink );
+              SlaveServerTransStatus transStatus =
+                      new SlaveServerTransStatus( transName, entry.getId(), trans.getStatus() );
+              transStatus.setFirstLoggingLineNr( startLineNr );
+              transStatus.setLastLoggingLineNr( lastLineNr );
+              transStatus.setLogDate( trans.getLogDate() );
+
+              for ( int i = 0; i < trans.nrSteps(); i++ ) {
+                StepInterface baseStep = trans.getRunThread( i );
+                if ( ( baseStep.isRunning() ) || baseStep.getStatus() != StepExecutionStatus.STATUS_EMPTY ) {
+                  StepStatus stepStatus = new StepStatus( baseStep );
+                  transStatus.getStepStatusList().add( stepStatus );
+                }
               }
 
-              String rowClass = evenRow ? "cellTableEvenRow" : "cellTableOddRow";
-              String cellClass = evenRow ? "cellTableEvenRowCell" : "cellTableOddRowCell";
-              htmlString = "<tr class=\"" + rowClass + "\"><td class=\"cellTableCell cellTableFirstColumn " + cellClass + "\">" + stepStatus.getStepname() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getCopy() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesRead() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesWritten() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesInput() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesOutput() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesUpdated() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesRejected() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getErrors() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getStatusDescription() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getSeconds() + "</td>"
-                  + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getSpeed() + "</td>"
-                  + "<td class=\"cellTableCell cellTableLastColumn " + cellClass + "\">" + stepStatus.getPriority() + "</td></tr>";
-              evenRow = !evenRow;
-              out.print( htmlString );
+              // The log can be quite large at times, we are going to putIfAbsent a base64 encoding around a compressed
+              // stream
+              // of bytes to handle this one.
+              String loggingString = HttpUtil.encodeBase64ZippedString( logText );
+              transStatus.setLoggingString( loggingString );
+              //        transStatus.setLoggingUncompressedSize( logText.length() );
+
+              // Also set the result object...
+              //
+              transStatus.setResult( trans.getResult() );
+
+              // Is the transformation paused?
+              //
+              transStatus.setPaused( trans.isPaused() );
+
+              // Send the result back as XML
+              //
+              String xml = transStatus.getXML( sendResultXmlWithStatus );
+              data = xml.getBytes( Charset.forName( Const.XML_ENCODING ) );
+              out = response.getOutputStream();
+              response.setContentLength( XML_HEADER.length + data.length );
+              out.write( XML_HEADER );
+              out.write( data );
+              out.flush();
+              if ( finishedOrStopped && logId != null ) {
+                cache.put( logId, xml, startLineNr );
+              }
             }
+            response.flushBuffer();
+          } catch ( KettleException e ) {
+            throw new ServletException( "Unable to get the transformation status in XML format", e );
           }
-          out.println( "</table>" );
+
+        } else {
+          PrintWriter out = response.getWriter();
+
+          int lastLineNr = KettleLogStore.getLastBufferLineNr();
+          int tableBorder = 0;
+
+          response.setContentType( "text/html;charset=UTF-8" );
+
+          out.println( "<HTML>" );
+          out.println( "<HEAD>" );
+          out.println( "<TITLE>"
+                  + BaseMessages.getString( PKG, "TransStatusServlet.KettleTransStatus" ) + "</TITLE>" );
+          if ( EnvUtil.getSystemProperty( Const.KETTLE_CARTE_REFRESH_STATUS, "N" ).equalsIgnoreCase( "Y" ) ) {
+            out.println( "<META http-equiv=\"Refresh\" content=\"10;url="
+                    + convertContextPath( CONTEXT_PATH ) + "?name=" + URLEncoder.encode( transName, "UTF-8" ) + "&id="
+                    + URLEncoder.encode( id, "UTF-8" ) + "\">" );
+          }
+          out.println( "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">" );
+
+          if ( isJettyMode() ) {
+            out.println( "<link rel=\"stylesheet\" type=\"text/css\" href=\"/static/css/carte.css\" />" );
+          } else {
+            out.print( StatusServletUtils.getPentahoStyles() );
+          }
+
+          out.println( "</HEAD>" );
+          out.println( "<BODY style=\"overflow: auto;\">" );
+          out.println( "<div class=\"row\" id=\"pucHeader\">" );
+          out.println( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 0px 10px;\">"
+                  + Encode.forHtml( BaseMessages.getString( PKG, "TransStatusServlet.TopTransStatus", transName ) )
+                  + "</div>" );
           out.println( "</div>" );
 
-          out.print( "<div class=\"row\" style=\"padding: 0px 0px 75px 0px;\">" );
-          out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Canvas preview</div>" );
-          // Get the transformation image
-          //
-          // out.print("<a href=\"" + convertContextPath(GetTransImageServlet.CONTEXT_PATH) + "?name=" +
-          // URLEncoder.encode(transName, "UTF-8") + "&id="+id+"\">"
-          // + BaseMessages.getString(PKG, "TransStatusServlet.GetTransImage") + "</a>");
-          Point max = trans.getTransMeta().getMaximum();
-          max.x += 20;
-          max.y += 20;
-          out.print( "<iframe height=\""
-            + max.y + "\" width=\"" + 875 + "\" seamless src=\""
-            + convertContextPath( GetTransImageServlet.CONTEXT_PATH ) + "?name="
-            + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" )
-            + "\"></iframe>" );
-          out.print( "</div>" );
+          try {
+            out.println( "<div class=\"row\" style=\"padding: 0px 0px 0px 30px\">" );
+            out.println( "<div class=\"row\" style=\"padding-top: 30px;\">" );
+            out.print( "<a href=\"" + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">" );
+            out.print( "<img src=\"" + prefix + "/images/back.svg\" style=\"margin-right: 5px; width: 16px; height: 16px; vertical-align: middle;\">" );
+            out.print( BaseMessages.getString( PKG, "CarteStatusServlet.BackToCarteStatus" ) + "</a>" );
+            out.println( "</div>" );
+            out.println( "<div class=\"row\" style=\"padding: 30px 0px 75px 0px; display: table;\">" );
+            out.println( "<div style=\"display: table-row;\">" );
+            out.println( "<div style=\"padding: 0px 30px 0px 0px; width: 60px; display: table-cell; vertical-align: top;\">" );
+            out.println( "<img src=\"" + prefix + "/images/trans.svg\" style=\"width: 60px; height: 60px;\"></img>" );
+            out.println( "</div>" );
+            out.println( "<div style=\"vertical-align: top; display: table-cell;\">" );
+            out.println( "<table style=\"border-collapse: collapse;\" border=\"" + tableBorder + "\">" );
+            out.print( "<tr class=\"cellTableRow\" style=\"border: solid; border-width: 1px 0; border-top: none; border-color: #E3E3E3; font-size: 12; text-align: left;\"> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.CarteObjectId" ) + "</th> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.TransStatus" ) + "</th> <th style=\"font-weight: normal; padding: 8px 10px 10px 10px\" class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.LastLogDate" ) + "</th> </tr>" );
+            out.print( "<tr class=\"cellTableRow\" style=\"border: solid; border-width: 1px 0; border-bottom: none; font-size: 12; text-align: left;\">" );
+            out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableFirstColumn\">" + Encode.forHtml( id ) + "</td>" );
+            out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell\" id=\"statusColor\" style=\"font-weight: bold;\">" + Encode.forHtml( trans.getStatus() ) + "</td>" );
+            String dateStr = XMLHandler.date2string( trans.getLogDate() );
+            out.print( "<td style=\"padding: 8px 10px 10px 10px\" class=\"cellTableCell cellTableLastColumn\">" + dateStr.substring( 0, dateStr.indexOf( ' ' ) ) + "</td>" );
+            out.print( "</tr>" );
+            out.print( "</table>" );
+            out.print( "</div>" );
+            out.println( "<div style=\"padding: 0px 0px 0px 20px; width: 90px; display: table-cell; vertical-align: top;\">" );
+            out.print( "<div style=\"display: block; margin-left: auto; margin-right: auto; padding: 5px 0px;\">" );
+            out.print( "<a target=\"_blank\" href=\""
+                    + convertContextPath( GetTransStatusServlet.CONTEXT_PATH ) + "?name="
+                    + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "&xml=y\">"
+                    + "<img src=\"" + prefix + "/images/view-as-xml.svg\" style=\"display: block; margin: auto; width: 22px; height: 22px;\"></a>" );
+            out.print( "</div>" );
+            out.println( "<div style=\"text-align: center; padding-top: 12px; font-size: 12px;\">" );
+            out.print( "<a target=\"_blank\" href=\""
+                    + convertContextPath( GetTransStatusServlet.CONTEXT_PATH ) + "?name="
+                    + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" ) + "&xml=y\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.ShowAsXml" ) + "</a>" );
+            out.print( "</div>" );
+            out.print( "</div>" );
+            out.print( "</div>" );
+            out.print( "</div>" );
 
-          // Put the logging below that.
-          out.print( "<div class=\"row\" style=\"padding: 0px 0px 30px 0px;\">" );
-          out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Transformation log</div>" );
-          out
-            .println( "<textarea id=\"translog\" cols=\"120\" rows=\"20\" "
-              + "wrap=\"off\" name=\"Transformation log\" readonly=\"readonly\" style=\"height: auto;\">"
-              + Encode.forHtml( getLogText( trans, startLineNr, lastLineNr ) ) + "</textarea>" );
-          out.print( "</div>" );
+            out.print( "<div class=\"row\" style=\"padding: 0px 0px 75px 0px;\">" );
+            out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Step detail</div>" );
+            out.println( "<table class=\"pentaho-table\" border=\"" + tableBorder + "\">" );
+            out.print( "<tr class=\"cellTableRow\"> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Stepname" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.CopyNr" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Read" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Written" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Input" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Output" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Updated" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Rejected" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Errors" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Active" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Time" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.Speed" ) + "</th> <th class=\"cellTableHeader\">"
+                    + BaseMessages.getString( PKG, "TransStatusServlet.prinout" ) + "</th> </tr>" );
 
-          out.println( "<script type=\"text/javascript\">" );
-          out.println( "element = document.getElementById( 'statusColor' );" );
-          out.println( "if( element.innerHTML == 'Running' || element.innerHTML == 'Finished' ){" );
-          out.println( "element.style.color = '#009900';" );
-          out.println( "} else if( element.innerHTML == 'Stopped' ) {" );
-          out.println( "element.style.color = '#7C0B2B';" );
-          out.println( "} else {" );
-          out.println( "element.style.color = '#F1C40F';" );
-          out.println( "}" );
-          out.println( "</script>" );
-          out.println( "<script type=\"text/javascript\"> " );
-          out.println( "  translog.scrollTop=translog.scrollHeight; " );
-          out.println( "</script> " );
-        } catch ( Exception ex ) {
-          out.println( "<pre>" );
-          out.println( Encode.forHtml( Const.getStackTracker( ex ) ) );
-          out.println( "</pre>" );
+            boolean evenRow = true;
+            for ( int i = 0; i < trans.nrSteps(); i++ ) {
+              StepInterface step = trans.getRunThread( i );
+              if ( ( step.isRunning() ) || step.getStatus() != StepExecutionStatus.STATUS_EMPTY ) {
+                StepStatus stepStatus = new StepStatus( step );
+                boolean snif = false;
+                String htmlString = "";
+                if ( step.isRunning() && !step.isStopped() && !step.isPaused() ) {
+                  snif = true;
+                  String sniffLink =
+                          " <a href=\""
+                                  + convertContextPath( SniffStepServlet.CONTEXT_PATH ) + "?trans="
+                                  + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" )
+                                  + "&lines=50" + "&copynr=" + step.getCopy() + "&type=" + SniffStepServlet.TYPE_OUTPUT
+                                  + "&step=" + URLEncoder.encode( step.getStepname(), "UTF-8" ) + "\">"
+                                  + Encode.forHtml( stepStatus.getStepname() ) + "</a>";
+                  stepStatus.setStepname( sniffLink );
+                }
+
+                String rowClass = evenRow ? "cellTableEvenRow" : "cellTableOddRow";
+                String cellClass = evenRow ? "cellTableEvenRowCell" : "cellTableOddRowCell";
+                htmlString = "<tr class=\"" + rowClass + "\"><td class=\"cellTableCell cellTableFirstColumn " + cellClass + "\">" + stepStatus.getStepname() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getCopy() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesRead() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesWritten() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesInput() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesOutput() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesUpdated() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getLinesRejected() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getErrors() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getStatusDescription() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getSeconds() + "</td>"
+                        + "<td class=\"cellTableCell " + cellClass + "\">" + stepStatus.getSpeed() + "</td>"
+                        + "<td class=\"cellTableCell cellTableLastColumn " + cellClass + "\">" + stepStatus.getPriority() + "</td></tr>";
+                evenRow = !evenRow;
+                out.print( htmlString );
+              }
+            }
+            out.println( "</table>" );
+            out.println( "</div>" );
+
+            out.print( "<div class=\"row\" style=\"padding: 0px 0px 75px 0px;\">" );
+            out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Canvas preview</div>" );
+            // Get the transformation image
+            //
+            // out.print("<a href=\"" + convertContextPath(GetTransImageServlet.CONTEXT_PATH) + "?name=" +
+            // URLEncoder.encode(transName, "UTF-8") + "&id="+id+"\">"
+            // + BaseMessages.getString(PKG, "TransStatusServlet.GetTransImage") + "</a>");
+            Point max = trans.getTransMeta().getMaximum();
+            max.x += 20;
+            max.y += 20;
+            out.print( "<iframe height=\""
+                    + max.y + "\" width=\"" + 875 + "\" seamless src=\""
+                    + convertContextPath( GetTransImageServlet.CONTEXT_PATH ) + "?name="
+                    + URLEncoder.encode( transName, "UTF-8" ) + "&id=" + URLEncoder.encode( id, "UTF-8" )
+                    + "\"></iframe>" );
+            out.print( "</div>" );
+
+            // Put the logging below that.
+            out.print( "<div class=\"row\" style=\"padding: 0px 0px 30px 0px;\">" );
+            out.print( "<div class=\"workspaceHeading\" style=\"padding: 0px 0px 30px 0px;\">Transformation log</div>" );
+            out
+                    .println( "<textarea id=\"translog\" cols=\"120\" rows=\"20\" "
+                            + "wrap=\"off\" name=\"Transformation log\" readonly=\"readonly\" style=\"height: auto;\">"
+                            + Encode.forHtml( getLogText( trans, startLineNr, lastLineNr ) ) + "</textarea>" );
+            out.print( "</div>" );
+
+            out.println( "<script type=\"text/javascript\">" );
+            out.println( "element = document.getElementById( 'statusColor' );" );
+            out.println( "if( element.innerHTML == 'Running' || element.innerHTML == 'Finished' ){" );
+            out.println( "element.style.color = '#009900';" );
+            out.println( "} else if( element.innerHTML == 'Stopped' ) {" );
+            out.println( "element.style.color = '#7C0B2B';" );
+            out.println( "} else {" );
+            out.println( "element.style.color = '#F1C40F';" );
+            out.println( "}" );
+            out.println( "</script>" );
+            out.println( "<script type=\"text/javascript\"> " );
+            out.println( "  translog.scrollTop=translog.scrollHeight; " );
+            out.println( "</script> " );
+          } catch ( Exception ex ) {
+            out.println( "<pre>" );
+            out.println( Encode.forHtml( Const.getStackTracker( ex ) ) );
+            out.println( "</pre>" );
+          }
+
+          out.println( "</div>" );
+          out.println( "</BODY>" );
+          out.println( "</HTML>" );
         }
-
-        out.println( "</div>" );
-        out.println( "</BODY>" );
-        out.println( "</HTML>" );
-      }
-    } else {
-      PrintWriter out = response.getWriter();
-      if ( useXML ) {
-        out.println( new WebResult( WebResult.STRING_ERROR, BaseMessages.getString(
-          PKG, "TransStatusServlet.Log.CoundNotFindSpecTrans", transName ) ) );
       } else {
-        out.println( "<H1>"
-          + Encode.forHtml( BaseMessages.getString(
-          PKG, "TransStatusServlet.Log.CoundNotFindTrans", transName ) ) + "</H1>" );
-        out.println( "<a href=\""
-          + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">"
-          + BaseMessages.getString( PKG, "TransStatusServlet.BackToStatusPage" ) + "</a><p>" );
+        PrintWriter out = response.getWriter();
+        if ( useXML ) {
+          out.println( new WebResult( WebResult.STRING_ERROR, BaseMessages.getString(
+                  PKG, "TransStatusServlet.Log.CoundNotFindSpecTrans", transName ) ) );
+        } else {
+          out.println( "<H1>"
+                  + Encode.forHtml( BaseMessages.getString(
+                  PKG, "TransStatusServlet.Log.CoundNotFindTrans", transName ) ) + "</H1>" );
+          out.println( "<a href=\""
+                  + convertContextPath( GetStatusServlet.CONTEXT_PATH ) + "\">"
+                  + BaseMessages.getString( PKG, "TransStatusServlet.BackToStatusPage" ) + "</a><p>" );
+        }
       }
+    }catch (Exception e){
+      e.printStackTrace();
+      throw new ServletException( e.getMessage(), e );
     }
+
+
   }
 
   public String toString() {

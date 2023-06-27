@@ -46,15 +46,15 @@ import org.pentaho.di.trans.TransConfiguration;
  *
  */
 public class TransformationMap {
-  private final Map<CarteObjectEntry, TransData> transMap;
+  private final Map<CarteObjectEntry, TransData>  transMap = new ConcurrentHashMap<>();
 
-  private final Map<String, List<SocketPortAllocation>> hostServerSocketPortsMap;
+  private final Map<String, List<SocketPortAllocation>> hostServerSocketPortsMap = new ConcurrentHashMap<>();
 
   private SlaveServerConfig slaveServerConfig;
 
   public TransformationMap() {
-    transMap = new ConcurrentHashMap<>();
-    hostServerSocketPortsMap = new ConcurrentHashMap<>();
+    //transMap = new ConcurrentHashMap<>();
+    //hostServerSocketPortsMap = new ConcurrentHashMap<>();
   }
 
   /**

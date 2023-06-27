@@ -22,6 +22,7 @@
 
 package org.pentaho.di.trans.steps.fileinput.text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -171,11 +172,11 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
 
     /** Flag indicating that a row number field should be included in the output */
     @Injection( name = "INCLUDE_ROW_NUMBER" )
-    public boolean includeRowNumber = true;
+    public boolean includeRowNumber ;
 
     /** The name of the field in the output containing the row number */
     @Injection( name = "ROW_NUMBER_FIELD" )
-    public String rowNumberField = "file_input_read_line";
+    public String rowNumberField ;
 
     /** Flag indicating row number is per file */
     @Injection( name = "ROW_NUMBER_BY_FILE" )
@@ -237,10 +238,10 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
   private boolean loop = false;
 
   @Injection( name = "LOOP_INTERVAL" )
-  private long loopInterval = 120;
+  private long loopInterval = 0;
 
   @Injection( name = "LOOP_TIMEOUT" )
-  private long loopTimeout = 1800;
+  private long loopTimeout = 0;
 
   private long totalTime = 0;
 
@@ -253,7 +254,7 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
   /** The step to accept filenames from */
   private StepMeta acceptingStep;
 
-
+  private List<String> processedFile = new ArrayList<>();
 
   public TextFileInputMeta() {
     additionalOutputFields = new BaseFileInputAdditionalField();
@@ -456,10 +457,10 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
       loop = YES.equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "isLoop" ) )  ;
 
       String loopIntervalStr = XMLHandler.getTagValue( stepnode, "loopInterval" );
-      loopInterval = new Long(Const.NVL(loopIntervalStr,"120"));
+      loopInterval = new Long(Const.NVL(loopIntervalStr,"0"));
       String loopTimeoutStr = XMLHandler.getTagValue( stepnode, "loopTimeout" );
 
-      loopTimeout  = new Long(Const.NVL(loopTimeoutStr,"1800"));
+      loopTimeout  = new Long(Const.NVL(loopTimeoutStr,"0"));
 
       backupFile = YES.equalsIgnoreCase( XMLHandler.getTagValue( stepnode, "isBackupFile" ) )  ;
       backupPath = Const.NVL(XMLHandler.getTagValue( stepnode, "backupPath" ),"");
@@ -1513,5 +1514,13 @@ public class TextFileInputMeta extends BaseFileInputMeta<BaseFileInputAdditional
 
   public void setBackupPath(String backupPath) {
     this.backupPath = backupPath;
+  }
+
+  public List<String> getProcessedFile() {
+    return processedFile;
+  }
+
+  public void setProcessedFile(List<String> processedFile) {
+    this.processedFile = processedFile;
   }
 }

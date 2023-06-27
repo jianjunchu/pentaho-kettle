@@ -81,7 +81,7 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   public int nrHeaderLines = -1;
 
 
-  List<String> processedFile = new ArrayList<>();
+
 
   /**
    * Content-dependent initialization.
@@ -110,13 +110,14 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
       TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
       header = fileInputMeta.content.header;
       nrHeaderLines = fileInputMeta.content.nrHeaderLines;
+      fileInputMeta.setProcessedFile(new ArrayList<>());
     }
 
 
     if ( !super.init( smi, sdi ) ) {
       return false;
     }
-    processedFile = new ArrayList<>();
+
     //Set Embedded NamedCluter MetatStore Provider Key so that it can be passed to VFS
     if ( getTransMeta().getNamedClusterEmbedManager() != null ) {
       getTransMeta().getNamedClusterEmbedManager()
@@ -167,67 +168,49 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
 
         //文件已经读完了 判断下是否开启循环
         if(meta instanceof TextFileInputMeta){
-
           TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
+          if(fileInputMeta.isLoop()){
+            FileInputList files = null;
 
-          FileInputList files = null;
+            while (fileInputMeta.isLoop() && fileInputMeta.getLoopInterval() > 0 ){
 
-          while (fileInputMeta.isLoop()){
+              logBasic("正在循环获取文件夹....");
 
-            logBasic("正在循环获取文件夹....");
-
-            if(getTrans().getErrors() > 0){
-              return false;
-            }
-
-            files = meta.getFileInputList( this,processedFile );
-
-            if(fileInputMeta.getTotalTime() > fileInputMeta.getLoopTimeout() ) {
-              logBasic("循环获取文件已超时....");
-              if(fileInputMeta.isBackupFile() && getTrans().getErrors() ==0){
-                logBasic("开始备份文件....");
-
-                for(String path : processedFile){
-                  logBasic("备份目录:"+environmentSubstitute(fileInputMeta.getBackupPath()));
-                  File srcFile = new File(path);
-                  File destFile = new File(environmentSubstitute(fileInputMeta.getBackupPath()) ,srcFile.getName());
-                  if(srcFile.exists()){
-                    if(destFile.exists()){
-                      FileUtils.deleteQuietly(destFile);
-                    }
-                    FileUtils.moveFileToDirectory(srcFile,destFile,true);
-                  }
-
-                  srcFile = new File(path+".conf");
-                  destFile = new File(environmentSubstitute(fileInputMeta.getBackupPath()) ,srcFile.getName());
-                  if(srcFile.exists()){
-                    if(destFile.exists()){
-                      FileUtils.deleteQuietly(destFile);
-                    }
-                    FileUtils.moveFileToDirectory(srcFile,destFile,true);
-                  }
-
-                }
+              if(getTrans().getErrors() > 0){
+                return false;
               }
-              return false;
 
-            }else if(files ==null || files.nrOfFiles() ==0){
-              logBasic("未获取到新文件,等待继续....");
-              Thread.sleep(fileInputMeta.getLoopInterval()*1000);
-              fileInputMeta.setTotalTime(fileInputMeta.getTotalTime()+fileInputMeta.getLoopInterval());
-              continue;
-            }else{
-              data.files = files;
-              //有新的文件加入
-              logBasic("获取到新文件,开始继续处理....");
-              data.currentFileIndex = 0;
-              fileInputMeta.setTotalTime(0L);
-              break;
+              files = meta.getFileInputList( this,fileInputMeta.getProcessedFile() );
 
+              if(fileInputMeta.getLoopTimeout() > 0 && fileInputMeta.getTotalTime() > fileInputMeta.getLoopTimeout() ) {
+                logBasic("循环获取文件已超时....");
+
+                return false;
+
+              }else if(files ==null || files.nrOfFiles() ==0){
+                logBasic("未获取到新文件,等待继续....");
+                Thread.sleep(fileInputMeta.getLoopInterval()*1000);
+                fileInputMeta.setTotalTime(fileInputMeta.getTotalTime()+fileInputMeta.getLoopInterval());
+                continue;
+              }else{
+                data.files = files;
+                //有新的文件加入
+                logBasic("获取到新文件,开始继续处理....");
+                data.currentFileIndex = 0;
+                fileInputMeta.setTotalTime(0L);
+                break;
+
+
+              }
 
             }
-
+          }else{
+            return false;
           }
+
+
+
+
         }
       }
 
@@ -330,17 +313,19 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
     }
 
     while ( true ) {
-      //文件已经处理过 直接跳过
-      if(processedFile.contains(data.file.getName().getPath())){
-          continue;
-      }
+
 
       if ( data.reader != null && data.reader.readRow() ) {
         // row processed
         return true;
       }
 
-      processedFile.add(data.file.getName().getPath());
+      if(smi instanceof TextFileInputMeta){
+        TextFileInputMeta fileInputMeta = (TextFileInputMeta) meta;
+        fileInputMeta.getProcessedFile().add(data.file.getName().getPath());
+      }
+
+
       // end of current file
       closeLastFile();
 
@@ -495,7 +480,6 @@ public abstract class BaseFileInputStep<M extends BaseFileInputMeta<?, ?, ?>, D 
   @Override
   public void dispose( StepMetaInterface smi, StepDataInterface sdi ) {
     closeLastFile();
-
     super.dispose( smi, sdi );
   }
 

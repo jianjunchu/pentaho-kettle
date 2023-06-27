@@ -666,11 +666,13 @@ public class KettleDatabaseRepositoryTransDelegate extends KettleDatabaseReposit
 
         return transMeta;
       } catch ( KettleDatabaseException e ) {
+        e.printStackTrace();
         log.logError( BaseMessages.getString( PKG, "TransMeta.Log.DatabaseErrorOccuredReadingTransformation" )
           + Const.CR + e );
         throw new KettleException( BaseMessages.getString(
           PKG, "TransMeta.Exception.DatabaseErrorOccuredReadingTransformation" ), e );
       } catch ( Exception e ) {
+        e.printStackTrace();
         log.logError( BaseMessages.getString( PKG, "TransMeta.Log.DatabaseErrorOccuredReadingTransformation" )
           + Const.CR + e );
         throw new KettleException( BaseMessages.getString(

@@ -2573,8 +2573,8 @@ public class TextFileInputDialog extends BaseStepDialog implements StepDialogInt
 
 
     wIsLoop.setSelection(meta.isLoop());
-    wLoopInterval.setText(Const.NVL( meta.getLoopInterval()+"" , "120" ));
-    wLoopTimeout.setText(Const.NVL( meta.getLoopTimeout()+"", "1800" ));
+    wLoopInterval.setText(Const.NVL( meta.getLoopInterval()+"" , "0" ));
+    wLoopTimeout.setText(Const.NVL( meta.getLoopTimeout()+"", "0" ));
     wIsBackup.setSelection(meta.isBackupFile());
     wBackupPath.setText(meta.getBackupPath());
 
