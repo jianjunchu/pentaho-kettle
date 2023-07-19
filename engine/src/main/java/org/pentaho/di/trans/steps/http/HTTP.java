@@ -294,6 +294,9 @@ public class HTTP extends BaseStep implements StepInterface {
     } catch ( UnknownHostException uhe ) {
       throw new KettleException( BaseMessages.getString( PKG, "HTTP.Error.UnknownHostException", uhe.getMessage() ) );
     } catch ( Exception e ) {
+      if(log.isDebug()){
+        log.logDebug(e.getMessage());
+      }
       throw new KettleException( BaseMessages.getString( PKG, "HTTP.Log.UnableGetResult", uri ), e );
     }
   }
@@ -313,14 +316,13 @@ public class HTTP extends BaseStep implements StepInterface {
       }
 
       uriBuilder = new URIBuilder( baseUrl ); // the base URL with variable substitution
-      List<NameValuePair> queryParams = uriBuilder.getQueryParams();
 
       for ( int i = 0; i < data.argnrs.length; i++ ) {
         String key = meta.getArgumentParameter()[ i ];
         String value = outputRowMeta.getString( row, data.argnrs[ i ] );
-        BasicNameValuePair basicNameValuePair = new BasicNameValuePair( key, value );
-        queryParams.add( basicNameValuePair );
+        uriBuilder.addParameter( key, value );
       }
+      List<NameValuePair> queryParams = uriBuilder.getQueryParams();
       if ( !queryParams.isEmpty() ) {
         uriBuilder.setParameters( queryParams );
       }

@@ -1699,7 +1699,10 @@ public class Database implements VariableSpace, LoggingObjectInterface {
     if(log.isDebug())
     {
       debug(sql);
-      debug(params.getFieldNames());
+      if(params!=null){
+        debug(params.getFieldNames());
+      }
+
       debug(data);
     }
     // Create a Statement
