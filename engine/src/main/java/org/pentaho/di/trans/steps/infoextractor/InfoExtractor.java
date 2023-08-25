@@ -133,12 +133,14 @@ public class InfoExtractor extends BaseStep implements StepInterface {
 				if (infoType == InfoExtractorMeta.INFO_TYPE_NUMBER)
 					value = extractNumber(scope, keyWord, position, order, minDigitals, maxDigitals, defaultDigitalsStr);
 				else if(infoType == InfoExtractorMeta.INFO_TYPE_TEXT)
-					value = extractText(scope,keyWord,position,new char[]{'\r','\n'});
+					value = extractText(scope,keyWord,position,new char[]{'。'});
+					//value = extractText(scope,keyWord,position,new char[]{'\r','\n'});
 				else if(infoType == InfoExtractorMeta.INFO_TYPE_DATE)
 					value = extractDate(scope,keyWord,position,order);
-			}else if(meta.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_REGEXP)
-				value = extractBypatternStr(scope,meta.getRegularExpression());
-			else{
+			}else if(meta.getExtractType()==InfoExtractorMeta.EXTRACT_TYPE_REGEXP) {
+				scope = content;
+				value = extractBypatternStr(scope, meta.getRegularExpression());
+			}else{
 				if (log.isBasic())
 					logBasic("Unsupported extract type");
 				return false;
