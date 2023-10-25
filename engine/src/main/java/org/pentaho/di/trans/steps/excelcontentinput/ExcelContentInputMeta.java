@@ -20,12 +20,10 @@
  *
  ******************************************************************************/
 
-package org.pentaho.di.trans.steps.filecontentinput;
+package org.pentaho.di.trans.steps.excelcontentinput;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.vfs2.*;
@@ -34,6 +32,8 @@ import org.pentaho.di.core.CheckResultInterface;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.exception.KettleFileException;
 import org.pentaho.di.core.fileinput.NonAccessibleFileObject;
+import org.pentaho.di.core.spreadsheet.KSheet;
+import org.pentaho.di.core.spreadsheet.KWorkbook;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
@@ -42,8 +42,6 @@ import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.fileinput.FileInputList;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
-import org.pentaho.di.core.row.value.ValueMetaBoolean;
-import org.pentaho.di.core.row.value.ValueMetaDate;
 import org.pentaho.di.core.row.value.ValueMetaString;
 import org.pentaho.di.core.variables.VariableSpace;
 import org.pentaho.di.core.vfs.KettleVFS;
@@ -60,10 +58,12 @@ import org.pentaho.di.trans.step.StepDataInterface;
 import org.pentaho.di.trans.step.StepInterface;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.step.StepMetaInterface;
+import org.pentaho.di.trans.steps.excelinput.SpreadSheetType;
+import org.pentaho.di.trans.steps.excelinput.WorkbookFactory;
 import org.pentaho.metastore.api.IMetaStore;
 import org.w3c.dom.Node;
 
-public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterface {
+public class ExcelContentInputMeta extends BaseStepMeta implements StepMetaInterface {
   private static final String INCLUDE = "include";
   private static final String INCLUDE_FIELD = "include_field";
   private static final String ROWNUM = "rownum";
@@ -76,7 +76,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   private static final String EXCLUDE_FILEMASK = "exclude_filemask";
   private static final String FILE_REQUIRED = "file_required";
   private static final String INCLUDE_SUBFOLDERS = "include_subfolders";
-  private static final String LIMIT = "limit";
+  private static final String TEMPLATE_FILE = "template_file";
 //  private static final String IS_IN_FIELDS = "IsInFields";
 //  private static final String DYNAMIC_FILENAME_FIELD = "DynamicFilenameField";
 //  private static final String SHORT_FILE_FIELD_NAME = "shortFileFieldName";
@@ -106,7 +106,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 //  private static final String FIELD_PRECISION_REP = "field_precision";
 //  private static final String FIELD_TRIM_TYPE_REP = "field_trim_type";
 //  private static final String FIELD_REPEAT_REP = "field_repeat";
-  private static Class<?> PKG = FileContentInputMeta.class; // for i18n purposes, needed by Translator2!!
+  private static Class<?> PKG = ExcelContentInputMeta.class; // for i18n purposes, needed by Translator2!!
 
   public static final String[] RequiredFilesDesc = new String[] { BaseMessages.getString( PKG, "System.Combo.No" ),
     BaseMessages.getString( PKG, "System.Combo.Yes" ) };
@@ -123,7 +123,8 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 
 
   /** file types seperated by ; */
-  private String fileType;
+  private SpreadSheetType fileType= SpreadSheetType.POI;
+
   /** part of filename to filter */
   private String filenamePart;
   private String excludeFileMask;
@@ -141,10 +142,10 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   //private String rowNumberField;
 
   /** The maximum number or lines to read */
-  private long rowLimit;
+  private String templateFile;
 
   /** The fields to import... */
-  private FileContentInputField[] inputFields = new FileContentInputField[4];
+  private ExcelContentInputField[] inputFields = new ExcelContentInputField[4];
 
   /** The encoding to use for reading: null or empty string means system default encoding */
   private String encoding;
@@ -179,7 +180,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   private String rootUriNameFieldName;
   private String extensionFieldName;
 
-  public FileContentInputMeta() {
+  public ExcelContentInputMeta() {
     super(); // allocate BaseStepMeta
   }
 
@@ -296,18 +297,18 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     this.fileRequired = fileRequired;
   }
 
-  public String getFileType() {
-    return fileType;
-  }
-
+//  public SpreadSheetType getFileType() {
+//    return fileType;
+//  }
+//  public void setFileType(SpreadSheetType fileType) {
+//    this.fileType = fileType;
+//  }
   public String getFilenamePart() {
     return filenamePart;
   }
 
 
-  public void setFileType(String fileType) {
-    this.fileType = fileType;
-  }
+
 
   public void setFilenamePart(String filenamePart) {
     this.filenamePart = filenamePart;
@@ -362,7 +363,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   /**
    * @return Returns the input fields.
    */
-  public FileContentInputField[] getInputFields() {
+  public ExcelContentInputField[] getInputFields() {
     return inputFields;
   }
 //
@@ -370,7 +371,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
    * @param inputFields
    *          The input fields to set.
    */
-  public void setInputFields( FileContentInputField[] inputFields ) {
+  public void setInputFields( ExcelContentInputField[] inputFields ) {
     this.inputFields = inputFields;
   }
 
@@ -542,16 +543,16 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   /**
    * @return Returns the rowLimit.
    */
-  public long getRowLimit() {
-    return rowLimit;
+  public String getTemplateFile() {
+    return templateFile;
   }
 
   /**
-   * @param rowLimit
+   * @param templateFile
    *          The rowLimit to set.
    */
-  public void setRowLimit( long rowLimit ) {
-    this.rowLimit = rowLimit;
+  public void setTemplateFile( String templateFile ) {
+    this.templateFile = templateFile;
   }
 
   /**
@@ -589,7 +590,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
   }
 
   public Object clone() {
-    FileContentInputMeta retval = (FileContentInputMeta) super.clone();
+    ExcelContentInputMeta retval = (ExcelContentInputMeta) super.clone();
 //
 //    int nrFiles = fileName.length;
     int nrFields = 4;
@@ -609,14 +610,16 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 
     retval.append( "    " + XMLHandler.addTagValue( INCLUDE, fileinfield ) );
     retval.append( "    " + XMLHandler.addTagValue( INCLUDE_FIELD, filenameField ) );
-    //retval.append( "    " + XMLHandler.addTagValue( ADDRESULTFILE, addresultfile ) );
     retval.append( "    " + XMLHandler.addTagValue( IS_IGNORE_EMPTY_FILE, IsIgnoreEmptyFile ) );
     retval.append( "    " + XMLHandler.addTagValue( ENCODING, encoding ) );
+    retval.append( "    " + XMLHandler.addTagValue( TEMPLATE_FILE, templateFile ) );
+
+
 
     retval.append( "    <" + FILE + ">" + Const.CR );
     retval.append( "      " + XMLHandler.addTagValue( NAME, fileName ) );
     retval.append( "      " + XMLHandler.addTagValue(FILE_NAME_PART, this.filenamePart ) );
-    retval.append( "      " + XMLHandler.addTagValue(FILE_TYPE, this.fileType ) );
+    retval.append( "      " + XMLHandler.addTagValue(FILE_TYPE, this.fileType.name() ) );
     retval.append( "      " + XMLHandler.addTagValue( INCLUDE_SUBFOLDERS, includeSubFolders ) );
     retval.append( "      </" + FILE + ">" + Const.CR );
 
@@ -627,18 +630,11 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     try {
       this.fileinfield = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, INCLUDE ) );
       filenameField = XMLHandler.getTagValue( stepnode, INCLUDE_FIELD );
-
-      //addresultfile = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, ADDRESULTFILE ) );
       IsIgnoreEmptyFile = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, IS_IGNORE_EMPTY_FILE ) );
-      //IsIgnoreMissingPath = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, IS_IGNORE_MISSING_PATH ) );
 
-      //includeRowNumber = "Y".equalsIgnoreCase( XMLHandler.getTagValue( stepnode, ROWNUM ) );
-      //rowNumberField = XMLHandler.getTagValue( stepnode, ROWNUM_FIELD );
       encoding = XMLHandler.getTagValue( stepnode, ENCODING );
 
       Node filenode = XMLHandler.getSubNode( stepnode, FILE );
-     // Node fields = XMLHandler.getSubNode( stepnode, FIELDS );
-
 
       Node filenamenode = XMLHandler.getSubNodeByNr( filenode, NAME, 0 );
       Node filemasknode = XMLHandler.getSubNodeByNr( filenode, FILE_NAME_PART, 0 );
@@ -648,10 +644,11 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
       fileName = XMLHandler.getNodeValue( filenamenode );
       fileMask = XMLHandler.getNodeValue( filemasknode );
       includeSubFolders = YES.equals(XMLHandler.getNodeValue( includeSubFoldersnode ));
-      fileType = XMLHandler.getNodeValue( filetypenode );
+      //fileType = XMLHandler.getNodeValue( filetypenode );
+      fileType = SpreadSheetType.POI;
       //allocate(0,4);
       // Is there a limit on the number of rows we process?
-      rowLimit = Const.toLong( XMLHandler.getTagValue( stepnode, LIMIT ), 0L );
+      templateFile =  XMLHandler.getTagValue( stepnode, TEMPLATE_FILE);
     } catch ( Exception e ) {
       throw new KettleXMLException( BaseMessages.getString( PKG, "LoadFileInputMeta.Exception.ErrorLoadingXML", e
           .toString() ) );
@@ -673,7 +670,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     fileMask = "";
     excludeFileMask = "";
     includeSubFolders = false;
-    rowLimit = 0;
+    templateFile = "";
     fileinfield = false;
     //DynamicFilenameField = null;
 
@@ -686,12 +683,57 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     addresultfile = true;
   }
 
+  /**
+   * return a hashmap of ValueMetaInterface
+   * @param origineName
+   * @return
+   */
+  public HashMap<String,String> getFieldFromTemplateFile(String origineName)
+  {
+    KWorkbook workbook = null;
+    String content;
+    HashMap r = new HashMap<String,String>();
+    try {
+      workbook = WorkbookFactory.getWorkbook( SpreadSheetType.POI , this.getTemplateFile(), this.getEncoding(), "" );
+      KSheet sheet = workbook.getSheet(0);
+      for(int i=0;i<100;i++) {
+        for(int j=0;j<100;j++) {
+          if(sheet.getCell(i, j)==null)
+            continue;
+          content = sheet.getCell(i, j).getContents();
+          if(Utils.isEmpty(content))
+            continue;
+          if (content.startsWith("${") && content.endsWith("}"))
+          {
+            String fieldName = content.substring(2,content.length()-1);
+            r.put( new Integer(j).toString()+"-"+new Integer(i).toString(),fieldName );
+          }
+        }
+      }
+
+    } catch (KettleException e) {
+      throw new RuntimeException(e);
+    }
+    return r;
+  }
+
   public void getFields( RowMetaInterface r, String name, RowMetaInterface[] info, StepMeta nextStep,
       VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException {
     if ( !getIsInFields() ) {
       r.clear();
     }
-    int i;
+    HashMap<String, String> fieldsList = getFieldFromTemplateFile(name);
+    Set set =fieldsList.keySet();
+    Iterator it = set.iterator();
+    while(it.hasNext())
+    {
+      String fieldKey = it.next().toString();// key: row-column
+      String fieldName = fieldsList.get(fieldKey);
+      ValueMetaInterface v1 = new ValueMetaString( fieldName );
+      v1.setLength( 255, -1 );
+      v1.setOrigin( name );
+      r.addValueMeta(v1);
+    }
 //    for ( i = 0; i < inputFields.length; i++ ) {
 //      FileContentInputField field = inputFields[i];
 //      int type = field.getType();
@@ -740,25 +782,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 //      r.addValueMeta( v );
 //    }
     // Add additional fields
-      ValueMetaInterface v1 = new ValueMetaString( "content" );
-      v1.setLength( 100, -1 );
-      v1.setOrigin( name );
-      r.addValueMeta( v1 );
 
-      ValueMetaInterface v2 = new ValueMetaString( "size" );
-      v2.setLength( 100, -1 );
-      v2.setOrigin( name );
-      r.addValueMeta( v2 );
-
-      ValueMetaInterface v3 = new ValueMetaString( "file_name" );
-      v3.setLength( 100, -1 );
-      v3.setOrigin( name );
-      r.addValueMeta( v3 );
-
-      ValueMetaInterface v4 = new ValueMetaString( "short_file_name" );
-      v4.setLength( 100, -1 );
-      v4.setOrigin( name );
-      r.addValueMeta( v4 );
   }
 
   public void readRep( Repository rep, IMetaStore metaStore, ObjectId id_step, List<DatabaseMeta> databases ) throws KettleException {
@@ -774,11 +798,11 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 
       fileName = rep.getStepAttributeString( id_step,  FILE_NAME_REP );
       fileMask = rep.getStepAttributeString( id_step,  FILE_MASK_REP );
-      fileType = rep.getStepAttributeString( id_step,  FILE_TYPE );
+      fileType = SpreadSheetType.valueOf(rep.getStepAttributeString( id_step,  FILE_TYPE ));
       filenamePart= rep.getStepAttributeString( id_step,  FILE_NAME_PART );
       includeSubFolders = rep.getStepAttributeBoolean( id_step,  INCLUDE_SUBFOLDERS );
 
-      rowLimit = rep.getStepAttributeInteger( id_step, LIMIT );
+      templateFile = rep.getStepAttributeString( id_step, TEMPLATE_FILE);
       encoding = rep.getStepAttributeString( id_step, ENCODING );
 
     } catch ( Exception e ) {
@@ -795,13 +819,13 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
       rep.saveStepAttribute( id_transformation, id_step, IS_IGNORE_EMPTY_FILE, IsIgnoreEmptyFile );
       //rep.saveStepAttribute( id_transformation, id_step, IS_IGNORE_MISSING_PATH, IsIgnoreMissingPath );
 
-      rep.saveStepAttribute( id_transformation, id_step, LIMIT, rowLimit );
+      rep.saveStepAttribute( id_transformation, id_step, TEMPLATE_FILE, templateFile );
       rep.saveStepAttribute( id_transformation, id_step, ENCODING, encoding );
 
 
       rep.saveStepAttribute( id_transformation, id_step,  FILE_NAME_REP, fileName );
       rep.saveStepAttribute( id_transformation, id_step,  FILE_MASK_REP, fileMask );
-      rep.saveStepAttribute( id_transformation, id_step,  FILE_TYPE, fileType );
+      rep.saveStepAttribute( id_transformation, id_step,  FILE_TYPE, fileType.name() );
       rep.saveStepAttribute( id_transformation, id_step,  FILE_NAME_PART, filenamePart );
       rep.saveStepAttribute( id_transformation, id_step,  INCLUDE_SUBFOLDERS, includeSubFolders );
 
@@ -984,25 +1008,9 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     {
       mask=".*";
     }
-    if(!Utils.isEmpty(this.getFileType()))
-      mask+="\\."+"(";
-    if(!Utils.isEmpty(this.getFileType()) && this.getFileType().indexOf("txt")>-1)
-      if(mask.endsWith("("))
-        mask+="txt|csv";
-      else
-        mask+="|txt|csv";
-    if(this.getFileType().indexOf("doc")>-1)
-      if(mask.endsWith("("))
-        mask+="doc|docx";
-    else
-        mask+="|doc|docx";
-    if(this.getFileType().indexOf("pdf")>-1)
-      if(mask.endsWith("("))
-        mask+="pdf";
-      else
-        mask+="|pdf";
-    if(!Utils.isEmpty(this.getFileType()))
-      mask+=")";
+    mask+="\\."+"(";
+    mask+="xls|xlsx";
+    mask+=")";
     return mask;
   }
 
@@ -1096,11 +1104,11 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 
   public StepInterface getStep( StepMeta stepMeta, StepDataInterface stepDataInterface, int cnr, TransMeta transMeta,
       Trans trans ) {
-    return new FileContentInput( stepMeta, stepDataInterface, cnr, transMeta, trans );
+    return new ExcelContentInput( stepMeta, stepDataInterface, cnr, transMeta, trans );
   }
 
   public StepDataInterface getStepData() {
-    return new FileContentInputData();
+    return new ExcelContentInputData();
   }
 
   public boolean supportsErrorHandling() {
@@ -1112,10 +1120,10 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     if ( this == o ) {
       return true;
     }
-    if ( !( o instanceof FileContentInputMeta) ) {
+    if ( !( o instanceof ExcelContentInputMeta) ) {
       return false;
     }
-    FileContentInputMeta that = (FileContentInputMeta) o;
+    ExcelContentInputMeta that = (ExcelContentInputMeta) o;
 
     if ( IsIgnoreEmptyFile != that.IsIgnoreEmptyFile ) {
       return false;
@@ -1135,7 +1143,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
 //    if ( includeRowNumber != that.includeRowNumber ) {
 //      return false;
 //    }
-    if ( rowLimit != that.rowLimit ) {
+    if ( templateFile != that.templateFile ) {
       return false;
     }
 //    if ( DynamicFilenameField != null ? !DynamicFilenameField.equals( that.DynamicFilenameField )
@@ -1205,7 +1213,7 @@ public class FileContentInputMeta extends BaseStepMeta implements StepMetaInterf
     result = 31 * result + ( filenameField != null ? filenameField.hashCode() : 0 );
     //result = 31 * result + ( includeRowNumber ? 1 : 0 );
     //result = 31 * result + ( rowNumberField != null ? rowNumberField.hashCode() : 0 );
-    result = 31 * result + (int) ( rowLimit ^ ( rowLimit >>> 32 ) );
+    result = 31 * result + (templateFile != null ? templateFile.hashCode() : 0 );
     result = 31 * result + ( inputFields != null ? Arrays.hashCode( inputFields ) : 0 );
     result = 31 * result + ( encoding != null ? encoding.hashCode() : 0 );
     //result = 31 * result + ( DynamicFilenameField != null ? DynamicFilenameField.hashCode() : 0 );
