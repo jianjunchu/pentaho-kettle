@@ -531,7 +531,10 @@ public class RepositoriesMeta {
             repUrl="http://localhost:8080/etl_platform";
 
           repUrl = repUrl + "/login?action=login&user_name=admin&password=admin";
-          testConnection(repUrl);
+          String message = testConnection(repUrl);
+          if(!message.equalsIgnoreCase("OK"))
+            log.logBasic("repository connection field!"+repUrl+" Message:"+message);
+
           //xnren end
           if(loginResponse!=null){
             readData();
@@ -552,7 +555,7 @@ public class RepositoriesMeta {
 
   /**
    * for bug 20697
-   * userd to test the connection when log to repository
+   * used to test the repository connection when log to repository
    * @param repUrl
    * @return
    */
@@ -576,10 +579,13 @@ public class RepositoriesMeta {
       }
     } catch (MalformedURLException e) {
       messages=BaseMessages.getString(PKG,"RepositoriesMeta.UncorrectURLFormat");
+      //e.printStackTrace();
     } catch (IOException e) {
       messages=BaseMessages.getString(PKG,"RepositoriesMeta.WrongUsePass");
+      //e.printStackTrace();
     }catch (Exception e) {
       messages="Exception";
+      //e.printStackTrace();
     }
     return messages;
   }
