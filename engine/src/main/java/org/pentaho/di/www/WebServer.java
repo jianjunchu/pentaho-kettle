@@ -153,11 +153,9 @@ public class WebServer {
 
     List<String> roles = new ArrayList<String>();
     roles.add( Constraint.ANY_ROLE );
-
     // Set up the security handler, optionally with JAAS
     //
     ConstraintSecurityHandler securityHandler = new ConstraintSecurityHandler();
-
     if ( System.getProperty( "loginmodulename" ) != null
         && System.getProperty( "java.security.auth.login.config" ) != null ) {
       JAASLoginService jaasLoginService = new JAASLoginService( "Kettle" );

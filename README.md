@@ -127,3 +127,6 @@ public class MyTest {
 
 ### Asking for help
 Please go to https://community.hitachivantara.com/community/products-and-solutions/pentaho/ to ask questions and get help.
+
+cd doc/swt/osxarm64
+mvn install:install-file -Dfile=swt.jar -DgroupId=org.eclipse.swt -DartifactId=org.eclipse.swt.cocoa.macosx.arm64 -Dversion=4.6 -Dpackaging=jar

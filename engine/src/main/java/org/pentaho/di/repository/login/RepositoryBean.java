@@ -14,6 +14,8 @@ public class RepositoryBean {
     private String dbPort;
     private String rep_username ;
     private String rep_password ;
+    private String url;
+    private String driverClassName;
     private int orgId;
 
     public int getRepositoryID() {
@@ -97,5 +99,21 @@ public class RepositoryBean {
 
     public void setRep_password(String rep_password) {
         this.rep_password = rep_password;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
     }
 }

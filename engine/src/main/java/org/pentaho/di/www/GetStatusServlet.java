@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,6 +37,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
+import cn.hutool.system.oshi.OshiUtil;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.Sigar;
@@ -46,6 +49,9 @@ import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.i18n.BaseMessages;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.trans.Trans;
+import oshi.SystemInfo;
+import cn.hutool.system.oshi.CpuInfo;
+import oshi.hardware.CentralProcessor;
 
 public class GetStatusServlet extends BaseHttpServlet implements CartePluginInterface {
   private static Class<?> PKG = GetStatusServlet.class; // for i18n purposes, needed by Translator2!!
@@ -193,25 +199,39 @@ public class GetStatusServlet extends BaseHttpServlet implements CartePluginInte
     //lilongyun start 2023-03-15
     //get server status for platform
     String action = request.getParameter("action");
+    if ( log.isDebug() ) {
+      logDebug( BaseMessages.getString( PKG, "GetStatusServlet.StatusRequested" ) );
+    }
+
     if ("getServerStatus".equals(action)) {
       double cpu_usage = 0.0;
       double memory_usage = 0.0;
 
       try{
-        Sigar sigar = new Sigar();
 
-        CpuPerc cpu = sigar.getCpuPerc();
+        CpuInfo cpuInfo = OshiUtil.getCpuInfo();
+        double free = cpuInfo.getFree();
+        DecimalFormat format = new DecimalFormat("#.00");
+        cpu_usage =  Double.parseDouble(format.format(100.0D - free));
 
-        double idle = cpu.getIdle();
-        cpu_usage = (1 - idle) * 100;
+        long totalByte = OshiUtil.getMemory().getTotal();
+        long acaliableByte = OshiUtil.getMemory().getAvailable();
+        memory_usage = Double.parseDouble(format.format(((totalByte-acaliableByte)*1d/totalByte)*100));
 
-        Mem mem = sigar.getMem();
-
-        double total = mem.getTotal();
-        double used = mem.getUsed();
-        memory_usage = (used / total) * 100;
-      }catch(SigarException e){
+      }catch(Exception e){
         e.printStackTrace();
+        Sigar sigar = new Sigar();
+        try {
+          CpuPerc cpu = sigar.getCpuPerc();
+          double idle = cpu.getIdle();
+          cpu_usage = (1 - idle) * 100;
+          Mem mem = sigar.getMem();
+          double total = mem.getTotal();
+          double used = mem.getUsed();
+          memory_usage = (used / total) * 100;
+        } catch (SigarException sigarException) {
+          sigarException.printStackTrace();
+        }
       }
 
       int running_jobs_num = 0;
@@ -240,9 +260,7 @@ public class GetStatusServlet extends BaseHttpServlet implements CartePluginInte
       return;
     }
 
-    if ( log.isDebug() ) {
-      logDebug( BaseMessages.getString( PKG, "GetStatusServlet.StatusRequested" ) );
-    }
+
     response.setStatus( HttpServletResponse.SC_OK );
     String root = request.getRequestURI() == null ? StatusServletUtils.PENTAHO_ROOT
       : request.getRequestURI().substring( 0, request.getRequestURI().indexOf( CONTEXT_PATH ) );

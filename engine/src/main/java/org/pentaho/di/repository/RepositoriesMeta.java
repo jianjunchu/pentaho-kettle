@@ -38,6 +38,7 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.util.PlatformUtil;
 import org.pentaho.di.core.util.Utils;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.GenericDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleRepositoryNotSupportedException;
 import org.pentaho.di.core.logging.LogChannel;
@@ -486,17 +487,26 @@ public class RepositoriesMeta {
         Const.setOrganizer_id(loginResponse.getOrganizer_id());
         List<RepositoryBean> repBeans = loginResponse.getRep_list();
         for (RepositoryBean repBean : repBeans) {
-          DatabaseMeta dbMeta = new DatabaseMeta(
-                  repBean.getRepositoryName(), repBean.getDbType(),
-                  repBean.getDbAccess(), repBean.getDbHost(),
-                  repBean.getDbName(), repBean.getDbPort(),
-                  repBean.getUserName(), repBean.getPassword());
-          dbMeta.addOptions();
-          addDatabase(dbMeta);
+
+
+          GenericDatabaseMeta nativeMeta = new GenericDatabaseMeta();
+          nativeMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
+          nativeMeta.setUsername(repBean.getUserName());
+          nativeMeta.setPassword(repBean.getPassword());
+          Properties attrs = new Properties();
+          attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS, repBean.getDriverClassName() );
+          attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, repBean.getUrl() );
+          nativeMeta.setAttributes( attrs );
+
+          DatabaseMeta databaseMeta = new DatabaseMeta();
+          databaseMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
+          databaseMeta.setDatabaseInterface(nativeMeta);
+
+          addDatabase(databaseMeta);
           KettleDatabaseRepositoryMeta kdbRepMeta = new KettleDatabaseRepositoryMeta(
                   "KettleDatabaseRepository",
                   repBean.getRepositoryName(),
-                  repBean.getRepositoryName(), dbMeta);
+                  repBean.getRepositoryName(), databaseMeta);
           kdbRepMeta.setUserID(userID);
           kdbRepMeta.setRep_password(repBean.getRep_password());
           kdbRepMeta.setRep_username(repBean.getRep_username());
@@ -519,6 +529,7 @@ public class RepositoriesMeta {
           String repUrl = p.getProperty("SERVER_URL");
           if(repUrl==null)
             repUrl="http://localhost:8080/etl_platform";
+
           repUrl = repUrl + "/login?action=login&user_name=admin&password=admin";
           testConnection(repUrl);
           //xnren end
@@ -565,13 +576,10 @@ public class RepositoriesMeta {
       }
     } catch (MalformedURLException e) {
       messages=BaseMessages.getString(PKG,"RepositoriesMeta.UncorrectURLFormat");
-      e.printStackTrace();
     } catch (IOException e) {
       messages=BaseMessages.getString(PKG,"RepositoriesMeta.WrongUsePass");
-      e.printStackTrace();
     }catch (Exception e) {
       messages="Exception";
-      e.printStackTrace();
     }
     return messages;
   }
