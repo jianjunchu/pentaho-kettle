@@ -488,32 +488,24 @@ public class RepositoriesMeta {
         List<RepositoryBean> repBeans = loginResponse.getRep_list();
         for (RepositoryBean repBean : repBeans) {
 
+          KettleDatabaseRepositoryMeta kdbRepMeta = null;
+          if(repBean.getUrl() !=null &&  repBean.getUrl().length() > 0){
+            kdbRepMeta =   getKettleDatabaseRepositoryMetaByUrl(repBean);
+          }else{
+            kdbRepMeta =   getKettleDatabaseRepositoryMetaByIP(repBean);
+          }
 
-          GenericDatabaseMeta nativeMeta = new GenericDatabaseMeta();
-          nativeMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
-          nativeMeta.setUsername(repBean.getUserName());
-          nativeMeta.setPassword(repBean.getPassword());
-          Properties attrs = new Properties();
-          attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS, repBean.getDriverClassName() );
-          attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, repBean.getUrl() );
-          nativeMeta.setAttributes( attrs );
+          if(kdbRepMeta !=null){
+            kdbRepMeta.setUserID(userID);
+            kdbRepMeta.setRep_password(repBean.getRep_password());
+            kdbRepMeta.setRep_username(repBean.getRep_username());
+            KettleDatabaseRepositoryMeta.priviledge = loginResponse
+                    .getPriviledges();
+            addRepository(kdbRepMeta);
+            PlatformUtil.properties.setProperty("USER_ID", userID);
+          }
 
-          DatabaseMeta databaseMeta = new DatabaseMeta();
-          databaseMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
-          databaseMeta.setDatabaseInterface(nativeMeta);
 
-          addDatabase(databaseMeta);
-          KettleDatabaseRepositoryMeta kdbRepMeta = new KettleDatabaseRepositoryMeta(
-                  "KettleDatabaseRepository",
-                  repBean.getRepositoryName(),
-                  repBean.getRepositoryName(), databaseMeta);
-          kdbRepMeta.setUserID(userID);
-          kdbRepMeta.setRep_password(repBean.getRep_password());
-          kdbRepMeta.setRep_username(repBean.getRep_username());
-          KettleDatabaseRepositoryMeta.priviledge = loginResponse
-                  .getPriviledges();
-          addRepository(kdbRepMeta);
-          PlatformUtil.properties.setProperty("USER_ID", userID);
 
         }
         success = true;
@@ -526,18 +518,17 @@ public class RepositoriesMeta {
           Properties p = new Properties();
           String propFile = Const.getKettleDirectory()+"/"+Const.KETTLE_PROPERTIES;
           p.load(new FileInputStream(propFile));
-          String repUrl = p.getProperty("SERVER_URL");
-          if(repUrl==null)
-            repUrl="http://localhost:8080/etl_platform";
+          String repUrl = p.getProperty("SERVER_URL","http://localhost:8080/etl_platform");
 
-          repUrl = repUrl + "/login?action=login&user_name=admin&password=admin";
+
+          repUrl = repUrl + "/login?action=get_repository_login&user_name=admin&password=jXf7iDoaYXtqDAIoCP0X2HAQkq7RfJOwkKEen";
           String message = testConnection(repUrl);
           if(!message.equalsIgnoreCase("OK"))
             log.logBasic("repository connection field!"+repUrl+" Message:"+message);
 
           //xnren end
           if(loginResponse!=null){
-            readData();
+            return readData();
           }else {
             return readData_localFile();
           }
@@ -551,6 +542,44 @@ public class RepositoriesMeta {
       throw new KettleException("Exception", e);
     }
     return success;
+  }
+
+  private KettleDatabaseRepositoryMeta getKettleDatabaseRepositoryMetaByIP(RepositoryBean repBean) {
+    DatabaseMeta dbMeta = new DatabaseMeta(
+            repBean.getRepositoryName(), repBean.getDbType(),
+            repBean.getDbAccess(), repBean.getDbHost(),
+            repBean.getDbName(), repBean.getDbPort(),
+            repBean.getUserName(), repBean.getPassword());
+    dbMeta.addOptions();
+    addDatabase(dbMeta);
+    KettleDatabaseRepositoryMeta kdbRepMeta = new KettleDatabaseRepositoryMeta(
+            "KettleDatabaseRepository",
+            repBean.getRepositoryName(),
+            repBean.getRepositoryName(), dbMeta);
+    return kdbRepMeta;
+  }
+
+  private KettleDatabaseRepositoryMeta getKettleDatabaseRepositoryMetaByUrl(RepositoryBean repBean) {
+    GenericDatabaseMeta nativeMeta = new GenericDatabaseMeta();
+    nativeMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
+    nativeMeta.setUsername(repBean.getUserName());
+    nativeMeta.setPassword(repBean.getPassword());
+    Properties attrs = new Properties();
+    attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_DRIVER_CLASS, repBean.getDriverClassName() );
+    attrs.put( GenericDatabaseMeta.ATRRIBUTE_CUSTOM_URL, repBean.getUrl() );
+    nativeMeta.setAttributes( attrs );
+
+    DatabaseMeta databaseMeta = new DatabaseMeta();
+    databaseMeta.setAccessType(DatabaseMeta.TYPE_ACCESS_NATIVE);
+    databaseMeta.setDatabaseInterface(nativeMeta);
+
+    addDatabase(databaseMeta);
+    KettleDatabaseRepositoryMeta kdbRepMeta = new KettleDatabaseRepositoryMeta(
+            "KettleDatabaseRepository",
+            repBean.getRepositoryName(),
+            repBean.getRepositoryName(), databaseMeta);
+
+    return kdbRepMeta;
   }
 
   /**
@@ -574,6 +603,8 @@ public class RepositoriesMeta {
       UMStatus um = loginResponse.getStatus();
       if(um!=UMStatus.SUCCESS){
         messages=um.getStatusMessage();
+        this.loginResponse = null;
+
       }else{
         this.loginResponse = loginResponse;
       }

@@ -4785,7 +4785,10 @@ public class ValueMetaBase implements ValueMetaInterface {
             precision = -1;
           }
 
-          if ( type == java.sql.Types.DOUBLE || type == java.sql.Types.FLOAT || type == java.sql.Types.REAL ) {
+          if("com.oscar.jdbc.OscarResultSetMetaData".equalsIgnoreCase(rm.getClass().getName())){
+            valtype = ValueMetaInterface.TYPE_BIGNUMBER;
+          }
+          else if ( type == java.sql.Types.DOUBLE || type == java.sql.Types.FLOAT || type == java.sql.Types.REAL ) {
             if ( precision == 0 ) {
               precision = -1; // precision is obviously incorrect if the type if
               // Double/Float/Real
@@ -5082,7 +5085,7 @@ public class ValueMetaBase implements ValueMetaInterface {
             precision = -1;
           }
 
-          if ( originalColumnType == java.sql.Types.DOUBLE || originalColumnType == java.sql.Types.FLOAT || originalColumnType == java.sql.Types.REAL ) {
+           if ( originalColumnType == java.sql.Types.DOUBLE || originalColumnType == java.sql.Types.FLOAT || originalColumnType == java.sql.Types.REAL ) {
             if ( precision == 0 ) {
               precision = -1; // precision is obviously incorrect if the type if
               // Double/Float/Real

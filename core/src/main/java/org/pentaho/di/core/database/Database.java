@@ -151,7 +151,7 @@ public class Database implements VariableSpace, LoggingObjectInterface {
 
   private LogChannelInterface log;
   private LoggingObjectInterface parentLoggingObject;
-  private static final String[] TABLE_TYPES_TO_GET = { "TABLE", "VIEW" };
+  private static final String[] TABLE_TYPES_TO_GET = { "TABLE", "VIEW","SYSTEM TABLE","KSTORE" };
   private static final String TABLES_META_DATA_TABLE_NAME = "TABLE_NAME";
 
   /**

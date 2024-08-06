@@ -958,7 +958,7 @@ public abstract class BaseDatabaseMeta implements Cloneable, DatabaseInterfaceEx
    */
   @Override
   public String[] getTableTypes() {
-    return new String[] { "TABLE" };
+    return new String[] { "TABLE","SYSTEM TABLE","KSTORE" };
   }
 
   /**

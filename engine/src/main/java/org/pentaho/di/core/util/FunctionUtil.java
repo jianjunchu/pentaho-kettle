@@ -54,8 +54,9 @@ public class FunctionUtil {
 		if(runner ==null){
 			try {
 				runner = new ExpressRunner();
-				runner.addOperatorWithAlias("If", "if", null);
-				runner.addOperatorWithAlias("Then", "then", null);
+
+				//runner.addOperatorWithAlias("If", "if", null);
+				//runner.addOperatorWithAlias("Then", "then", null);
 //			runner.addOperatorWithAlias("Else","else",null);
 
 				runner.addFunction("AlNum", new AlNum());

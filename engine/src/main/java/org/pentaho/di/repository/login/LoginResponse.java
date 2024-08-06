@@ -83,7 +83,8 @@ public class LoginResponse {
             {
                 JSONObject repObj = (JSONObject)repListObj.get(i) ;
                 RepositoryBean repBean = new RepositoryBean() ;
-
+                repBean.setDriverClassName((String)repObj.get("driverClassName"));
+                repBean.setUrl((String)repObj.get("url"));
                 repBean.setDbAccess((String)repObj.get("DBAccess")) ;
                 repBean.setDbHost((String)repObj.get("DBHost")) ;
                 repBean.setDbPort((String)repObj.get("DBPort")) ;
