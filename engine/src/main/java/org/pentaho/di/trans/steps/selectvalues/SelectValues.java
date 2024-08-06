@@ -450,11 +450,7 @@ public class SelectValues extends BaseStep implements StepInterface {
   public boolean init( StepMetaInterface smi, StepDataInterface sdi ) {
     meta = (SelectValuesMeta) smi;
     data = (SelectValuesData) sdi;
-    try {
-      functionUtil= new FunctionUtil(log);
-    }catch (Exception e){
-        logBasic("init FunctionUtil");
-    }
+    functionUtil= new FunctionUtil(log);
 
     if ( super.init( smi, sdi ) ) {
       data.firstselect = true;

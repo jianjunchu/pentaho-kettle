@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.pentaho.di.plugins</groupId>
+        <artifactId>aliyun-odps</artifactId>
+        <version>8.3.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>kettle-aliyun-odps-plugin-core</artifactId>
+    <packaging>jar</packaging>
+
+    <name>PDI aliyun odps JDBC Plugin Core</name>
+
+    <properties>
+        <pdi.version>8.3.0.0-SNAPSHOT</pdi.version>
+        <pentaho-kettle.version>5.4.0.1-130</pentaho-kettle.version>
+        <pentaho-metaverse.version>8.3.0.0-SNAPSHOT</pentaho-metaverse.version>
+        <platform.version>8.3.0.0-SNAPSHOT</platform.version>
+        <build.revision>${project.version}</build.revision>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <build.description>${project.description}</build.description>
+        <maven.build.timestamp.format>yyyy/MM/dd hh:mm</maven.build.timestamp.format>
+        <poi.version>3.17</poi.version>
+        <dependency.com.tinkerpop.blueprints.version>2.6.0</dependency.com.tinkerpop.blueprints.version>
+        <dependency.org.powermock.version>1.6.0</dependency.org.powermock.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+
+
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-core</artifactId>
+            <version>${pentaho-kettle.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/kettle_lib/kettle-core-${pentaho-kettle.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-engine</artifactId>
+            <version>${pentaho-kettle.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/kettle_lib/kettle-engine-${pentaho-kettle.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-ui-swt</artifactId>
+            <version>${pentaho-kettle.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/kettle_lib/kettle-ui-swt-${pentaho-kettle.version}.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>metastore</artifactId>
+            <version>${pentaho-kettle.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/kettle_lib/metastore-${pentaho-kettle.version}.jar</systemPath>
+        </dependency>
+
+
+
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
+
+</project>

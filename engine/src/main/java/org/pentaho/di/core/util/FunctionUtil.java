@@ -27,11 +27,12 @@ public class FunctionUtil {
 
 
 	protected LogChannelInterface log;
-	private static ExpressRunner runner = null;
+	private  ExpressRunner runner = null;
 	public FunctionUtil(LogChannelInterface log)  {
 		this.log = log;
 		try {
 			runner = getRunner();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,8 +56,8 @@ public class FunctionUtil {
 			try {
 				runner = new ExpressRunner();
 
-				//runner.addOperatorWithAlias("If", "if", null);
-				//runner.addOperatorWithAlias("Then", "then", null);
+				runner.addOperatorWithAlias("If", "if", null);
+				runner.addOperatorWithAlias("Then", "then", null);
 //			runner.addOperatorWithAlias("Else","else",null);
 
 				runner.addFunction("AlNum", new AlNum());
@@ -161,7 +162,9 @@ public class FunctionUtil {
 
 				//load from plugins
 				loadFuncitonPlugins();
-			}catch (Exception e){e.printStackTrace();}
+			}catch (Exception e){
+
+			}
 
 		}
 		return runner;
