@@ -291,7 +291,8 @@ public class KettleDatabaseRepositoryConnectionDelegate extends KettleDatabaseRe
       // Also, clear the counters, reducing the risk of collisions!
       //
       Counters.getInstance().clear();
-    } catch ( KettleException dbe ) {
+    } catch ( Exception dbe ) {
+      dbe.printStackTrace();
       throw new KettleException( "Unable to commit repository connection", dbe );
     }
   }
