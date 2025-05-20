@@ -168,6 +168,11 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
   private Label wlCloseIdleConnectionsTime;
   private TextVar wCloseIdleConnectionsTime;
 
+
+  private Label wlRetryTimes;
+  private TextVar wRetryTimes;
+
+
   public HTTPDialog( Shell parent, Object in, TransMeta transMeta, String sname ) {
     super( parent, (BaseStepMeta) in, transMeta, sname );
     input = (HTTPMeta) in;
@@ -511,6 +516,26 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
     fdCloseIdleConnectionsTime.left = new FormAttachment( middle, 0 );
     fdCloseIdleConnectionsTime.right = new FormAttachment( 100, 0 );
     wCloseIdleConnectionsTime.setLayoutData( fdCloseIdleConnectionsTime );
+
+    wlRetryTimes = new Label( gSettings, SWT.RIGHT );
+    wlRetryTimes
+            .setText( BaseMessages.getString( PKG, "HTTPDialog.RetryTimes.Label" ) );
+    props.setLook(wlRetryTimes);
+    FormData fwlRetryTimes = new FormData();
+    fwlRetryTimes.top = new FormAttachment( wCloseIdleConnectionsTime, margin );
+    fwlRetryTimes.left = new FormAttachment( 0, 0 );
+    fwlRetryTimes.right = new FormAttachment( middle, -margin );
+    wlRetryTimes.setLayoutData( fwlRetryTimes );
+    wRetryTimes = new TextVar( transMeta, gSettings, SWT.SINGLE | SWT.LEFT | SWT.BORDER );
+    wRetryTimes.addModifyListener( lsMod );
+    wRetryTimes.setToolTipText( BaseMessages.getString(
+            PKG, "HTTPDialog.RetryTimes.Tooltip" ) );
+    props.setLook(wRetryTimes);
+    FormData fdRetryTimes = new FormData();
+    fdRetryTimes.top = new FormAttachment( wCloseIdleConnectionsTime, margin );
+    fdRetryTimes.left = new FormAttachment( middle, 0 );
+    fdRetryTimes.right = new FormAttachment( 100, 0 );
+    wRetryTimes.setLayoutData( fdRetryTimes );
 
     FormData fdSettings = new FormData();
     fdSettings.left = new FormAttachment( 0, 0 );
@@ -1033,6 +1058,7 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
     wSocketTimeOut.setText( Const.NVL( input.getSocketTimeout(), "" ) );
     wConnectionTimeOut.setText( Const.NVL( input.getConnectionTimeout(), "" ) );
     wCloseIdleConnectionsTime.setText( Const.NVL( input.getCloseIdleConnectionsTime(), "" ) );
+    wRetryTimes.setText( Const.NVL( input.getRetryTimes(), "" ) );
 
     wUrl.setText( Const.NVL( input.getUrl(), "" ) );
     wUrlInField.setSelection( input.isUrlInField() );
@@ -1128,6 +1154,7 @@ public class HTTPDialog extends BaseStepDialog implements StepDialogInterface {
     input.setSocketTimeout( wSocketTimeOut.getText() );
     input.setConnectionTimeout( wConnectionTimeOut.getText() );
     input.setCloseIdleConnectionsTime( wCloseIdleConnectionsTime.getText() );
+    input.setRetryTimes( wRetryTimes.getText() );
 
     stepname = wStepname.getText(); // return value
 

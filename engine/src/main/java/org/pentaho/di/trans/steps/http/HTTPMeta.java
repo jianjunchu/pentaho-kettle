@@ -74,6 +74,16 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
   private String connectionTimeout;
   private String closeIdleConnectionsTime;
 
+  public String getRetryTimes() {
+    return retryTimes;
+  }
+
+  public void setRetryTimes(String retryTimes) {
+    this.retryTimes = retryTimes;
+  }
+
+  private String retryTimes;
+
   /** URL / service to be called */
   private String url;
 
@@ -138,7 +148,7 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
   }
 
   /**
-   * @param connectionTimeout
+   * @param closeIdleConnectionsTime
    *          The connectionTimeout to set.
    */
   public void setCloseIdleConnectionsTime( String closeIdleConnectionsTime ) {
@@ -436,6 +446,9 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
     retval.append( "    " + XMLHandler.addTagValue( "socketTimeout", socketTimeout ) );
     retval.append( "    " + XMLHandler.addTagValue( "connectionTimeout", connectionTimeout ) );
     retval.append( "    " + XMLHandler.addTagValue( "closeIdleConnectionsTime", closeIdleConnectionsTime ) );
+    retval.append( "    " + XMLHandler.addTagValue( "retryTimes", retryTimes ) );
+
+
 
     retval.append( "    <lookup>" ).append( Const.CR );
 
@@ -483,6 +496,7 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       socketTimeout = XMLHandler.getTagValue( stepnode, "socketTimeout" );
       connectionTimeout = XMLHandler.getTagValue( stepnode, "connectionTimeout" );
       closeIdleConnectionsTime = XMLHandler.getTagValue( stepnode, "closeIdleConnectionsTime" );
+      retryTimes = XMLHandler.getTagValue( stepnode, "retryTimes" );
 
       Node lookup = XMLHandler.getSubNode( stepnode, "lookup" );
       nrargs = XMLHandler.countNodes( lookup, "arg" );
@@ -529,6 +543,7 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       socketTimeout = rep.getStepAttributeString( id_step, "socketTimeout" );
       connectionTimeout = rep.getStepAttributeString( id_step, "connectionTimeout" );
       closeIdleConnectionsTime = rep.getStepAttributeString( id_step, "closeIdleConnectionsTime" );
+      retryTimes = rep.getStepAttributeString( id_step, "retryTimes" );
 
       int nrargs = rep.countNrStepAttributes( id_step, "arg_name" );
       int nrheaders = rep.countNrStepAttributes( id_step, "header_name" );
@@ -571,6 +586,7 @@ public class HTTPMeta extends BaseStepMeta implements StepMetaInterface {
       rep.saveStepAttribute( id_transformation, id_step, "socketTimeout", socketTimeout );
       rep.saveStepAttribute( id_transformation, id_step, "connectionTimeout", connectionTimeout );
       rep.saveStepAttribute( id_transformation, id_step, "closeIdleConnectionsTime", closeIdleConnectionsTime );
+      rep.saveStepAttribute( id_transformation, id_step, "retryTimes", retryTimes );
 
       for ( int i = 0; i < argumentField.length; i++ ) {
         rep.saveStepAttribute( id_transformation, id_step, i, "arg_name", argumentField[i] );

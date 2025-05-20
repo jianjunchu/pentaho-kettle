@@ -425,25 +425,34 @@ public class HTTP extends BaseStep implements StepInterface {
       }
 
     } // end if first
+    Object[] outputRowData=null;
+    boolean sendToErrorRow = false;
+    String errorMessage = null;
+    int times=1;
 
-    try {
-      Object[] outputRowData = execHttp( getInputRowMeta(), r ); // add new values to the row
+    while(outputRowData==null && data.realRetryTimes>=times) {
+      try {
+        outputRowData = execHttp(getInputRowMeta(), r); // add new values to the row
+
+      } catch (KettleException e) {
+        errorMessage = e.getMessage();
+        times++;
+      }
+    }
+    if(outputRowData!=null)
+    {
       putRow( data.outputRowMeta, outputRowData ); // copy row to output rowset(s);
-
       if ( checkFeedback( getLinesRead() ) ) {
         if ( isDetailed() ) {
           logDetailed( BaseMessages.getString( PKG, "HTTP.LineNumber" ) + getLinesRead() );
         }
       }
-    } catch ( KettleException e ) {
-      boolean sendToErrorRow = false;
-      String errorMessage = null;
-
+    }
+    else{
       if ( getStepMeta().isDoingErrorHandling() ) {
         sendToErrorRow = true;
-        errorMessage = e.toString();
       } else {
-        logError( BaseMessages.getString( PKG, "HTTP.ErrorInStepRunning" ) + e.getMessage() );
+        logError( BaseMessages.getString( PKG, "HTTP.ErrorInStepRunning" ) +errorMessage );
         setErrors( 1 );
         stopAll();
         setOutputDone(); // signal end to receiver(s)
@@ -454,7 +463,6 @@ public class HTTP extends BaseStep implements StepInterface {
         putError( getInputRowMeta(), r, 1, errorMessage, null, "HTTP001" );
       }
     }
-
     return true;
   }
 
@@ -471,6 +479,7 @@ public class HTTP extends BaseStep implements StepInterface {
 
       data.realSocketTimeout = Const.toInt( environmentSubstitute( meta.getSocketTimeout() ), -1 );
       data.realConnectionTimeout = Const.toInt( environmentSubstitute( meta.getSocketTimeout() ), -1 );
+      data.realRetryTimes = Const.toInt( environmentSubstitute( meta.getRetryTimes() ), -1 );
 
       return true;
     }

@@ -48,6 +48,8 @@ public class HTTPData extends BaseStepData implements StepDataInterface {
 
   public int realSocketTimeout;
   public int realConnectionTimeout;
+  public int realRetryTimes;
+
   public int realcloseIdleConnectionsTime;
 
   /**
