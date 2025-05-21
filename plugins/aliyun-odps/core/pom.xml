@@ -2,13 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.pentaho.di.plugins</groupId>
         <artifactId>aliyun-odps</artifactId>
         <version>8.3.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>kettle-aliyun-odps-plugin-core</artifactId>
-    <packaging>jar</packaging>
 
     <name>PDI aliyun odps JDBC Plugin Core</name>
 
@@ -31,39 +32,21 @@
 
     <dependencies>
 
-
-        <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>kettle-core</artifactId>
-            <version>${pentaho-kettle.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/kettle_lib/kettle-core-${pentaho-kettle.version}.jar</systemPath>
-        </dependency>
-
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-engine</artifactId>
-            <version>${pentaho-kettle.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/kettle_lib/kettle-engine-${pentaho-kettle.version}.jar</systemPath>
+            <version>${pdi.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>pentaho-kettle</groupId>
+            <artifactId>kettle-core</artifactId>
+            <version>${pdi.version}</version>
+        </dependency>
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-ui-swt</artifactId>
-            <version>${pentaho-kettle.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/kettle_lib/kettle-ui-swt-${pentaho-kettle.version}.jar</systemPath>
+            <version>${pdi.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>pentaho-kettle</groupId>
-            <artifactId>metastore</artifactId>
-            <version>${pentaho-kettle.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/kettle_lib/metastore-${pentaho-kettle.version}.jar</systemPath>
-        </dependency>
-
 
 
     </dependencies>

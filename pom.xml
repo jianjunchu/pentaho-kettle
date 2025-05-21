@@ -7,13 +7,7 @@
   <groupId>org.pentaho.di</groupId>
   <artifactId>pdi</artifactId>
   <version>8.3.0.0-SNAPSHOT</version>
-    <modules>
-        <module>plugins/aliyun-odps</module>
-        <module>plugins/aliyun-odps/assemblies</module>
-      <module>plugins/aliyun-odps/core</module>
-      <module>plugins/aliyun-odps/assemblies/plugin</module>
-    </modules>
-    <packaging>pom</packaging>
+  <packaging>pom</packaging>
 
   <name>Pentaho Data Integration</name>
   <description>Container pom for Pentaho Data Integration modules</description>

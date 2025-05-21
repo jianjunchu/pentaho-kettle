@@ -1,34 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.pentaho.di.plugins</groupId>
         <artifactId>pdi-plugins</artifactId>
         <version>8.3.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>aliyun-odps</artifactId>
 
+    <packaging>pom</packaging>
 
-    <modules>
-        <module>core</module>
-        <module>assemblies</module>
-    </modules>
-
-    <licenses>
-        <license>
-            <name>GNU Lesser General Public License, Version 3.0</name>
-            <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
-            <distribution>repo</distribution>
-            <comments></comments>
-        </license>
-    </licenses>
 
     <properties>
         <!-- License Configuration -->
         <license.licenseName>lgpl_v3</license.licenseName>
-
         <org.eclipse.swt.version>4.6</org.eclipse.swt.version>
         <jface.version>3.3.0-I20070606-0010</jface.version>
         <junit.version>4.7</junit.version>
@@ -117,5 +104,8 @@
         </dependencies>
     </dependencyManagement>
 
-
+    <modules>
+         <module>core</module>
+         <module>assemblies</module>
+    </modules>
 </project>
